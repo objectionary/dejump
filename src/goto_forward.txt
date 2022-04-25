@@ -1,13 +1,13 @@
 [x] > f
-  memory > r
-  seq > @
-    r.write 0
-    goto 
-      [g]
-        seq > @
-          if.
-            x.eq 0
-            g.forward
-            TRUE
-          r.write (42.div x)
-    r
+ memory > r
+ seq > @
+  r.write 0
+  goto 
+   [g]
+    seq > @
+     if.
+      x.eq 0
+      g.forward
+      TRUE
+     r.write (42.div x)
+  r
