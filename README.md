@@ -12,18 +12,18 @@ We have an ***EO*** program ***X*** with GOTO object:
 
 ```
 [x] > f
-  memory > r
-  seq > @
-    r.write 0
-    goto 
-      [g]
-        seq > @
-          if.
-            x.eq 0
-            g.forward
-            TRUE
-          r.write (42.div x)
-    r
+ memory > r
+ seq > @
+  r.write 0
+  goto 
+   [g]
+    seq > @
+     if.
+      x.eq 0
+      g.forward
+      TRUE
+     r.write (42.div x)
+  r
 ```
 Which is the same as this ***C++*** program:
 ```
@@ -39,16 +39,16 @@ int f(int x) {
 After replacing the GOTO object, we get:
 ```
 [x] > f
-  memory > r
-  seq > @
-    r.write 0
-      seq > @
-        if.
-          x.eq 0
-          r                       // How just to return here?
-          TRUE
-        r.write (42.div x)
-    r
+ memory > r
+ seq > @
+  r.write 0
+   seq > @
+    if.
+     x.eq 0
+     r
+     TRUE
+    r.write (42.div x)
+  r
 ```
 The same on ***C++***:
 ```
