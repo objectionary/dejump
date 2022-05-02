@@ -1,0 +1,5 @@
+goto
+ [g]
+  seq
+   g.forward TRUE
+   stdout "Will never be printed"
