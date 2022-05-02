@@ -1,0 +1,5 @@
+goto
+ [g]
+  seq
+   stdout "Will be printed forever"
+   g.backward
