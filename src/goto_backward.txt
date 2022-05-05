@@ -1,0 +1,16 @@
++import org.eolang.gray.goto
++import org.eolang.io.stdout
+
+[] > f
+ memory > i
+ seq > @
+  i.write 1
+  goto
+   [g]
+    seq > @
+     i.write (i.add 1)
+     if.
+      i.less 10
+      g.backward
+      TRUE
+ stdout "Finished!"
