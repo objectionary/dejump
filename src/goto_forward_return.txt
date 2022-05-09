@@ -1,0 +1,9 @@
+[a b] > max
+ goto > @
+  [g]
+   seq > @
+    if.
+     a.greater b
+     g.forward a
+     TRUE
+    b
