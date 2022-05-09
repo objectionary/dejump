@@ -23,8 +23,8 @@
 
 \begin{abstract}
 In this article we raise the problem of the so-called Jump Statements. Getting rid of the use of operators such as \textbf{goto}, \textbf{return}, \textbf{continue}, \textbf{break}, and \textbf{throw} in code is the task of most modern programming languages, as the program becomes unreadable, poorly optimized and the probability of fixing errors in such a program is extremely high. 
+We are trying to answer the following research question: “Is it possible to completely get rid of the \textbf{GOTO} operator in the code?”
 
-The result of our research is an algorithm that allows converting a program in EO (Elementary Objects) language containing \textbf{GOTO} objects into a semantically similar one, but without using them.
 \end{abstract}
 
 \keywords{Object-Oriented Programming, software engineering, algorithms, computer science}
@@ -39,15 +39,27 @@ To our knowledge, there is still no software tool available, which would impleme
 
 Such an analysis works well with statements which are easy to map to functions, for example if and switch. Jump statements, on the other hand, can't be easily mapped to functions, The presence of jump statements in the source code makes it impossible to use the functional method of analysis just explained.
 
-We propose an algorithm that replaces code fragments using the GOTO object with similar fragments, but without using it. Two algorithms are semantically equivalent if with the same set of input arguments they return the same results.
+The result of our research is an algorithm that allows converting a program in EO (Elementary Objects) language containing \textbf{GOTO} objects into a semantically similar one, but without using them. We propose an algorithm that replaces code fragments using the GOTO object with similar fragments, but without using it. We claim that two algorithms are semantically equivalent if with the same set of input arguments they return the same results.
 
 \section{Methods}
-In EOLANG, all jump statements are implemented as a single \textbf{GOTO}-object. The main task is to distinguish what this object is in different places of the program - \textbf{goto}, \textbf{continue}, \textbf{break} or \textbf{return}. We need to learn to recognize the type of implied object and replace it with similar code accordingly.
+In EOLANG, all jump statements are implemented as a single \textbf{GOTO}-object. The \textbf{GOTO}-object represents two types of jumps: \textit{forward jump} and \textit{backward jump}. Operators such as \textbf{break}, \textbf{return} and \textbf{goto forward} are implemented via \textit{forward jump}; \textbf{continue} and \textbf{goto backward} are implemented via \textit{backward jump}.
 
-\subsection{GOTO statement}
-There are two types of \textbf{goto}-statements in the program - "forward jumps" and "backward jumps".
-\subsubsection{forward jumps}
-In a program "forward jump" can be used within the body of \textbf{if}-statement. In this case program will look like this:
+For each of them, a semantically identical replacement is required so that the algorithm returns the same output with the same input parameters.
+
+\subsection{forward jump}
+\textbf{\textit{Goto forward}} is implemented in the language as:
+\begin{lstlisting}
++import org.eolang.gray.goto
++import org.eolang.io.stdout
+
+goto
+ [g]
+  seq
+   g.forward TRUE
+   stdout "Will never be printed"
+\end{lstlisting}
+
+In a program \textit{forward jump} can be used within the body of \textbf{if}-statement. In this case program will look like this:
 
 \includegraphics{forward1}
 
@@ -72,23 +84,82 @@ In this example we can see that the use of "forward jump" is unnecessary because
 
 \includegraphics{forward2}
 
+Modified code:
 \begin{lstlisting}
 [x] > f
  memory > r
  seq > @
   r.write 0
   if.
-   not (x.eq 0)?? IS THIS SYNTAX WRONG??
+   not. (eq. (x 0))
    r.write (42.div x)
    TRUE
   r
 \end{lstlisting}
 
-\subsubsection{backward jumps}
-Backward jump is usually used similarly to a while loop and can be easily replaced by it (considering programs that are compiled and executed).
+If the program encountered unconditional \textit{forward jump}, we need to transform it as \textbf{goto} with an additional condition: \textbf{if (true) goto forward}. Then the replacement occurs just as if the condition exists.
+
+\subsubsection{return}
+As mentioned above, return statement is also implemented via \textit{goto forward} object. Consider the following code:
+\begin{lstlisting}
+[a b] > max
+ goto > @
+  [g]
+   seq > @
+    if.
+     a.greater b
+     g.forward a
+     TRUE
+    b
+\end{lstlisting}
+When using goto as \textit{return} statement, an additional attribute is added to the \textbf{goto}-object, similar to the return value of a procedure. In this case, it can easily be transformed into an \textbf{if}-statement as shown in the paragraph above:
+\begin{lstlisting}
+[a b] > max
+ if.
+  a.greater b
+  a
+  TRUE
+ b
+\end{lstlisting}
+
+\subsubsection{break}
+Break is a control-flow statement which could also be implemented using \textbf{goto forward}. Since the break statement can only be found inside the generator (in EOlang Generator is a routine that can be used to control iteration behaviour of a loop) Its replacement is slightly different from the one presented in the paragraph above. In this case, we need to invert the \textit{if}-condition and add it to the condition of the loop with the logical operator \textit{AND}. After that, we easily get rid of the \textit{if}-condition itself.
+
+Let's look at the example:
+\begin{lstlisting}
+[]
+ memory > i
+ goto > @
+  [g]
+   seq > @
+    while.
+     i.less 10
+     seq
+      i.write (i.add 1)
+      if.
+       eq. (i.mod 5 0)
+       g.forward
+       TRUE
+\end{lstlisting}
+
+We invert \textit{condition} and add it to \textbf{while}-condition:
+\begin{lstlisting}
+[]
+ memory > i
+ seq > @
+  while.
+   and.
+    i.less 10
+    not. (eq. (i.mod 5 0))
+   seq
+    i.write (i.add 1)
+\end{lstlisting}
+
+\subsection{backward jumps}
+Backward jump is usually used similarly to a while loop and can be easily replaced by it (considering programs that are compiled and executed). Substitution will look like \textbf{do-while} construction.
 
 
-??? INSERT IMAGE
+\includegraphics{backward1}
 
 Consider the following code:
 \begin{lstlisting}
@@ -109,6 +180,9 @@ Consider the following code:
 
 
 In this case we could easily replace construction using \textbf{goto} with the \textbf{while}:
+
+\includegraphics{backward2}
+
 \begin{lstlisting}
 [] > f
  memory > i
@@ -122,15 +196,51 @@ In this case we could easily replace construction using \textbf{goto} with the \
  stdout "Finished!"
 \end{lstlisting}
 
+\subsubsection{continue}
+Continue is also a control-flow statement, which occurs in loops and is implemented through the EO object \textbf{GOTO}. In order to replace it, we need to invert the \textit{if}-condition in the loop and all the statements that occur after \textbf{goto} are put in the \textit{if} body with the inverted condition.
 
+Example of using \textit{continue} via \textbf{goto backward}:
+\begin{lstlisting}
+[]
+ memory > i
+ goto > @
+  [g]
+   seq > @
+    while.
+     i.less 10
+     seq
+      i.write (i.add 1)
+      if.
+       eq. (i.mod 5 0)
+       g.backward
+       TRUE
+      stdout "Not divisible by 5!\n"
+\end{lstlisting}
 
-\subsubsection{Complex case}
+Replace the GOTO object with the described method:
+\begin{lstlisting}
+[]
+ memory > i
+ seq > @
+ while.
+  i.less 10
+  seq
+   i.write (i.add 1)
+   if.
+    not. (eq. (i.mod 5 0))
+    stdout "Not divisible by 5!\n"
+    TRUE
+\end{lstlisting}
+
+\subsection{Complex cases}
 ??? when forward and then backward jump
+??? and mb add throw ???
 
 
-\subsection{continue}
+\subsection{Final algorithm}
+Knowing how to replace a goto-forward statement and a goto-backward statement, we can present a final algorithm to get rid of all the GOTO objects in the EOlang code.
 
-\subsection{break}
+
 
 \end{document}
 \endinput
