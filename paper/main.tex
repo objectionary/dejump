@@ -1,0 +1,136 @@
+\documentclass[two column]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{graphicx}
+
+\graphicspath{ {./images/} }
+
+% Keywords command
+\providecommand{\keywords}[1]
+{
+  \small
+  \textbf{\textit{Keywords:}} #1
+}
+
+\title{\textbf{Elimination Of Jump Statements}}
+\author{\textbf{author}}
+\date{May 2022}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+In this article we raise the problem of the so-called Jump Statements. Getting rid of the use of operators such as \textbf{goto}, \textbf{return}, \textbf{continue}, \textbf{break}, and \textbf{throw} in code is the task of most modern programming languages, as the program becomes unreadable, poorly optimized and the probability of fixing errors in such a program is extremely high. 
+
+The result of our research is an algorithm that allows converting a program in EO (Elementary Objects) language containing \textbf{GOTO} objects into a semantically similar one, but without using them.
+\end{abstract}
+
+\keywords{Object-Oriented Programming, software engineering, algorithms, computer science}
+
+
+\section{Introduction}
+The problem is known both computer science and software engineering communities for a few decades already, while it was firstly formulated by Dijkstra in 1968: he affirmed that the use of \textbf{goto} has disastrous effect and proposed to remove it from all programming languages, Even though a few years later Knuth showed a manner for structuring programs with the \textbf{goto} statement and argued that it could be a powerful tool if it is well used, researchers got interested in finding a way for restructuring programs and eliminating \textbf{goto} statements.
+
+Williams created a tool for restructuring Pascal code; Jonsson was one of the first who made a summary of so called \textbf{GOTO}-patches, which are design techniques for eliminating \textbf{goto} statements; Erosa suggested an algorithm fir automatic elimination of \textbf{goto} statements in C; Zegour explained how \textbf{goto} elimination may work in any language, as long as it has jump statements and control structures; Morris suggested to use regular expressions for replacing \textbf{goto} with IF-THEN-ELSE constructs; Ramshow proposed an algorithm for Pascal programs; Ganapathi introduced optimisation method for SHIM IR; Ceccato suggested how to eliminate \textbf{goto} during migration of legacy code to Java,
+
+To our knowledge, there is still no software tool available, which would implement any of the suggested methods and enable automatic elimination of jump statements in programs. However, the main reason for finding a solution to this problem for us is the development of EOLANG, an experimental \(\varphi\)-calculus-based object-oriented programming language, which is used as an Intermediate Representation (IR) in Polystat, a new polyglot static analyzer. The method of program analysis used in Polystat is functional: we find bugs by 1) transforming source code to formulas of \(\varphi\)-calculus, 2) mapping them to \(\lambda\)-terms, and 3) reasoning on terms using their inverses.
+
+Such an analysis works well with statements which are easy to map to functions, for example if and switch. Jump statements, on the other hand, can't be easily mapped to functions, The presence of jump statements in the source code makes it impossible to use the functional method of analysis just explained.
+
+We propose an algorithm that replaces code fragments using the GOTO object with similar fragments, but without using it. Two algorithms are semantically equivalent if with the same set of input arguments they return the same results.
+
+\section{Methods}
+In EOLANG, all jump statements are implemented as a single \textbf{GOTO}-object. The main task is to distinguish what this object is in different places of the program - \textbf{goto}, \textbf{continue}, \textbf{break} or \textbf{return}. We need to learn to recognize the type of implied object and replace it with similar code accordingly.
+
+\subsection{GOTO statement}
+There are two types of \textbf{goto}-statements in the program - "forward jumps" and "backward jumps".
+\subsubsection{forward jumps}
+In a program "forward jump" can be used within the body of \textbf{if}-statement. In this case program will look like this:
+
+\includegraphics{forward1}
+
+Let's look at the following code on EOLANG:
+\begin{lstlisting}
+[x] > f
+ memory > r
+ seq > @
+  r.write 0
+  goto
+   [g]
+    seq > @
+     if.
+      x.eq 0
+      g.forward
+      TRUE
+     r.write (42.div x)
+  r
+\end{lstlisting}
+
+In this example we can see that the use of "forward jump" is unnecessary because it is called when condition within \textbf{if}-statement is TRUE. By inverting the condition in \textbf{if}-statement, you can write the code block between the \textbf{goto} call and its label into a separate \textbf{if}-statement:
+
+\includegraphics{forward2}
+
+\begin{lstlisting}
+[x] > f
+ memory > r
+ seq > @
+  r.write 0
+  if.
+   not (x.eq 0)?? IS THIS SYNTAX WRONG??
+   r.write (42.div x)
+   TRUE
+  r
+\end{lstlisting}
+
+\subsubsection{backward jumps}
+Backward jump is usually used similarly to a while loop and can be easily replaced by it (considering programs that are compiled and executed).
+
+
+??? INSERT IMAGE
+
+Consider the following code:
+\begin{lstlisting}
+[] > f
+ memory > i
+ seq > @
+  i.write 1
+  goto
+   [g]
+    seq > @
+     i.write (i.add 1)
+     if.
+      i.less 10
+      g.backward
+      TRUE
+ stdout "Finished!"
+\end{lstlisting}
+
+
+In this case we could easily replace construction using \textbf{goto} with the \textbf{while}:
+\begin{lstlisting}
+[] > f
+ memory > i
+ seq > @
+  i.write 1
+  i.write (i.add 1)
+  while.
+   i.less 10
+   seq
+    i.write (i.add 1)
+ stdout "Finished!"
+\end{lstlisting}
+
+
+
+\subsubsection{Complex case}
+??? when forward and then backward jump
+
+
+\subsection{continue}
+
+\subsection{break}
+
+\end{document}
+\endinput
