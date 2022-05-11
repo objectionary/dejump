@@ -1,0 +1,50 @@
+Abstract:
+Why we do this research
+Research question
+
+1. Introduction:
+General description of the problem
+Why we need to solve it
+What we get as a result of our research
+
+2. Methods:
+General description of the algorithm in "two words"
+Description of the tasks we should consider (That we need to separately consider the replacement of Forward Jump and Backward Jump.)
+
+  2.1 forward jump
+  Review of the object Goto forward.
+  How it looks at EO/phi-calculus
+  Proposed solution for this case
+  and a theorem1 that we CAN do THIS like:
+    2.1.1 return
+    Solution for this section
+    
+    2.1.2 break
+    Solution for this section
+  
+  Proof of the proposed theorem1 described above, using phi-calculus, which should show that our solution works
+  (todo - make a proof on phi-calc)
+    
+  2.2 backward jump
+  Review of the object Goto backward.
+  How it looks at EO/phi-calculus
+  Proposed solution for this case
+  and a theorem2 that we CAN do THIS like:
+    2.2.1 continue
+    Solution for this section
+    
+  Proof of the proposed theorem2 described above, using phi-calculus, which should show that our solution works
+  (todo - make a proof on phi-calc)
+  
+  2.3 Complex cases
+  Analysis of complex cases of algorithm application and showing, how our solution will work at this cases
+  
+  2.4 Final algorithm
+  Summarization both approaches and showing pseudo-code of the algorithm itself
+  
+  
+3. Results and Discussion
+Summing up of a research and smth more??
+
+References
+bibliography
