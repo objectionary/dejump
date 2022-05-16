@@ -1,27 +1,32 @@
-goto
- [g0]
-  seq > @
-   ...
-   [g1]
-    seq > @
-    ...
-     [g2]
-      seq > @
-       ...
-       if.
-        condition1
-        [g3]
-         seq > @
-          ...
-          if.
-           condition2
-           g1.backward
-           TRUE
-          ...
-        TRUE
-       ...
-       if.
-        condition3
-        g2.forward
-        TRUE
-     ...
+[g1]
+ ..._1
+ [g2]
+  ..._2
+  [g3]
+   ..._3
+   if.
+    cond
+    g2.forward
+    TRUE
+   ..._4
+   [g4]
+    ..._5
+    if.
+     cond
+     g3.backward
+     TRUE
+    ..._6
+    if.
+     cond
+     g3.forward
+     TRUE
+    ..._7
+   ..._8
+   if.
+    cond
+    g2.backward
+    TRUE
+   ..._9
+  ..._10
+ ..._11
+..._12
