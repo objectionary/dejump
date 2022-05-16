@@ -1,37 +1,73 @@
-goto
- [g0]
-  seq > @
-   ...0
-   
-    seq > @
-    ...1
-     [g2]
-      seq > @
-       ...2
+[g1]
+ ..._1
+ [g2]
+  ..._2
+  [g3]
+   ..._3
+   if.
+    !cond
+    
+    seq
+     ..._4
+     [g4]
+      ..._5
+      while.
+       cond
+       
+       seq
+        ..._3
+        if.
+         !cond
+         seq
+          ..._4
+          [g4]
+           ..._5
+         TRUE
+       
+      ..._6
+      if.
+       !cond
+       seq
+        ..._7
+       TRUE
+     ..._8
+     while.
+      cond
+      
+      seq
+       ..._2
+       [g3]
+       ..._3
        if.
-        condition1
-        [g3]
-         seq > @
-          ...3
+        !cond
+         
+        seq
+         ..._4
+         [g4]
+          ..._5
           while.
-           condition2
+           cond
+                 
            seq
-            ...1
-             [g2]
-              seq > @
-              ...2
-              if.
-               condition1
-               [g3]
-                seq > @
-                 ...3
-               TRUE
-          
-          ...4
+            ..._3
+            if.
+             !cond
+             seq
+              ..._4
+              [g4]
+               ..._5
+             TRUE
+                  
+          ..._6
+          if.
+           !cond
+           seq
+            ..._7
+           TRUE
+         ..._8
         TRUE
-       ...5
-       if.
-        condition3
-        g1.forward
-        TRUE
-     ...6
+     ..._9
+    TRUE    
+   ..._10 
+ ..._11
+..._12
