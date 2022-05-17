@@ -43,33 +43,46 @@
 
 \maketitle
 
-\begin{abstract}
-In this article we raise the problem of the so-called Jump Statements. Getting rid of the use of operators such as \textbf{goto}, \textbf{return}, \textbf{continue}, \textbf{break}, and \textbf{throw} in code is the task of most modern programming languages, as the program becomes unreadable, poorly optimized and the probability of fixing errors in such a program is extremely high. 
-We are trying to answer the following research question: “Is it possible to completely get rid of the \textbf{GOTO} operator in the code?”
 
-\end{abstract}
+
+
+
+
+%%\begin{abstract}
+%%In this article we raise the problem of the so-called Jump Statements. Getting rid of the use of operators such as goto, return, continue, break, and throw in code is the task of most modern programming languages, as the program becomes unreadable, poorly optimized and the probability of fixing errors in such a program is extremely high. 
+%%We are trying to answer the following research question: “Is it possible to completely get rid of the GOTO operator in the code?”
+%%\end{abstract}
+
 
 \keywords{Object-Oriented Programming, software engineering, algorithms, computer science}
 
 
 \section{Introduction}
-The problem is known both computer science and software engineering communities for a few decades already, while it was firstly formulated by Dijkstra in 1968: he affirmed that the use of GOTO has disastrous effect and proposed to remove it from all programming languages, Even though a few years later Knuth showed a manner for structuring programs with the GOTO statement and argued that it could be a powerful tool if it is well used, researchers got interested in finding a way for restructuring programs and eliminating GOTO statements.
+The problem is known both computer science and software engineering communities for a few decades already, while it was firstly formulated by Dijkstra in 1968: he affirmed that the use of GOTO has disastrous effect and proposed to remove it from all programming languages,
+Even though a few years later Knuth showed a manner for structuring programs with the GOTO statement and argued that it could be a powerful tool if it is well used, researchers got interested in finding a way for restructuring programs and eliminating GOTO statements.
 
-Williams created a tool for restructuring Pascal code; Jonsson was one of the first who made a summary of so called GOTO-patches, which are design techniques for eliminating GOTO statements; Erosa suggested an algorithm fir automatic elimination of GOTO statements in C; Zegour explained how GOTO elimination may work in any language, as long as it has jump statements and control structures; Morris suggested to use regular expressions for replacing GOTO with IF-THEN-ELSE constructs; Ramshow proposed an algorithm for Pascal programs; Ganapathi introduced optimisation method for SHIM IR; Ceccato suggested how to eliminate GOTO during migration of legacy code to Java,
+Williams created a tool for restructuring Pascal code; Jonsson was one of the first who made a summary of so called GOTO-patches, which are design techniques for eliminating GOTO statements;
+Erosa suggested an algorithm fir automatic elimination of GOTO statements in C;
+Zegour explained how GOTO elimination may work in any language, as long as it has jump statements and control structures; Morris suggested to use regular expressions for replacing GOTO with IF-THEN-ELSE constructs;
+Ramshow proposed an algorithm for Pascal programs; Ganapathi introduced optimisation method for SHIM IR; Ceccato suggested how to eliminate GOTO during migration of legacy code to Java,
 
-To our knowledge, there is still no software tool available, which would implement any of the suggested methods and enable automatic elimination of jump statements in programs. However, the main reason for finding a solution to this problem for us is the development of EOLANG, an experimental \(\varphi\)-calculus-based object-oriented programming language, which is used as an Intermediate Representation (IR) in Polystat, a new polyglot static analyzer. The method of program analysis used in Polystat is functional: we find bugs by 1) transforming source code to formulas of \(\varphi\)-calculus, 2) mapping them to \(\lambda\)-terms, and 3) reasoning on terms using their inverses.
+To our knowledge, there is still no software tool available, which would implement any of the suggested methods and enable automatic elimination of jump statements in programs.
+However, the main reason for finding a solution to this problem for us is the development of EOLANG, an experimental $\varphi$-calculus-based object-oriented programming language, which is used as an Intermediate Representation (IR) in Polystat, a new polyglot static analyzer.
+The method of program analysis used in Polystat is functional: we find bugs by 1) transforming source code to formulas of $\varphi$-calculus, 2) mapping them to $\lambda$-terms, and 3) reasoning on terms using their inverses.
 
 Such an analysis works well with statements which are easy to map to functions, for example if and switch. Jump statements, on the other hand, can't be easily mapped to functions, The presence of jump statements in the source code makes it impossible to use the functional method of analysis just explained.
 
-The result of our research is an algorithm that allows converting a program in EO (Elementary Objects) language containing GOTO objects into a semantically similar one, but without using them. We propose an algorithm that replaces code fragments using the GOTO object with similar fragments, but without using it. We claim that two algorithms are semantically equivalent if with the same set of input arguments they return the same results.
+The result of our research is an algorithm that allows converting a program in EO (Elementary Objects) language containing GOTO objects into a semantically similar one, but without using them.
+We propose an algorithm that replaces code fragments using the GOTO object with similar fragments, but without using it. We claim that two algorithms are semantically equivalent if with the same set of input arguments they return the same results.
 
 \section{Methods}
-In EOLANG, all jump statements are implemented as a single \textbf{goto}-object. The \textbf{goto}-object represents two types of jumps: \textit{forward jump} and \textit{backward jump}. Operators such as \textbf{break}, \textbf{return} and \textbf{goto forward} are implemented via \textit{forward jump}; \textbf{continue} and \textbf{goto backward} are implemented via \textit{backward jump}.
+In EOLANG, all jump statements are implemented as a single goto-object. The goto-object represents two types of jumps: forward jump and backward jump.
+Operators such as break, return and goto forward are implemented via forward jump; continue and goto backward are implemented via backward jump.
 
 We need to find a solution for both, how to replace them in different situations. For each of them, a semantically identical replacement is required so that the algorithm returns the same output with the same input parameters. 
 
 \subsection{forward jump}
-\textbf{Goto forward} is implemented in EOLANG as:
+Goto forward is implemented in EOLANG as:
 \begin{lstlisting}
 +import org.eolang.gray.goto
 +import org.eolang.io.stdout
@@ -81,9 +94,9 @@ goto
    stdout "Will never be printed"
 \end{lstlisting}
 
-In a program \textit{forward jump} can be used within the body of \textit{if-statement}. Structure of an algorithm can be represented by a scheme on Figure 1. Inside \textit{if-statement} are located some statements (stmt1), after that \textbf{goto-forward}, some other statements (stmt2) and the label of \textbf{goto}, where the program will continue to work if the condition in \textit{if-statement} was equal to \textit{TRUE}.
+In a program forward jump can be used within the body of if-statement. Structure of an algorithm can be represented by a scheme on Figure 1. Inside if-statement are located some statements (stmt1), after that goto-forward, some other statements (stmt2) and the label of goto, where the program will continue to work if the condition in if-statement was equal to TRUE.
 
-\begin{figure}[h]
+\begin{figure}
     \centering
     \includegraphics{forward1}
     \caption{\textit{forward jump} scheme}
@@ -108,9 +121,9 @@ Let's look at the following code:
   r
 \end{lstlisting}
 
-In this example we can see that the use of "forward jump" is unnecessary because it is called when condition within \textit{if-statement} is TRUE. By inverting the condition, you can write the code block between the \textbf{goto} call and its label into a separate \textit{if-statement}. This approach is illustrated in Figure 2.
+In this example we can see that the use of "forward jump" is unnecessary because it is called when condition within if-statement is TRUE. By inverting the condition, you can write the code block between the goto call and its label into a separate if-statement. This approach is illustrated in Figure 2.
 
-\begin{figure}[h]
+\begin{figure}
     \centering
     \includegraphics{forward2}
     \caption{\textit{forward jump} elimination}
@@ -130,10 +143,10 @@ Modified code:
   r
 \end{lstlisting}
 
-If the program encountered unconditional \textit{forward jump}, we need to transform it as \textbf{goto} with an additional condition: \textbf{if (true) goto forward}. Then the replacement occurs just as if the condition exists.
+If the program encountered unconditional forward jump, we need to transform it as goto with an additional condition: if (true) goto forward. Then the replacement occurs just as if the condition exists.
 
 \subsubsection{return}
-As mentioned above, \textbf{return} statement is also implemented via \textit{goto forward} object. Consider the following code:
+As mentioned above, return statement is also implemented via goto forward object. Consider the following code:
 \begin{lstlisting}
 [a b] > max
  goto > @
@@ -145,18 +158,21 @@ As mentioned above, \textbf{return} statement is also implemented via \textit{go
      TRUE
     b
 \end{lstlisting}
-When using goto as \textit{return} statement, an additional attribute is added to the \textbf{goto}-object, similar to the return value of a procedure. In this case, it can easily be transformed into an \textbf{if}-statement as shown in the paragraph above:
+When using goto as return statement, an additional attribute is added to the goto-object, similar to the return value of a procedure.
+In this case, it can easily be transformed into an if-statement as shown in the paragraph above:
 \begin{lstlisting}
 [a b] > max
  if.
-  a.greater b
-  a
+  not. (a.greater b)
+  b
   TRUE
- b
+ a
 \end{lstlisting}
 
 \subsubsection{break}
-\textit{Break} is a control-flow statement which could also be implemented using \textbf{goto forward}. Since the \textit{break} statement can only be found inside the generator (in EOlang Generator is a routine that can be used to control iteration behaviour of a loop) Its replacement is slightly different from the one presented in the paragraph above. In this case, we need to invert the \textit{if}-condition and add it to the condition of the loop with the logical operator \textit{AND}. After that, we easily get rid of the \textit{if}-condition itself.
+Break is a control-flow statement which could also be implemented using goto forward. Since the break statement can only be found inside the generator (in EOlang Generator is a routine that can be used to control iteration behaviour of a loop) Its replacement is slightly different from the one presented in the paragraph above.
+In this case, we need to invert the if-condition and add it to the condition of the loop with the logical operator AND.
+After that, we easily get rid of the if-condition itself.
 
 Let's look at the example:
 \begin{lstlisting}
@@ -217,7 +233,7 @@ Consider the following code:
  stdout "Finished!"
 \end{lstlisting}
 
-\textbf{Goto backward} will work as long as the condition in if-statement is TRUE. In this case we could easily replace construction using \textbf{goto} with the \textit{while}:
+\textbf{Goto backward} will work as long as the condition in if-statement is TRUE. In this case we could easily replace construction using \textbf{goto} with the \textit{while} loop:
 
 \begin{figure}[h]
     \centering
@@ -279,11 +295,50 @@ Since the \textbf{while} loop is an attribute of the \textbf{goto} object, \text
 
 \subsection{Complex cases}
 ??? when forward and then backward jump
-??? and mb add throw ???
+???
+goto obj inside another goto obj????
+and mb add throw ???
 
 
 \subsection{Final algorithm}
-Knowing how to replace a goto-forward statement and a goto-backward statement, we can present a final algorithm to get rid of all the GOTO objects in the EOlang code.
+Knowing how to replace a \textit{goto-forward} statement and a \textit{goto-backward} statement, we can present a final algorithm to get rid of all the GOTO objects in the EOLANG code. First, we have to determine which kind of jump we need to replace: \textit{forward jump} or \textit{backward jump}. If several GOTO objects are located inside each other, then we should first replace the internal object, then the one that is located outside, and so on. If the \textit{goto forward} object is in front of us, we should check if it has a \textbf{while}-loop attribute to change its condition when replacing this piece of code. Also, if a \textit{forward jump} appears in the code, we should consider whether this object has an additional attribute as the return value - then we should return this value in the replaced piece of code. In another case, if we have \textit{goto backward}, we should also check for a loop to add an \textit{if-statement} inside it, not create a new \textbf{while} loop.
+
+All \textbf{goto}-objects in a program we will store in the form of a tree to make it more convenient to make replacements going from sons to parents - from more nested objects to external objects.
+
+The pseudocode of the algorithm may look like this:
+
+\begin{lstlisting}
+//find all goto-objects and store them as a tree
+goto_obj[] = ...
+//walk through objects in tree walk order
+for_each curr_obj in goto_obj:
+  //if unconditional goto, add condition
+  if "if." not in curr_obj:
+    add condition "if (true)" as an attribute of obj curr_obj
+    
+  if curr_obj.equal goto.forward:
+    // inverting condition
+    curr_cond = !curr_cond
+    if "while." in curr_obj:
+      add curr_cond to while condition with logical operator AND
+    else:
+      add if-condition with curr_cond
+      add stmts that goes after g.forward inside if-body
+      add stmts that goes before g.forward
+  else:
+    if "while." in curr_obj:
+      curr_cond = !curr_cond
+      add if-condition with curr_cond
+      add stmts that goes after g.backward inside if-body
+    else:
+      add stmts before "if."
+      add while-loop with curr_cond condition
+      add stmts which occur when "if." stmt is TRUE
+      add stmts before and inside "if."
+      
+  eliminate curr_obj
+\end{lstlisting}
+
 
 
 
