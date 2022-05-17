@@ -1,0 +1,124 @@
+\documentclass[two column]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\graphicspath{ {./images/} }
+
+% Keywords command
+\providecommand{\keywords}[1]
+{
+  \small
+  \textbf{\textit{Keywords:}} #1
+}
+
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+
+\lstdefinestyle{mystyle}{
+  %%backgroundcolor=\color{backcolour}, commentstyle=\color{codegreen},
+  %%keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{codegray},
+  %%stringstyle=\color{codepurple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,
+  frame=leftline,
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2
+}
+
+\title{\textbf{Elimination Of Jump Statements}}
+\author{\textbf{author}}
+\date{May 2022}
+
+\lstset{style=mystyle}
+\begin{document}
+
+\maketitle
+
+
+\keywords{Object-Oriented Programming, software engineering, algorithms, computer science}
+
+\section{Introduction}
+The problem is known both computer science and soft-
+ware engineering communities for a few decades and formulated by several scientists.
+
+Many of them have offered solutions to this problem. (Look at Related Work)
+
+The presence of jump statements in the source code makes it impossible to use the functional method of analysis.
+
+We are trying to answer the following research question: “Is it possible to completely get rid of the GOTO operator in the code?”
+
+
+\section{Related work}
+To solve related problems, the following works were published:
+Morris suggested to use regular expressions for replacing GOTO with IF-THEN-ELSE constructs.
+Ramshow proposed an algorithm for Pascal programs.
+Ceccato suggested how to eliminate GOTO during migration of legacy code to Java.
+
+To our knowledge, there is still no software tool  which enable automatic elimination of jump statements in programs.
+
+In this article, we will describe an algorithm that will convert a program to EOLANG in such a way that the output returns a semantically equivalent program, but without using the GOTO object.
+
+We will also provide a formal proof of our algorithm, using phi-calculus.
+
+\section{Methods}
+In EOLANG, all jump statements are implemented as a
+single ATOM-object GOTO. The goto-object represents two types of jumps: forward jump and backward jump.
+The algorithm we propose contains two types of transformations for the goto object - forward jump and backward jump.
+We also assume that all jumps are conditional. If this is not the case, then we can easily convert an unconditional goto to a conditional goto by adding an additional if (true) condition.
+
+The algorithm itself consists in applying these transformations to replace both types of jumps.
+
+\subsection{forward jump}
+Forward jump is implemented as:
+
+(Forward jump object usage code example)
+
+In the simple case, replacing forward jump is reduced to inverting the jump condition and executing statements in reverse order
+
+In cases where forward jump is used to implement return and break, the transformations will look slightly different.
+
+\subsubsection{return}
+Forward jump can be used to implement return-statement.
+
+The only difference here is the return parameter on the jump, which we have to return. Transformation is similar to a simple case.
+
+\subsubsection{break}
+Break occurs in constructs that emulate the operation of loops - EOLANG implements a generator that works as a while loop.
+
+In this case, the inverted condition is added to the while loop itself with the logical AND operator.
+
+\subsection{backward jump}
+Backward jump is implemented as:
+
+(Backward jump object usage code example)
+
+Backward jump works the same as do-while construction in other languages: the first iteration of the loop is always executed, and the next only if the condition is TRUE.
+Transformation is to replace a piece of code with a while loop with a backward jump condition.
+
+In cases where backward jump is used to implement continue, the transformation will look slightly different.
+
+\subsubsection{continue}
+Backward jump is used to implement continue statement. In this case, the transformation consists in inverting the jump condition and executing the remaining statements in the body of the new if statement.
+
+
+\subsection{Complex cases}
+
+
+\subsection{final algorithm}
+
+\section{Results}
+
+\section{Discussion}
+
+
+\end{document}
+\endinput
