@@ -1,3 +1,6 @@
++import org.eolang.gray.goto
++import org.eolang.io.stdout
+
 goto
  [g]
   seq
