@@ -1,8 +1,11 @@
-\documentclass[two column]{article}
+\documentclass[sigplan,review,11pt,nonacm,natbib=false]{acmart}
+\settopmatter{printfolios=false,printccs=false,printacmref=false}
+\usepackage[maxnames=1,minnames=1,maxbibnames=100,natbib=true,citestyle=authoryear,bibstyle=authoryear,doi=false,url=false,isbn=false,isbn=false]{biblatex}
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{ffcode}
 
 \graphicspath{ {./images/} }
 
@@ -15,30 +18,11 @@
 
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 
-\lstdefinestyle{mystyle}{
-  %%backgroundcolor=\color{backcolour}, commentstyle=\color{codegreen},
-  %%keywordstyle=\color{magenta},
-  numberstyle=\tiny\color{codegray},
-  %%stringstyle=\color{codepurple},
-  basicstyle=\ttfamily\footnotesize,
-  breakatwhitespace=false,         
-  breaklines=true,
-  frame=leftline,
-  captionpos=b,                    
-  keepspaces=true,                 
-  numbers=left,                    
-  numbersep=5pt,                  
-  showspaces=false,                
-  showstringspaces=false,
-  showtabs=false,                  
-  tabsize=2
-}
-
-\title{\textbf{Elimination Of Jump Statements}}
+\title{\textbf{Elimination Of Jump Objects}}
 \author{\textbf{author}}
 \date{May 2022}
 
-\lstset{style=mystyle}
+
 \begin{document}
 
 \maketitle
@@ -54,71 +38,380 @@ Many of them have offered solutions to this problem. (Look at Related Work)
 
 The presence of jump statements in the source code makes it impossible to use the functional method of analysis.
 
-We are trying to answer the following research question: “Is it possible to completely get rid of the GOTO operator in the code?”
+There are an "object-flow" languages where we can control flow through an objects. An example of such language is EO (Elementary Objects language). This is a strictly object-oriented programming language in which any action is described by creating a new object, or decorating an existing one.
 
+We are trying to answer the following research question: "Is it possible for any program, written on "object-flow" language like EO and containing GOTO objects to find a semantically equivalent program, but without using them?"
 
 \section{Related work}
-To solve related problems, the following works were published:
-Morris suggested to use regular expressions for replacing GOTO with IF-THEN-ELSE constructs.
-Ramshow proposed an algorithm for Pascal programs.
+To solve the problem of eliminating Jump statements in other programming languages, the following works were published:
+Morris suggested to use regular expressions for replacing GOTO with IF-THEN-ELSE constructs;
+Ramshow proposed an algorithm for Pascal programs;
 Ceccato suggested how to eliminate GOTO during migration of legacy code to Java.
 
-To our knowledge, there is still no software tool  which enable automatic elimination of jump statements in programs.
+To our knowledge, there is still no method which enables automatic elimination of jump objects in programs written in such an object-flow languages.
 
-In this article, we will describe an algorithm that will convert a program to EOLANG in such a way that the output returns a semantically equivalent program, but without using the GOTO object.
+\section{Method}
+In this article, we will describe an algorithm that will convert an EO program in such a way that the output returns a semantically equivalent program, but without using the GOTO object.
 
-We will also provide a formal proof of our algorithm, using phi-calculus.
+Some objects in EO programs may need to be platform specific and can’t be composed from other existing objects—they are called atoms. 
+In EO, all jump statements are implemented as a
+single atom-object GOTO. The goto-object represents two types of jumps: goto-forward and goto-backward.
 
-\section{Methods}
-In EOLANG, all jump statements are implemented as a
-single ATOM-object GOTO. The goto-object represents two types of jumps: forward jump and backward jump.
 The algorithm we propose contains two types of transformations for the goto object - forward jump and backward jump.
-We also assume that all jumps are conditional. If this is not the case, then we can easily convert an unconditional goto to a conditional goto by adding an additional if (true) condition.
+We also assume that all jumps are conditional. If this is not the case, then we can easily convert an unconditional goto to a conditional goto by adding an additional condition: \emph{if (true)}.
 
 The algorithm itself consists in applying these transformations to replace both types of jumps.
 
 \subsection{forward jump}
 Forward jump is implemented as:
 
-(Forward jump object usage code example)
+\begin{ffcode}
++import org.eolang.gray.goto
++import org.eolang.io.stdout
 
-In the simple case, replacing forward jump is reduced to inverting the jump condition and executing statements in reverse order
+goto
+ [g]
+  seq
+   g.forward TRUE
+   stdout "Will never be printed"
+\end{ffcode}
+
+It is not difficult to notice that statements which goto-forward "jumps through" will be executed if the condition in the if-statement is not equal to TRUE.
+If the condition is true, then statements following the goto object itself are executed.
+So we can swap statements and invert the condition into if-statement to get rid of the goto-forward object (Look at Image1).
+
+{INSERT AN IMAGE1}
+
+Let's take a look at the following example of how to use goto-forward:
+\begin{ffcode}
+[x] > f
+ memory > r
+ seq > @
+  r.write 0
+  goto
+   [g]
+    seq > @
+     if.
+      x.eq 0
+      g.forward TRUE
+      TRUE
+     r.write (42.div x)
+  r
+\end{ffcode}
+
+In this case, the jump condition looks like:
+\emph{if (x equals 0)}. After the body if-statement there is an expression: \emph{r = 42 / x}. By swapping the statements that follow the if-statement body and after the jump itself, as described above, we get the following replacement for this example:
+\begin{ffcode}
+[x] > f
+ memory > r
+ seq > @
+  r.write 0
+  if.
+   not. (eq. (x 0))
+   r.write (42.div x)
+   TRUE
+  r
+\end{ffcode}
 
 In cases where forward jump is used to implement return and break, the transformations will look slightly different.
 
 \subsubsection{return}
-Forward jump can be used to implement return-statement.
+Forward jump can be used to implement the return-statement:
+\begin{ffcode}
+[a b] > max
+ goto > @
+  [g]
+   seq > @
+    if.
+     a.greater b
+     g.forward a
+     TRUE
+    b
+\end{ffcode}
 
-The only difference here is the return parameter on the jump, which we have to return. Transformation is similar to a simple case.
+The only difference here is the return parameter on the jump, which we have to return. Transformation is similar to a simple case, described at Section 3.1 .
+
+So, the transformation will look like this:
+\begin{ffcode}
+[a b] > max
+ if.
+  not. (a.greater b)
+  b
+  TRUE
+ a
+\end{ffcode}
 
 \subsubsection{break}
-Break occurs in constructs that emulate the operation of loops - EOLANG implements a generator that works as a while loop.
+Break occurs in constructs that emulate the operation of loops - EO implements a generator that works as a while loop.
 
-In this case, the inverted condition is added to the while loop itself with the logical AND operator.
+Let's consider how break is implemented on the next example:
+\begin{ffcode}
+[]
+ memory > i
+ goto > @
+  [g]
+   seq > @
+    while.
+     i.less 10
+     seq
+      i.write (i.add 1)
+      if.
+       eq. (i.mod 5 0)
+       g.forward TRUE
+       TRUE
+      stdout "After break!"
+\end{ffcode}
+
+In this case, goto-forward is used to exit the body of the while loop. However, every iteration of a while loop checks its own condition if it is true. 
+
+Since the jump is executed once the jump condition is true, the while loop will be executed as long as the jump condition is false. We can deduce that the condition for the jump is tested at every iteration of the loop, exactly the same as the condition in the while body itself.
+So by combining the jump condition and the while loop condition do not violate the program logic. But the point is, once the jump condition is true, the next iteration of the while loop will fail and the loop will end.
+So we only care about the first triggering of the jump condition for goto-forward. To do this, we can create an auxiliary variable \emph{flag} that will be TRUE as soon as the jump condition is met.
+Otherwise, all statements that came after the jump in the while loop will be executed.
+So the combined condition of the while loop will look like: while (!flag AND condOfWhile).
+
+In this example, break-statement transformation looks like this:
+\begin{ffcode}
+[]
+ memory > i
+ memory > flag
+ flag.write 0
+ while.
+  and.
+   not. (eq. (flag 1))
+   i.less 10
+  seq
+   i.write (i.add 1)
+   if.
+    not. (eq. (i.mod 5 0))
+    stdout "After break!"
+    flag.write 1
+\end{ffcode}
+
+Thus we reduced the break statement transformation to the transformation described in section 3.1 with inverting the jump condition and replacing the statements places.
+
 
 \subsection{backward jump}
-Backward jump is implemented as:
+Backward jump in EO is implemented as:
 
-(Backward jump object usage code example)
+\begin{ffcode}
++import org.eolang.gray.goto
++import org.eolang.io.stdout
+
+goto
+ [g]
+  seq
+   stdout "Will be printed forever"
+   g.backward
+\end{ffcode}
 
 Backward jump works the same as do-while construction in other languages: the first iteration of the loop is always executed, and the next only if the condition is TRUE.
+So, all statemets that met before the "jump" itself should be executed before the new while loop once, and all subsequent times were executed depending on the condition of the loop (Look at Image2).
+
+{INSERT AN IMAGE2}
+
+Consider the following code:
+\begin{ffcode}
+[] > f
+ memory > i
+ seq > @
+  i.write 1
+  goto
+   [g]
+    seq > @
+     i.write (i.add 1)
+     if.
+      i.less 10
+      g.backward
+      TRUE
+ stdout "Finished!"
+\end{ffcode}
+
 Transformation is to replace a piece of code with a while loop with a backward jump condition.
+
+Equivalent replacement of the example described above:
+\begin{ffcode}
+[] > f
+ memory > i
+ seq > @
+  i.write 1
+  i.write (i.add 1)
+  while.
+   i.less 10
+   seq
+    i.write (i.add 1)
+ stdout "Finished!"
+\end{ffcode}
 
 In cases where backward jump is used to implement continue, the transformation will look slightly different.
 
 \subsubsection{continue}
-Backward jump is used to implement continue statement. In this case, the transformation consists in inverting the jump condition and executing the remaining statements in the body of the new if statement.
+Backward jump is used to implement continue statement:
+
+\begin{ffcode}
+[]
+ memory > i
+ goto > @
+  [g]
+   seq > @
+    while.
+     i.less 10
+     seq
+      i.write (i.add 1)
+      if.
+       eq. (i.mod 5 0)
+       g.backward
+       TRUE
+      stdout "Not divisible by 5!\n"
+\end{ffcode}
+
+This statement is logically the same as a break statement, except that after a break is executed the entire while loop stops. When you execute the continue statement, the next iteration of the loop is simply started.
+So from a logical standpoint, replacing continue statement is identical to replacing break statement described in section 3.1.2, except that now we don't have to create an auxiliary variable to abort the execution of the while loop. In this case, the transformation consists in inverting the jump condition and executing the remaining statements in the body of the new if statement.
+
+Modification of the given example code will look like:
+\begin{ffcode}
+[]
+ memory > i
+ seq > @
+ while.
+  i.less 10
+  seq
+   i.write (i.add 1)
+   if.
+    not. (eq. (i.mod 5 0))
+    stdout "Not divisible by 5!\n"
+    TRUE
+\end{ffcode}
 
 
 \subsection{Complex cases}
+In complex cases, when one goto object is nested in another, the transformations will be similar to cases, described in sections 3.1 - 3.2. When Backward jump, we should insert a while loop into the body all the statements that stand between the declaration of the object and the jump itself, as described at Section 3.2 . When Forward jump, remember all statements that follow in the body of if-statement where the jump is made and execute these statements after the GOTO object, as decribed at Section 3.1 .
 
+Consider the following complex example with nested goto-objects:
+\begin{ffcode}
+[g1]
+ ..._1
+ [g2]
+  ..._2
+  [g3]
+   ..._3
+   if.
+    cond
+    g2.forward
+    TRUE
+   ..._4
+   [g4]
+    ..._5
+    if.
+     cond
+     g3.backward
+     TRUE
+    ..._6
+    if.
+     cond
+     g3.forward
+     TRUE
+    ..._7
+   ..._8
+   if.
+    cond
+    g2.backward
+    TRUE
+   ..._9
+  ..._10
+ ..._11
+..._12
+\end{ffcode}
 
-\subsection{final algorithm}
+Considering all the jumps that appear in the code (the jumps themselves, not the declaration of goto objects), we apply the transformations already discussed and proved by us above one by one.
 
-\section{Results}
+Applying all the transformations to each encountered goto object, we get the following code:
+\begin{ffcode}
+[g1]
+ ..._1
+ [g2]
+  ..._2
+  [g3]
+   ..._3
+   if.
+    !cond
+    
+    seq
+     ..._4
+     [g4]
+      ..._5
+      while.
+       cond
+       
+       seq
+        ..._3
+        if.
+         !cond
+         seq
+          ..._4
+          [g4]
+           ..._5
+         TRUE
+       
+      ..._6
+      if.
+       !cond
+       seq
+        ..._7
+       TRUE
+     ..._8
+     while.
+      cond
+      
+      seq
+       ..._2
+       [g3]
+       ..._3
+       if.
+        !cond
+         
+        seq
+         ..._4
+         [g4]
+          ..._5
+          while.
+           cond
+                 
+           seq
+            ..._3
+            if.
+             !cond
+             seq
+              ..._4
+              [g4]
+               ..._5
+             TRUE
+                  
+          ..._6
+          if.
+           !cond
+           seq
+            ..._7
+           TRUE
+         ..._8
+        TRUE
+     ..._9
+    TRUE    
+   ..._10 
+ ..._11
+..._12
+\end{ffcode}
+
+\subsection{Final algorithm}
+Summarizing the points above, we can fully describe the algorithm itself. It consists of three steps (See Image3). The first step is to convert all unconditional goto objects to conditional goto objects. In the second step, applying the transformations described above, we replace jumps with semantically equivalent pieces of code. In the third step, remove all the declarations of the GOTO objects themselves.
+
+{INSERT IMAGE3}
+
+\section{Conclusion}
+As a result of our research, we described an algorithm that automatically converts an input program to an equivalent analog, but without using the ATOM object GOTO. They also showed that the program at the output will contain the same logic as the program at the input (TODO).
 
 \section{Discussion}
-
+Our software will simplify programs in EO language and make them more readable without using GOTO objects. In addition, a formal proof makes it possible to remove all GOTO constructs from programs.
 
 \end{document}
 \endinput
