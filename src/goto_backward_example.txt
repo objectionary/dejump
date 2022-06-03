@@ -1,8 +1,0 @@
-+import org.eolang.gray.goto
-+import org.eolang.io.stdout
-
-goto
- [g]
-  seq
-   stdout "Will be printed forever"
-   g.backward
