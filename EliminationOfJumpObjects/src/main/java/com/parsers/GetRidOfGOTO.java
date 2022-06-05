@@ -9,6 +9,7 @@ public class GetRidOfGOTO {
     final String fileName;
     int cntOfFlags;
     String code;
+
     public GetRidOfGOTO(String FileName) {
         fileName = FileName;
         //XMIR xmir = new XMIR(fileName);
@@ -16,10 +17,18 @@ public class GetRidOfGOTO {
         code = """
                 goto
                   [g]
-                    seq
-                      stdout "kek"
-                      g.forward TRUE
-                      stdout "lol"
+                    seq1
+                      o1
+                      if.
+                        st1
+                        seq2
+                          o2
+                          if.
+                            st2
+                            o3
+                            g.forward TRUE1
+                          o4
+                        g.forward FALSE
                 """;
         cntOfFlags = 0;
     }
@@ -74,6 +83,17 @@ public class GetRidOfGOTO {
         cond.insert(enStat + 2, ").not");
         return cond;
     }
+    void addIfStatement(ArrayList <StringBuffer> ar, int jump, int initLevel) {
+        if (ar.get(jump - 2).indexOf("if.") == -1) {
+            ar.add(jump, new StringBuffer("if."));
+            ar.add(jump + 1, new StringBuffer("TRUE"));
+            ar.add(jump + 3, new StringBuffer("TRUE"));
+            setTab(ar, jump, initLevel);
+            setTab(ar, jump + 1, initLevel + 1);
+            setTab(ar, jump + 2, initLevel + 1);
+            setTab(ar, jump + 3, initLevel + 1);
+        }
+    }
     //Splits code into an array of strings by separator
     ArrayList<StringBuffer> separate(Character sep) {
         int id = 0;
@@ -110,19 +130,6 @@ public class GetRidOfGOTO {
         StringBuffer retValueOfJump = new StringBuffer(ar.get(jump).substring(ar.get(jump).indexOf(".forward") + 9));
         int en = findObjectEnding(ar, beg);
 
-        // Adding if-statement if Simple forward
-        if (ar.get(jump - 2).indexOf("if.") == -1) {
-            ar.add(jump, new StringBuffer("if."));
-            ar.add(jump + 1, new StringBuffer("TRUE"));
-            ar.add(jump + 3, new StringBuffer("TRUE"));
-            setTab(ar, jump, initLevel);
-            setTab(ar, jump + 1, initLevel + 1);
-            setTab(ar, jump + 2, initLevel + 1);
-            setTab(ar, jump + 3, initLevel + 1);
-            jump += 2;
-            en += 3;
-        }
-
         // Inverting Jump statement and Modifying new if-statement
         ar.set(jump - 1, invertingCond(ar.get(jump - 1)));
 
@@ -142,23 +149,27 @@ public class GetRidOfGOTO {
             int currLevel = getLevel(ar.get(pos));
             ar.add(pos, new StringBuffer("if."));
             ar.add(pos + 1, new StringBuffer("(eq. (" + currFlag + " 1)).not"));
-            ar.add(pos + 3, new StringBuffer("TRUE"));
+            ar.add(currEn + 2, new StringBuffer("TRUE"));
             en += 3;
             setTab(ar, pos, currLevel);
-            for (int i = pos + 1; i < currEn + 3; i++) {
-                setTab(ar, i, currLevel + 1);
+            setTab(ar, pos + 1, currLevel + 1);
+            setTab(ar, currEn + 2, currLevel + 1);
+            for (int i = pos + 2; i < currEn + 2; i++) {
+                setTab(ar, i, getLevel(ar.get(i)) + 1);
             }
             pos = currEn + 3;
         }
 
         // Deleting declaration of goto-object
-        for (int i = beg; i < en; i++) {
-            setTab(ar, i, getLevel(ar.get(i)) - 2);
+        if (beg >= 2 && ar.get(beg - 2).indexOf("goto") != -1) {
+            for (int i = beg; i < en; i++) {
+                setTab(ar, i, getLevel(ar.get(i)) - 2);
+            }
+            ar.remove(beg - 1);
+            ar.remove(beg - 2);
         }
-        ar.remove(beg - 1);
-        ar.remove(beg - 2);
 
-        return en - 2;
+        return beg - 2;
     }
 
 
@@ -209,6 +220,15 @@ public class GetRidOfGOTO {
         }
         System.out.println("----------------------");
 
+        // Adding if-statement if Simple forward/backward
+        for (int i = 0; i < ar.size(); i++) {
+            if (ar.get(i).indexOf(".forward") != -1 || ar.get(i).indexOf(".backward") != -1) {
+                if (ar.get(i - 2).indexOf("if.") == -1) {
+                    addIfStatement(ar, i, getLevel(ar.get(i)));
+                }
+            }
+        }
+
         HashMap <String, Integer> mp = new HashMap<String, Integer>();
         int i = 0;
         while (i < ar.size()) {
@@ -238,6 +258,7 @@ public class GetRidOfGOTO {
                     String nameOfObject = ar.get(i).substring(pos, posNext + 1);
                     if (!mp.containsKey(nameOfObject)) sendException("Initialisation of Jump is wrong!");
                     i = GotoForward(mp.get(nameOfObject), i, ar);
+                    //mp.put(nameOfObject, mp.get(nameOfObject) + 2);
                 }
                 catch (RuntimeException e) {
                     System.out.println(Arrays.toString(e.getStackTrace()));
