@@ -9,55 +9,12 @@ public class GetRidOfGOTO {
     final String fileName;
     int cntOfFlags;
     String code;
-
     StringBuffer currFlag;
 
     public GetRidOfGOTO(String FileName) {
         fileName = FileName;
         //XMIR xmir = new XMIR(fileName);
         //code = xmir.toEO();
-        String tt = """
-goto
-  [g]
-    o0
-      o1
-        o2
-        if.
-          st1
-          g.backward
-          TRUE
-        o3
-      o4
-      
-o0
-  o1
-    o2
-    if.
-      st1.not
-      TRUE
-      while.
-        st1
-        seq
-          o0
-            o1
-              o2
-              if.
-                st1.not
-                TRUE
-                flag.write 1
-              if.
-                (eq. (flag 1)).not
-                o3
-                TRUE
-            if.
-              (eq. (flag 1)).not
-              o4
-              TRUE
-          flag.write 0
-    o3
-  o4
-                
-                """;
         code = """
                 goto
                   [g]
@@ -69,7 +26,6 @@ o0
                           g.backward
                           TRUE
                         o3
-                      g.backward
                 """;
         cntOfFlags = 0;
     }
@@ -153,6 +109,12 @@ o0
         }
         else return beg;
     }
+    int getHigherObj(ArrayList <StringBuffer> ar, int id, int beg) {
+        int lvl = getLevel(ar.get(id));
+        int pos = id - 1;
+        while (pos >= beg && getLevel(ar.get(pos)) >= lvl) pos--;
+        return pos;
+    }
     void addIfStatement(ArrayList <StringBuffer> ar, int jump, int initLevel) {
         if (ar.get(jump - 2).indexOf("if.") == -1) {
             ar.add(jump, new StringBuffer("if."));
@@ -222,13 +184,14 @@ o0
         ar.set(jump - 1, invertingCond(ar.get(jump - 1)));
 
         // REWRITE !!!!!!!!
-        Collections.swap(ar, jump, jump + 1);
-        ar.set(jump + 1, new StringBuffer("seq"));
-        ar.add(jump + 2, retValueOfJump);
-        ar.add(jump + 3, new StringBuffer(currFlag + ".write 1"));
-        setTab(ar, jump + 1, getLevel(ar.get(jump)));
-        setTab(ar, jump + 2, getLevel(ar.get(jump)) + 1);
-        setTab(ar, jump + 3, getLevel(ar.get(jump)) + 1);
+        ar.remove(jump);
+        int curEn = findObjectEnding(ar, jump);
+        ar.add(curEn, new StringBuffer("seq"));
+        ar.add(curEn + 1, retValueOfJump);
+        ar.add(curEn + 2, new StringBuffer(currFlag + ".write 1"));
+        setTab(ar, curEn, getLevel(ar.get(jump)));
+        setTab(ar, curEn + 1, getLevel(ar.get(jump)) + 1);
+        setTab(ar, curEn + 2, getLevel(ar.get(jump)) + 1);
         en += 2;
 
         // Adding if-statement for the rest Objects with nesting >= nesting of goto object
@@ -255,8 +218,38 @@ o0
         int en = findObjectEnding(ar, beg);
         StringBuffer cond = new StringBuffer(ar.get(jump - 1));
 
-        // Replacing jump to while-loop
+        /*
+
+        MAKE TREE-ADDING STATEMENTS TO JUMP
+
+         */
         ArrayList <StringBuffer> tmp = new ArrayList<>();
+
+
+        /*for (int i = findObjectEnding(ar, jump + 1) - 1; i >= jump - 2; i--) {
+            tmp.add(0, ar.get(i));
+        }
+        int idxBeg = jump - 2;
+        while (idxBeg > beg) {
+            int idx = getHigherObj(ar, idxBeg, beg);
+            if (ar.get(idx).indexOf("if.") != -1) {
+                int currEn = findObjectEnding(ar, idx + 2);
+                if (currEn == idxBeg) {
+                    tmp.add(ar.get(idx + ));
+                }
+                else {
+
+                }
+
+            } else if (ar.get(idx).indexOf("while.") != -1) {
+
+            } else {
+
+            }
+        }*/
+
+        // Replacing jump to while-loop
+
         int remIdOfJump = -1;
         for (int i = beg; i < en; i++) {
             tmp.add(ar.get(i));
@@ -300,10 +293,10 @@ o0
         // Deleting declaration of goto-object
         int ret = rmvDclr(ar, beg, en);
 
-        for (StringBuffer now : ar){
+        /*for (StringBuffer now : ar){
             System.out.println(now);
         }
-        System.out.println("----------------------");
+        System.out.println("----------------------");*/
 
         return ret;
     }
@@ -357,7 +350,7 @@ o0
                     String nameOfObject = ar.get(i).substring(pos, posNext + 1);
                     if (!mp.containsKey(nameOfObject)) sendException("Initialisation of Jump is wrong!");
                     int ret = GotoForward(mp.get(nameOfObject), i, ar);
-                    //mp.put(nameOfObject, ret);
+                    mp.put(nameOfObject, ret);
                     i = ret;
                 }
                 catch (RuntimeException e) {
@@ -376,7 +369,7 @@ o0
                     String nameOfObject = ar.get(i).substring(pos, posNext + 1);
                     if (!mp.containsKey(nameOfObject)) sendException("Initialisation of Jump is wrong!");
                     int ret = GotoBackward(mp.get(nameOfObject), i, ar);
-                    //mp.put(nameOfObject, ret);
+                    mp.put(nameOfObject, ret);
                     i = ret;
                 }
                 catch (RuntimeException e) {
