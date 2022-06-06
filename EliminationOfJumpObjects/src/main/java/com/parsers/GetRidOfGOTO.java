@@ -69,7 +69,7 @@ o0
                           g.backward
                           TRUE
                         o3
-                      o4
+                      g.backward
                 """;
         cntOfFlags = 0;
     }
@@ -260,7 +260,7 @@ o0
         int remIdOfJump = -1;
         for (int i = beg; i < en; i++) {
             tmp.add(ar.get(i));
-            if (ar.get(i).indexOf(".backward") != -1)
+            if (ar.get(i).indexOf(".backward") != -1 && remIdOfJump == -1)
                 remIdOfJump = tmp.size() - 1;
         }
 
@@ -299,6 +299,11 @@ o0
 
         // Deleting declaration of goto-object
         int ret = rmvDclr(ar, beg, en);
+
+        for (StringBuffer now : ar){
+            System.out.println(now);
+        }
+        System.out.println("----------------------");
 
         return ret;
     }
@@ -351,7 +356,9 @@ o0
                     if (pos > posNext) sendException("Initialisation of Jump is wrong!");
                     String nameOfObject = ar.get(i).substring(pos, posNext + 1);
                     if (!mp.containsKey(nameOfObject)) sendException("Initialisation of Jump is wrong!");
-                    i = GotoForward(mp.get(nameOfObject), i, ar);
+                    int ret = GotoForward(mp.get(nameOfObject), i, ar);
+                    //mp.put(nameOfObject, ret);
+                    i = ret;
                 }
                 catch (RuntimeException e) {
                     System.out.println(Arrays.toString(e.getStackTrace()));
@@ -368,13 +375,15 @@ o0
                     if (pos > posNext) sendException("Initialisation of Jump is wrong!");
                     String nameOfObject = ar.get(i).substring(pos, posNext + 1);
                     if (!mp.containsKey(nameOfObject)) sendException("Initialisation of Jump is wrong!");
-                    i = GotoBackward(mp.get(nameOfObject), i, ar);
+                    int ret = GotoBackward(mp.get(nameOfObject), i, ar);
+                    //mp.put(nameOfObject, ret);
+                    i = ret;
                 }
                 catch (RuntimeException e) {
                     System.out.println(Arrays.toString(e.getStackTrace()));
                 }
             }
-            i++;
+            else i++;
         }
 
         return toString(ar);
