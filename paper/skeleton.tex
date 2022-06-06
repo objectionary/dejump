@@ -1,4 +1,6 @@
-\documentclass[two column]{article}
+\documentclass[sigplan,review,11pt,nonacm,natbib=false]{acmart}
+\settopmatter{printfolios=false,printccs=false,printacmref=false}
+\usepackage[maxnames=1,minnames=1,maxbibnames=100,natbib=true,citestyle=authoryear,bibstyle=authoryear,doi=false,url=false,isbn=false,isbn=false]{biblatex}
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
 \usepackage{graphicx}
@@ -16,30 +18,9 @@
 
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 
-\lstdefinestyle{mystyle}{
-  %%backgroundcolor=\color{backcolour}, commentstyle=\color{codegreen},
-  %%keywordstyle=\color{magenta},
-  numberstyle=\tiny\color{codegray},
-  %%stringstyle=\color{codepurple},
-  basicstyle=\ttfamily\footnotesize,
-  breakatwhitespace=false,         
-  breaklines=true,
-  frame=leftline,
-  captionpos=b,                    
-  keepspaces=true,                 
-  numbers=left,                    
-  numbersep=5pt,                  
-  showspaces=false,                
-  showstringspaces=false,
-  showtabs=false,                  
-  tabsize=2
-}
+\title{Elimination Of Jump Objects}
+\author{author}
 
-\title{\textbf{Elimination Of Jump Objects}}
-\author{\textbf{author}}
-\date{May 2022}
-
-\lstset{style=mystyle}
 \begin{document}
 
 \maketitle
@@ -71,124 +52,445 @@ To our knowledge, there is still no method which enables automatic elimination o
 In this article, we will describe an algorithm that will convert an EO program in such a way that the output returns a semantically equivalent program, but without using the GOTO object.
 
 Some objects in EO programs may need to be platform specific and can’t be composed from other existing objects—they are called atoms. 
-In EO, all jump statements are implemented as a
-single atom-object GOTO. The goto-object represents two types of jumps: forward jump and backward jump.
+So all jump statements are implemented as a
+single atom-object GOTO. The implementation of goto-object in EO implies two types of jumps - goto forward and goto backward. So we should consider transformations for both cases.
 
-The algorithm we propose contains two types of transformations for the goto object - forward jump and backward jump.
-We also assume that all jumps are conditional. If this is not the case, then we can easily convert an unconditional goto to a conditional goto by adding an additional if (true) condition.
+Since we consider a solution to the problem in strictly object-oriented programming languages, which means that the whole program is a set of objects where some objects can contain others.
+It should be noted that each object in the program has its own level of \emph{nesting} relative to other objects.
 
+\emph{Definition:} The \emph{nesting} of the current object means the number of objects that contain the current object directly, or that contain objects that contain the current object.
+
+The solution we propose contains two types of transformations - forward jump and backward jump.
 The algorithm itself consists in applying these transformations to replace both types of jumps.
 
-\subsection{forward jump}
-Forward jump is implemented as:
+\emph{Designations:}
+
+$\sigma$ - Means that there can be an arbitrary number of objects, a chain of nested objects or there can be no objects at all.
+
+$\delta$ - Means that there should necessarily be an object that returns a non-NULL value when accessed.
+
+$\mu$ - Means that there must be an object that returns a boolean value (TRUE/FALSE) when executed.
+
+\newcommand\sgm[1]{$\sigma_#1$}
+\newcommand\dlt[1]{$\delta_#1$}
+\newcommand\m[1]{$\mu_#1$}
+
+
+\subsection{Forward jump}
+Goto forward in EO is implemented as:
 
 \begin{ffcode}
 +import org.eolang.gray.goto
 +import org.eolang.io.stdout
 
 goto
- [g]
-  seq
-   g.forward TRUE
-   stdout "Will never be printed"
+  [g]
+    |\sgm{1}|
+      g.forward |\dlt{1}|
+      stdout "Will never be printed"
 \end{ffcode}
+
+It consists of the goto atom-object, the abstract object \emph{g}, and the g.forward attribute. Several abstract objects such as \emph{g} can be declared inside of goto-object, and the attribute \emph{.forward} can be called to each of them.
+
+\subsubsection{Simple Forward}
+This is the simplest example of using goto-forward:
+
+\begin{ffcode}
+goto
+  [g]
+    g.forward |\dlt{1}|
+\end{ffcode}
+
+Note that in this example, g.forward is simply an attribute of the abstract object g and is executed as soon as the queue reaches it.
+Our transformation only considers the jumps that are made when a condition for it is fulfilled. In cases where there is unconditional jump, first of all we transform it into conditional jump by adding an additional if-statement - if (TRUE).
+This will not violate the program logic, because without the added if-statement, the jump would always be executed, and statements coming after this jump with a nesting not less that the nesting of the abstract object \emph{g} would never be executed:
+
+\begin{ffcode}
+goto
+  [g]
+    if.
+      TRUE
+      g.forward |\dlt{1}|
+      TRUE
+\end{ffcode}
+
+\subsubsection{Goto forward wrapped in an object}
+So, after the conversion described in section 3.1.1, in general cases, forward jumps will look like this:
+\begin{ffcode}
+goto
+  [g]
+    |\sgm{1}| |$\label{ln:ret0}$|
+      |\sgm{2}|
+      if.
+        |\m{1}|
+        g.forward |\dlt{1}|
+        |\dlt{2}|
+      |\sgm{3}| |$\label{ln:ret1}$|
+\end{ffcode}
+
+Let's denote lines \ref{ln:ret0}-\ref{ln:ret1} as X.
 
 It is not difficult to notice that statements which goto-forward "jumps through" will be executed if the condition in the if-statement is not equal to TRUE.
-If the condition is true, then statements following the goto object itself are executed.
-So we can swap statements and invert the condition into if-statement to get rid of the goto-forward object.
+Otherwise statements following the goto object itself are executed.
+So we can swap statements and invert the condition into if-statement to get rid of the \emph{g.forward} attribute without violating program logic (Look at Image1).
 
-Let's take a look at the following example of how to use goto-forward:
+Also, after replacing the jump, we must create an additional \emph{flag} object, which will change if the jump condition is met, i.e. in the new if-statement, the 'ELSE' branch will be executed. We need this so that when a series of nested objects are nested one in another, when the jump condition is met, subsequent objects whose nesting is less than the nesting of the original object containing goto forward and more than the nesting of an abstract object \emph{g} and following after the original object are not executed.
+
+By swapping the statements that follow the if-statement body and after the jump itself, as described above, we get the following replacement for this example: the \m{1} object must be inverted with not. (\m{1}); in 'THEN' brunch of if-statement creates an object \emph{seq} with \dlt{2} and \sgm{3} inside of it; the 'ELSE' branch an object \emph{seq} with \dlt{1} object that was previously called when the jump is made and changes the value of the \emph{flag} object to 1.
+
+{INSERT AN IMAGE1}
+
+Thus, after transformation, the program will look like this:
 \begin{ffcode}
-[x] > f
- memory > r
- seq > @
-  r.write 0
-  goto
-   [g]
-    seq > @
-     if.
-      x.eq 0
-      g.forward TRUE
-      TRUE
-     r.write (42.div x)
-  r
-\end{ffcode}
-
-In this case, the jump condition looks like:
-
-\emph{if (x equals 0)}. After the body if-statement there is an expression: \emph{r = 42 / x}. By swapping the statements that follow the if-statement body and after the jump itself, as described above, we get the following replacement for this example:
-\begin{ffcode}
-[x] > f
- memory > r
- seq > @
-  r.write 0
+memory > flag
+flag.write 0
+|\sgm{1}||$\label{ln:ret2}$|
+  |\sgm{2}|
   if.
-   not. (eq. (x 0))
-   r.write (42.div x)
-   TRUE
-  r
+    |\m{1}|.not
+    |\dlt{2}|
+    seq
+      |\dlt{1}|
+      flag.write 1
+  if.
+    (eq. (flag 1)).not
+    |\sgm{3}|
+    TRUE|$\label{ln:ret3}$|
 \end{ffcode}
 
-In cases where forward jump is used to implement return and break, the transformations will look slightly different.
+Let's denote lines \ref{ln:ret2}-\ref{ln:ret3} as X'.
 
-\subsubsection{return}
-Forward jump can be used to implement the return-statement:
+Now let's look at an example program with nested objects containing goto forward:
 \begin{ffcode}
-[a b] > max
- goto > @
+goto
   [g]
-   seq > @
-    if.
-     a.greater b
-     g.forward a
-     TRUE
-    b
+    |\sgm{0}|
+      X
+      |\sgm{4}|
 \end{ffcode}
 
-The only difference here is the return parameter on the jump, which we have to return. Transformation is similar to a simple case, described at Section 3.1 .
-
-So, the transformation will look like this:
+Applying the transformation, we get:
 \begin{ffcode}
-[a b] > max
- if.
-  not. (a.greater b)
-  b
-  TRUE
- a
+memory > flag
+flag.write 0
+|\sgm{0}|
+  X'
+  if.
+    (eq. (flag 1)).not
+    |\sgm{4}|
+    TRUE
 \end{ffcode}
 
-\subsubsection{break}
-Break occurs in constructs that emulate the operation of loops - EO implements a generator that works as a while loop.
+
+\subsubsection{Goto forward inside the while-loop}
+In order to realize the functionality of cycles in EO, generators are provided. A generator is a routine that can be used to control the iteration behaviour of a loop.
+
+The language currently provides a while generator, on which other generators are implemented.
+
+A goto-object can also be called inside such a while-loop. In this case, the transformation is slightly different from that described in Section 3.1.2, because the behavior of while is different from other objects in the language.
+
+In general, using goto forward inside a while-loop will look like this:
+\begin{ffcode}
+goto
+  [g]
+    |\sgm{0}||$\label{ln:ret4}$|
+      while.
+        |\m{0}|
+        |\sgm{1}|
+          |\sgm{2}|
+          if.
+            |\m{1}|
+            g.forward |\dlt{1}|
+            |\dlt{2}|
+          |\sgm{3}||$\label{ln:ret5}$|
+\end{ffcode}
+
+Let's denote lines \ref{ln:ret4}-\ref{ln:ret5} as Y.
 
 In this case, goto-forward is used to exit the body of the while loop. However, every iteration of a while loop checks its own condition if it is true. 
 
-Since the jump is executed once the jump condition is true, the while loop will be executed as long as the jump condition is false. We can deduce that the condition for the jump is tested at every iteration of the loop, exactly the same as the condition in the while body itself. So by combining the jump condition and the while loop condition do not violate the program logic. But the point is, once the jump condition is true, the next iteration of the while loop will fail and the loop will end. So we only care about the first triggering of the jump condition for goto-forward. To do this, we can create an auxiliary variable that will be TRUE as soon as the jump condition is met. Otherwise, all statements that came after the jump in the while loop will be executed.
-So the combined condition of the while loop will look like: while (!IfCondOfJumpExecFirstTime AND condOfWhile).
+Since the jump is executed once the jump condition is true, the while loop will be executed as long as the jump condition is false. We can deduce that the condition for the jump is tested at every iteration of the loop, exactly the same as the condition in the while body itself.
+So by combining the jump condition and the while loop condition do not violate the program logic. But the point is, once the jump condition is true, the next iteration of the while loop will fail and the loop will end.
+So we only care about the first triggering of the jump condition for goto-forward. To do this, we can create an auxiliary object \emph{flag} that will be TRUE as soon as the jump condition is met.
+Otherwise, all statements that came after the jump in the while loop will be executed.
+So the combined condition of the while loop will look like: while (!flag AND condOfWhile).
 
-Thus we reduced the break statement transformation to the transformation described in section 3.1 with inverting the jump condition and replacing the statements places.
+Thus, transformation will look like this:
+\begin{ffcode}
+memory > flag
+flag.write 0
+|\sgm{0}||$\label{ln:ret6}$|
+  while.
+    and.
+      (eq. (flag 1)).not
+      |\m{0}|
+    |\sgm{1}|
+      |\sgm{2}|
+      if.
+        |\m{1}|.not
+        |\dlt{2}|
+        seq
+          |\dlt{1}|
+          flag.write 1
+      if.
+        (eq. (flag 1)).not
+        |\sgm{3}|
+        TRUE|$\label{ln:ret7}$|
+\end{ffcode}
+
+Let's denote lines \ref{ln:ret6}-\ref{ln:ret7} as Y'.
+
+We create an additional \emph{flag} object that will be equal to 1 when the jump condition is triggered and add this condition to the loop body; modify if-statement as described in Section 3.1.2, except that in the 'ELSE' branch we are changing the flag value because the jump condition has been met and the next iteration of the loop should not be executed.
+
+It is worth noting that if goto forward represent several nested while-loops, then in each of them should be added to the condition of the loop check whether the flag is equal to 1, as in the inner while, from where the jump is made. So, every while that has a nesting less than the original nesting and more than the nesting of the abstract object \emph{g} will end without performing the next iteration.
+
+For example, a program with nested while-loops may look like this:
+\begin{ffcode}
+goto
+  [g]
+    while.
+      |\m{9}|
+      |\sgm{9}|
+        Y
+        |\sgm{4}|
+\end{ffcode}
+
+After transformation it will look like:
+\begin{ffcode}
+memory > flag
+flag.write 0
+while.
+  and.
+    (eq. (flag 1)).not
+    |\m{9}|
+  |\sgm{9}|
+    Y'
+    if.
+      (eq. (flag 1)).not
+      |\sgm{4}|
+      TRUE
+\end{ffcode}
 
 
-\subsection{backward jump}
-Backward jump in EO is implemented as:
 
-(Backward jump object usage code example)
+\subsection{Backward jump}
+Goto backward in EO is implemented as:
 
-Backward jump works the same as do-while construction in other languages: the first iteration of the loop is always executed, and the next only if the condition is TRUE.
-Transformation is to replace a piece of code with a while loop with a backward jump condition.
+\begin{ffcode}
++import org.eolang.gray.goto
++import org.eolang.io.stdout
 
-In cases where backward jump is used to implement continue, the transformation will look slightly different.
+goto
+  [g]
+    |\sgm{1}|
+      stdout "Will be printed forever"
+      g.backward
+\end{ffcode}
 
-\subsubsection{continue}
-Backward jump is used to implement continue statement.
-This statement is logically the same as a break statement, except that after a break is executed the entire while loop stops. When you execute the continue statement, the next iteration of the loop is simply started.
-So from a logical standpoint, replacing continue statement is identical to replacing break statement described in section 3.1.2, except that now we don't have to create an auxiliary variable to abort the execution of the while loop. In this case, the transformation consists in inverting the jump condition and executing the remaining statements in the body of the new if statement.
+Same as with goto forward, there is the goto atom-object, the abstract object \emph{g}, and the g.backward attribute. Several abstract objects such as \emph{g} can be declared inside of goto-object, and the attribute \emph{.backward} can be called to each of them.
+
+\subsubsection{Simple Backward} The simplest example of using goto-backward:
+
+\begin{ffcode}
+goto
+  [g]
+    g.backward
+\end{ffcode}
+
+This is identical to that discussed in Section 3.1.1. In cases where the jump is performed without condition, you need to add an additional if-statement, similar to the example in Section 3.1.1 but with goto-backward:
+
+\begin{ffcode}
+goto
+  [g]
+    if.
+      TRUE
+      g.backward
+      TRUE
+\end{ffcode}
+
+\subsubsection{Goto backward wrapped in an object}
+After the conversion decribed in Section 3.2.1, in general cases, backward jumps will look like this:
+
+\begin{ffcode}
+goto
+  [g]
+    |\sgm{1}||$\label{ln:ret8}$|
+      |\sgm{2}|
+      if.
+        |\m{1}|
+        g.backward
+        |\dlt{1}|
+      |\sgm{3}||$\label{ln:ret9}$|
+\end{ffcode}
+
+Let's denote lines \ref{ln:ret8}-\ref{ln:ret9} as W.
+
+Note that goto-backward works the same as do-while construction in other languages: the first iteration of the new loop is always executed, and the next only if the condition is TRUE.
+So, all objects that occurs between the "jump" itself and the declaration of an abstract object \emph{g} should be executed before the new while loop once, and all subsequent times were executed depending on the condition of the loop (Look at Image2).
+
+As soon as the execution of the program reaches the jump condition, the first iteration of the new do-while loop will already be executed.
+After that, if the jump conditions are met, all objects that are between the declaration of the abstract object \emph{g} and the jump itself will be executed again. And that means that we can create a while loop at the point of the jump, so that every time we check the condition, we don't make a jump, but just start a new iteration of the loop.
+
+Inside the body of the new while loop, we copy all objects that are inside the abstract object g - with nesting at least the object g itself, except for the call of the jump itself with its condition.
+At the point of the jump, we should create an if-statement with an inverted jump condition: in the 'THEN' branch there will be objects that were returned in the 'ELSE' branch of the original if for the jump; in the 'THEN' branch, the value of the flag object will be changed, which will mean that the condition for the jump is met, and all subsequent objects with nesting at least the nesting of the added while loop will not be executed.
+To do this, for all these objects, going down the nesting from the object where the jump was made to the while loop, we need to add an if-statement that will check whether the condition for the jump has been met before.
+
+This transformation does not violate the program logic, because if the jump condition is fulfilled, then all the objects going after the jump itself will not be executed due to the added if-statements.
+
+{INSERT AN IMAGE2}
+
+So, after transformation, the program will look like this:
+\begin{ffcode}
+memory > flag
+flag.write 0
+|\sgm{1}||$\label{ln:ret10}$|
+  |\sgm{2}|
+  if.
+    |\m{1}|.not
+    |\dlt{1}|
+    while.
+      |\m{1}|
+      seq
+        |\sgm{1}|
+          |\sgm{2}|
+          if.
+            |\m{1}|.not
+            |\dlt{1}|
+            flag.write 1
+          if.
+            (eq. (flag 1)).not
+            |\sgm{3}|
+            TRUE
+        flag.write 0
+  |\sgm{3}||$\label{ln:ret11}$|
+
+      
+        
+\end{ffcode}
+
+Let's denote lines \ref{ln:ret10}-\ref{ln:ret11} as W'.
+
+Let's look at an example of a chain of nested objects containing a goto backward:
+
+\begin{ffcode}
+goto
+  [g]
+    |\sgm{0}|
+      W
+      |\sgm{4}|
+\end{ffcode}
+
+Applying transformation, we get:
+\begin{ffcode}
+memory > flag
+flag.write 0
+|\sgm{0}|
+  W'
+  if.
+    (eq. (flag 1)).not
+    |\sgm{4}|
+    TRUE
+\end{ffcode}
 
 
-\subsection{Complex cases}
-In complex cases, when one goto object is nested in another, the transformations will be similar to cases, described in sections 3.1 - 3.2. When Backward jump, we should insert a while loop into the body all the statements that stand between the declaration of the object and the jump itself. When Forward jump, remember all statements that follow in the body of if-statement where the jump is made and execute these statements after the GOTO object.
+\subsubsection{Goto backward inside the while-loop}
+Goto backward, like goto forward, can be called inside a while-loop body.
+As discussed in section 3.1.3, the behavior of while is different from other objects in the language. Therefore, the transformation will be slightly different from that described in section 3.2.2.
 
-\subsection{final algorithm}
-Summarizing the points above, we can fully describe the algorithm itself. The first step is to convert all unconditional goto objects to conditional goto objects. In the second step, applying the transformations described above, we replace jumps with semantically equivalent pieces of code. In the third step, remove all the declarations of the GOTO objects themselves.
+In general cases, a goto backward call inside a while loop will look like this:
+
+\begin{ffcode}
+goto
+  [g]
+    |\sgm{0}||$\label{ln:ret12}$|
+      while.
+        |\m{0}|
+        |\sgm{1}|
+          |\sgm{2}|
+          if.
+            |\m{1}|
+            g.backward
+            |\dlt{1}|
+          |\sgm{3}||$\label{ln:ret13}$|
+        
+\end{ffcode}
+
+Let's denote lines \ref{ln:ret12}-\ref{ln:ret13} as Z.
+
+As described in section 3.2.2, the program runs from top to bottom until it meets goto forward and if the jump condition is met, the abstract object g is executed again.
+Similar to what was said in section 3.2.2, all objects inside the abstract object g should be copied at the jump point.
+
+The only difference, when the jump itself frames a while loop, is that when the jump condition is met, we need to interrupt the execution of all the internal while loops inside the new while loop, which we replaced the jump with.
+
+In order to interrupt the execution of each of the internal while loops, we can add an additional condition to each of them, whether the jump condition is met or not. This can be done with an additional flag object that will signal for each inner while loop whether the jump condition has been met.
+
+So, all internal while loops will not be executed further if flag shows that the jump condition is met and the logic of the program is not violated. For all other objects inside our new while loop, we should apply the transformation described in section 3.2.2.
+
+The transformation will look like this:
+
+\begin{ffcode}
+memory > flag
+flag.write 0
+|\sgm{0}||$\label{ln:ret14}$|
+  while.
+    |\m{0}|
+    |\sgm{1}|
+      |\sgm{2}|
+      while.
+        |\m{1}|
+        |\sgm{0}|
+          while.
+            and.
+              (eq. (flag 1)).not
+              |\m{0}|
+            |\sgm{1}|
+              |\sgm{2}|
+              if.
+                |\m{1}|.not
+                |\dlt{1}|
+                flag.write 1
+              if.
+                (eq. (flag 1)).not
+                |\sgm{3}|
+                TRUE
+      |\sgm{3}||$\label{ln:ret15}$|
+        
+\end{ffcode}
+
+Let's denote lines \ref{ln:ret14}-\ref{ln:ret15} as Z'.
+
+
+Let's take a look on a program with nested while-loops:
+\begin{ffcode}
+goto
+  [g]
+    while.
+      |\m{9}|
+      |\sgm{9}|
+        Z
+        |\sgm{4}|
+\end{ffcode}
+
+After transformation it will look like:
+\begin{ffcode}
+memory > flag
+flag.write 0
+while.
+  |\m{9}|
+  |\sgm{9}|
+    Z'
+    if.
+      (eq. (flag 1)).not
+      |\sgm{4}|
+      TRUE
+\end{ffcode}
+
+
+
+\subsection{Final algorithm}
+To sum up, we can now fully describe the algorithm itself. The first step is to make the transformations, if necessary, described in sections 3.1.1 and 3.2.1, depending on the current transformation. The second step is going through all the jumps in the program - forward and backward, and depending on the jump we carry out the required transformations: if you need to make a replacement in the while loop, containing a jump - we use transformations 3.1.3 and 3.2.3 accordingly. If you want to make a replacement for a normal object that frames the jump - use transformations 3.1.2 and 3.2.2 respectively.
+
+{INSERT IMAGE3}
 
 \section{Conclusion}
 As a result of our research, we described an algorithm that automatically converts an input program to an equivalent analog, but without using the ATOM object GOTO. They also showed that the program at the output will contain the same logic as the program at the input (TODO).
