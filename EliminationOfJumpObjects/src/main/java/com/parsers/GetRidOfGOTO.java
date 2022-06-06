@@ -10,11 +10,55 @@ public class GetRidOfGOTO {
     int cntOfFlags;
     String code;
 
+    StringBuffer currFlag;
+
     public GetRidOfGOTO(String FileName) {
         fileName = FileName;
         //XMIR xmir = new XMIR(fileName);
         //code = xmir.toEO();
         String tt = """
+goto
+  [g]
+    o0
+      o1
+        o2
+        if.
+          st1
+          g.backward
+          TRUE
+        o3
+      o4
+      
+o0
+  o1
+    o2
+    if.
+      st1.not
+      TRUE
+      while.
+        st1
+        seq
+          o0
+            o1
+              o2
+              if.
+                st1.not
+                TRUE
+                flag.write 1
+              if.
+                (eq. (flag 1)).not
+                o3
+                TRUE
+            if.
+              (eq. (flag 1)).not
+              o4
+              TRUE
+          flag.write 0
+    o3
+  o4
+                
+                """;
+        code = """
                 goto
                   [g]
                     o0
@@ -26,39 +70,6 @@ public class GetRidOfGOTO {
                           TRUE
                         o3
                       o4
-                      
-                o0
-                  o1
-                    o2
-                    while.
-                      st1
-                      o0
-                        o1
-                          o2
-                          if.
-                            st1.not
-                            TRUE
-                            flag.write 1
-                          if.
-                            (eq. (flag 1)).not
-                            o3
-                            TRUE
-                        if.
-                          (eq. (flag 1)).not
-                          o4
-                          TRUE
-                          
-                    o3
-                  o4
-                
-                """;
-        code = """
-                goto
-                  [g]
-                    if.
-                      st1
-                      g.backward
-                      TRUE
                 """;
         cntOfFlags = 0;
     }
@@ -113,6 +124,35 @@ public class GetRidOfGOTO {
         cond.insert(enStat + 2, ").not");
         return cond;
     }
+    int procOtherObjects(ArrayList <StringBuffer> ar, int pos, int en) {
+        while (pos < en) {
+            int currEn = findObjectEnding(ar, pos);
+            int currLevel = getLevel(ar.get(pos));
+            ar.add(pos, new StringBuffer("if."));
+            ar.add(pos + 1, new StringBuffer("(eq. (" + currFlag + " 1)).not"));
+            ar.add(currEn + 2, new StringBuffer("TRUE"));
+            en += 3;
+            setTab(ar, pos, currLevel);
+            setTab(ar, pos + 1, currLevel + 1);
+            setTab(ar, currEn + 2, currLevel + 1);
+            for (int i = pos + 2; i < currEn + 2; i++) {
+                setTab(ar, i, getLevel(ar.get(i)) + 1);
+            }
+            pos = currEn + 3;
+        }
+        return en;
+    }
+    int rmvDclr(ArrayList <StringBuffer> ar, int beg, int en) {
+        if (beg >= 2 && ar.get(beg - 2).indexOf("goto") != -1) {
+            for (int i = beg; i < en; i++) {
+                setTab(ar, i, getLevel(ar.get(i)) - 2);
+            }
+            ar.remove(beg - 1);
+            ar.remove(beg - 2);
+            return beg - 2;
+        }
+        else return beg;
+    }
     void addIfStatement(ArrayList <StringBuffer> ar, int jump, int initLevel) {
         if (ar.get(jump - 2).indexOf("if.") == -1) {
             ar.add(jump, new StringBuffer("if."));
@@ -149,7 +189,7 @@ public class GetRidOfGOTO {
     }
     int GotoForward(int beg, int jump, ArrayList <StringBuffer> ar) {
         // Adding flag
-        StringBuffer currFlag = new StringBuffer("flag" + String.valueOf(cntOfFlags));
+        currFlag = new StringBuffer("flag" + String.valueOf(cntOfFlags));
         ar.add(0, new StringBuffer("memory > " + currFlag));
         ar.add(1, new StringBuffer(currFlag + ".write 0"));
         cntOfFlags++;
@@ -181,6 +221,7 @@ public class GetRidOfGOTO {
         // Inverting Jump statement and Modifying new if-statement
         ar.set(jump - 1, invertingCond(ar.get(jump - 1)));
 
+        // REWRITE !!!!!!!!
         Collections.swap(ar, jump, jump + 1);
         ar.set(jump + 1, new StringBuffer("seq"));
         ar.add(jump + 2, retValueOfJump);
@@ -192,38 +233,18 @@ public class GetRidOfGOTO {
 
         // Adding if-statement for the rest Objects with nesting >= nesting of goto object
         int pos = jump + 4;
-        while (pos < en) {
-            int currEn = findObjectEnding(ar, pos);
-            int currLevel = getLevel(ar.get(pos));
-            ar.add(pos, new StringBuffer("if."));
-            ar.add(pos + 1, new StringBuffer("(eq. (" + currFlag + " 1)).not"));
-            ar.add(currEn + 2, new StringBuffer("TRUE"));
-            en += 3;
-            setTab(ar, pos, currLevel);
-            setTab(ar, pos + 1, currLevel + 1);
-            setTab(ar, currEn + 2, currLevel + 1);
-            for (int i = pos + 2; i < currEn + 2; i++) {
-                setTab(ar, i, getLevel(ar.get(i)) + 1);
-            }
-            pos = currEn + 3;
-        }
+        en = procOtherObjects(ar, pos, en);
 
         // Deleting declaration of goto-object
-        if (beg >= 2 && ar.get(beg - 2).indexOf("goto") != -1) {
-            for (int i = beg; i < en; i++) {
-                setTab(ar, i, getLevel(ar.get(i)) - 2);
-            }
-            ar.remove(beg - 1);
-            ar.remove(beg - 2);
-        }
+        int ret = rmvDclr(ar, beg, en);
 
-        return beg - 2;
+        return ret;
     }
 
 
     int GotoBackward(int beg, int jump, ArrayList <StringBuffer> ar) {
         // Adding flag
-        StringBuffer currFlag = new StringBuffer("flag" + String.valueOf(cntOfFlags));
+        currFlag = new StringBuffer("flag" + String.valueOf(cntOfFlags));
         ar.add(0, new StringBuffer("memory > " + currFlag));
         ar.add(1, new StringBuffer(currFlag + ".write 0"));
         cntOfFlags++;
@@ -232,21 +253,54 @@ public class GetRidOfGOTO {
 
         int initLevel = getLevel(ar.get(jump));
         int en = findObjectEnding(ar, beg);
+        StringBuffer cond = new StringBuffer(ar.get(jump - 1));
 
-        //ar.set(jump - 2, new StringBuffer("while."));
-        //setTab(ar, jump - 2, initLevel - 1);
-
-        for (int i = beg, j = 0; i < en; i++, j++) {
-            ar.add(jump + j, ar.get(i));
-            setTab(ar, jump + j, getLevel(ar.get(i)) + initLevel - 1);
+        // Replacing jump to while-loop
+        ArrayList <StringBuffer> tmp = new ArrayList<>();
+        int remIdOfJump = -1;
+        for (int i = beg; i < en; i++) {
+            tmp.add(ar.get(i));
+            if (ar.get(i).indexOf(".backward") != -1)
+                remIdOfJump = tmp.size() - 1;
         }
 
+        ar.remove(jump);
+        int curEn = findObjectEnding(ar, jump);
+        ar.add(curEn, new StringBuffer("while."));
+        setTab(ar, curEn, initLevel);
+        ar.add(curEn + 1, cond);
+        setTab(ar, curEn + 1, initLevel + 1);
+        ar.add(curEn + 2, new StringBuffer("seq"));
+        setTab(ar, curEn + 2, initLevel + 1);
+        en += 2;
 
-        for (StringBuffer now : ar) {
-            System.out.println(now);
+        for (int i = 0; i < tmp.size(); i++) {
+            ar.add(curEn + 3 + i, tmp.get(i));
+            setTab(ar, curEn + 3 + i, getLevel(tmp.get(i)) - getLevel(ar.get(beg)) + initLevel + 2);
+            en++;
         }
-        System.out.println("----------------------");
-        return 10000;
+
+        remIdOfJump = curEn + 3 + remIdOfJump;
+        ar.remove(remIdOfJump);
+        curEn = findObjectEnding(ar, remIdOfJump);
+        ar.add(curEn, new StringBuffer(currFlag + ".write 1"));
+        setTab(ar, curEn, getLevel(ar.get(remIdOfJump)));
+        ar.set(jump - 1, invertingCond(ar.get(jump - 1)));
+        ar.set(remIdOfJump - 1, invertingCond(ar.get(remIdOfJump - 1)));
+
+        // Adding if-statement for the rest Objects with nesting >= nesting of goto object
+        int pos = curEn + 1;
+        int loopEn = findObjectEnding(ar, jump + 4);
+        int diff = procOtherObjects(ar, pos, loopEn) - loopEn;
+        en += diff;
+        ar.add(loopEn + diff, new StringBuffer(currFlag + ".write 0"));
+        setTab(ar, loopEn + diff, getLevel(ar.get(jump + 4)));
+        en++;
+
+        // Deleting declaration of goto-object
+        int ret = rmvDclr(ar, beg, en);
+
+        return ret;
     }
 
     public String eliminate() {
@@ -260,9 +314,12 @@ public class GetRidOfGOTO {
         // Adding if-statement if Simple forward/backward
         for (int i = 0; i < ar.size(); i++) {
             if (ar.get(i).indexOf(".forward") != -1 || ar.get(i).indexOf(".backward") != -1) {
-                if (ar.get(i - 2).indexOf("if.") == -1) {
-                    addIfStatement(ar, i, getLevel(ar.get(i)));
+                if (i >= 2) {
+                    if (ar.get(i - 2).indexOf("if.") == -1) {
+                        addIfStatement(ar, i, getLevel(ar.get(i)));
+                    }
                 }
+                else sendException("Initialisation of an Abstract object is wrong!");
             }
         }
 
