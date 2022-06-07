@@ -1,63 +1,20 @@
-# EliminationOfJumps
-## Goal:
-#### In this section we consider the possibility to get rid of GOTO object in code (atom object of EO).
-## Action plan:
-1. As an input we get an *EO* program ***X*** (as XMIR-file), which contains atom-Objects "GOTO";
-2. We replace pieces of code containing "goto" with semantically equivalent counterparts;
-3. Now we have new ***X'*** program with the same logic, as an input program, but without "GOTO". Then we must prove that ***X'*** program
-with the same input data as for the ***X*** program at the output gets the same results.
 
-## Example:
-We have an ***EO*** program ***X*** with GOTO object:
+Takes an input program in a strictly object-oriented programming language and converts it to a semantically equivalent program, excluding the use of goto objects.
+The input data is a program in EO in XMIR format, the output program also returns the program in XMIR.
 
+## Quick start
+To use this program, the first step is to clone this repository to your device locally. This can be done via the command line by writing:
 ```
-[x] > f
- memory > r
- seq > @
-  r.write 0
-  goto 
-   [g]
-    seq > @
-     if.
-      x.eq 0
-      g.forward
-      TRUE
-     r.write (42.div x)
-  r
+git clone https://github.com/MikhailLipanin/EliminationOfJumps.git
 ```
-Which is the same as this ***C++*** program:
+To compile a program, you can do it through the command line by running it from the directory where the project was cloned:
 ```
-int f(int x) {
-  int r = 0;
-  if (x == 0) goto exit;
-  r = 42 / x;
-  exit:
-  return r;
-}
+javac Main.java
 ```
-----------------------------------------
-After replacing the GOTO object, we get:
+And run with:
 ```
-[x] > f
- memory > r
- seq > @
-  r.write 0
-   seq > @
-    if.
-     x.eq 0
-     r
-     TRUE
-    r.write (42.div x)
-  r
+java Main arg0
 ```
-The same on ***C++***:
-```
-int f(int x) {
-  int r = 0;
-  if (x == 0) return r;
-  else {
-    r = 42 / x;
-    return r;
-  }
-}
-```
+Where arg0 will be the path to the XMIR file you want to convert.
+
+The converted XMIR file will be located in the same directory where the repository was cloned.
