@@ -3,6 +3,15 @@ package com.parsers;
 import java.util.*;
 
 public class GetRidOfGOTO {
+    /*
+     * fileName -
+     * cntOfFlags - to count number of flags
+     * code -
+     * currFlag - Current flag for adding
+     * delDclr - Checks if declaration of goto-object is deleted
+     * initBack - Checks if main while-loop for GotoBackward is added
+     * flagForBack - Gives a flag of goto-object with backward Jump
+     */
     final String fileName;
     int cntOfFlags;
     String code;
@@ -20,31 +29,32 @@ goto
   [g]
     o0
       o1
-        goto
-          [g1]
-            o9
-              o2
-              if.
-                st1
-                g.backward
-                TRUE
-              o3
-                o4
-                g1.forward val
-                o5
-              o6
+        o2
+        if.
+          st1
+          g.backward
+          TRUE
+        o3
+      g.backward
                 """;
         cntOfFlags = 0;
     }
     void sendException(String msg) {
         throw new RuntimeException(msg);
     }
+
+    /*
+     * Returns nesting of an Object
+     */
     int getLevel(StringBuffer s) {
         int id = 0;
         while (id < s.length() && s.charAt(id) == ' ') id++;
         return id / 2;
     }
-    // Set Tab to desired level
+
+    /*
+     * Sets Tab to desired level
+     */
     void setTab(ArrayList <StringBuffer> ar, int id, int lvl) {
         int currLvl = getLevel(ar.get(id));
         if (currLvl < lvl) {
@@ -78,18 +88,23 @@ goto
         while (pos < ar.size() && getLevel(ar.get(pos)) > initLevel) pos++;
         return pos;
     }
-    StringBuffer invertingCond(StringBuffer cond) {
-        int begStat = -1, enStat = -1;
-        for (int i = 0; i < cond.length(); i++) {
-            if (cond.charAt(i) != ' ') {
-                if (begStat == -1) begStat = i;
-                enStat = i;
-            }
+
+    /*
+     * Inverting Condition to opposite
+     */
+    void invertingCond(ArrayList <StringBuffer> ar, int line) {
+        int begStmt = getHigherObj(ar, line) + 1;
+        ar.add(begStmt, new StringBuffer("not."));
+        setTab(ar, begStmt, getLevel(ar.get(begStmt + 1)));
+        int curEn = findObjectEnding(ar, begStmt + 1);
+        for (int i = begStmt + 1; i < curEn; i++) {
+            setTab(ar, i, getLevel(ar.get(i)) + 1);
         }
-        cond.insert(begStat, '(');
-        cond.insert(enStat + 2, ").not");
-        return cond;
     }
+
+    /*
+     * Adding additional if-statements which compares given flag equals to valOfFlag
+     */
     void procOtherObjects(ArrayList <StringBuffer> ar, int pos, int en, int valOfFlag) {
         while (pos < en) {
             int currEn = findObjectEnding(ar, pos);
@@ -107,6 +122,10 @@ goto
             pos = currEn + 3;
         }
     }
+
+    /*
+     * Removes declaration of goto-object
+     */
     boolean rmvDclr(ArrayList <StringBuffer> ar, int beg, int en) {
         if (beg >= 2 && ar.get(beg - 2).indexOf("goto") != -1) {
             for (int i = beg; i < en; i++) {
@@ -118,12 +137,21 @@ goto
         }
         else return false;
     }
-    int getHigherObj(ArrayList <StringBuffer> ar, int id, int beg) {
+
+    /*
+     * Returns an object that wraps the current
+     */
+    int getHigherObj(ArrayList <StringBuffer> ar, int id) {
         int lvl = getLevel(ar.get(id));
         int pos = id - 1;
-        while (pos >= beg && getLevel(ar.get(pos)) >= lvl) pos--;
+        while (pos > 0 && getLevel(ar.get(pos)) >= lvl) pos--;
+
         return pos;
     }
+
+    /*
+     * Adds if-statement for unconditional Jump
+     */
     void addIfStatement(ArrayList <StringBuffer> ar, int jump, int initLevel) {
         if (ar.get(jump - 2).indexOf("if.") == -1) {
             ar.add(jump, new StringBuffer("if."));
@@ -135,7 +163,10 @@ goto
             setTab(ar, jump + 3, initLevel + 1);
         }
     }
-    //Splits code into an array of strings by separator
+
+    /*
+     * Splits code into an array of strings by separator
+     */
     ArrayList<StringBuffer> separate(Character sep) {
         int id = 0;
         ArrayList <StringBuffer> ret = new ArrayList<>();
@@ -158,6 +189,7 @@ goto
         }
         return ret.toString();
     }
+
     int GotoForward(int beg, int jump, String nameOfObject, ArrayList <StringBuffer> ar) {
         /*
          * Making a flag
@@ -217,7 +249,9 @@ goto
         /*
          * Modifying Jump statement
          */
-        ar.set(jump - 1, invertingCond(cond));
+        invertingCond(ar, jump);
+        jump++;
+        endOfObj++;
         ar.remove(jump);
         int curEn = findObjectEnding(ar, jump);
         ar.add(curEn, new StringBuffer("seq"));
@@ -325,7 +359,9 @@ goto
         /*
          * Modifying Jump statement
          */
-        ar.set(jump - 1, invertingCond(cond));
+        invertingCond(ar, jump);
+        jump++;
+        endOfObj++;
         ar.remove(jump);
         int curEn = findObjectEnding(ar, jump);
         ar.add(curEn, new StringBuffer(currFlag + ".write 0"));
@@ -348,7 +384,9 @@ goto
         }
         System.out.println("----------------------");
 
-        // Adding if-statement if Simple forward/backward
+        /*
+         * Adding if-statement if Simple forward/backward
+         */
         for (int i = 0; i < ar.size(); i++) {
             if (ar.get(i).indexOf(".forward") != -1 || ar.get(i).indexOf(".backward") != -1) {
                 if (i >= 2) {
@@ -360,6 +398,9 @@ goto
             }
         }
 
+        /*
+         * mp - for each nameOfObject returns line, where it's declaration starts
+         */
         HashMap <String, Integer> mp = new HashMap<String, Integer>();
 
         for (int i = 0; i < ar.size(); ) {

@@ -1,0 +1,61 @@
+goto
+  [g]
+    o0
+      o1
+        goto
+          [g1]
+            o9
+              o2
+              if.
+                st1
+                g.backward
+                TRUE
+              o3
+                o4
+                g1.forward val
+                o5
+              o6
+
+memory > flag1
+flag1.write 0
+memory > flag0
+flag0.write 0
+while.
+  eq. (flag0  0)
+  seq
+    flag0.write 1
+    o0
+      o1
+        o9
+          o2
+          if.
+            not.
+              st1
+            TRUE
+            flag0.write 0
+          if.
+            (eq. (flag0 0)).not
+            o3
+              o4
+              if.
+                not.
+                  TRUE
+                TRUE
+                seq
+                  val
+                  flag1.write 1
+              if.
+                (eq. (flag1 1)).not
+                o5
+                TRUE
+            if.
+              (eq. (flag1 1)).not
+              TRUE
+              TRUE
+          if.
+            (eq. (flag1 1)).not
+            if.
+              (eq. (flag0 0)).not
+              o6
+              TRUE
+            TRUE
