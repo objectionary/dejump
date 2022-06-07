@@ -1,8 +1,5 @@
 package com.parsers;
 
-import org.eolang.parser.Syntax;
-import org.eolang.parser.XMIR;
-
 import java.util.*;
 
 public class GetRidOfGOTO {
@@ -10,22 +7,32 @@ public class GetRidOfGOTO {
     int cntOfFlags;
     String code;
     StringBuffer currFlag;
+    HashMap <String, Boolean> delDclr = new HashMap<String, Boolean>();
+    HashMap <String, Boolean> initBack = new HashMap<String, Boolean>();
+    HashMap <String, StringBuffer> flagForBack = new HashMap<String, StringBuffer>();
 
     public GetRidOfGOTO(String FileName) {
         fileName = FileName;
         //XMIR xmir = new XMIR(fileName);
         //code = xmir.toEO();
         code = """
-                goto
-                  [g]
-                    o0
-                      o1
-                        o2
-                        if.
-                          st1
-                          g.backward
-                          TRUE
-                        o3
+goto
+  [g]
+    o0
+      o1
+        goto
+          [g1]
+            o9
+              o2
+              if.
+                st1
+                g.backward
+                TRUE
+              o3
+                o4
+                g1.forward val
+                o5
+              o6
                 """;
         cntOfFlags = 0;
     }
@@ -61,7 +68,10 @@ public class GetRidOfGOTO {
             }
         }
     }
-    // Returns the end of the scope of an object
+
+    /*
+     * Returns the end of the scope of an object
+     */
     int findObjectEnding(ArrayList <StringBuffer> ar, int beg) {
         int initLevel = getLevel(ar.get(beg));
         int pos = beg + 1;
@@ -80,12 +90,12 @@ public class GetRidOfGOTO {
         cond.insert(enStat + 2, ").not");
         return cond;
     }
-    int procOtherObjects(ArrayList <StringBuffer> ar, int pos, int en) {
+    void procOtherObjects(ArrayList <StringBuffer> ar, int pos, int en, int valOfFlag) {
         while (pos < en) {
             int currEn = findObjectEnding(ar, pos);
             int currLevel = getLevel(ar.get(pos));
             ar.add(pos, new StringBuffer("if."));
-            ar.add(pos + 1, new StringBuffer("(eq. (" + currFlag + " 1)).not"));
+            ar.add(pos + 1, new StringBuffer("(eq. (" + currFlag + " " + valOfFlag + ")).not"));
             ar.add(currEn + 2, new StringBuffer("TRUE"));
             en += 3;
             setTab(ar, pos, currLevel);
@@ -96,18 +106,17 @@ public class GetRidOfGOTO {
             }
             pos = currEn + 3;
         }
-        return en;
     }
-    int rmvDclr(ArrayList <StringBuffer> ar, int beg, int en) {
+    boolean rmvDclr(ArrayList <StringBuffer> ar, int beg, int en) {
         if (beg >= 2 && ar.get(beg - 2).indexOf("goto") != -1) {
             for (int i = beg; i < en; i++) {
                 setTab(ar, i, getLevel(ar.get(i)) - 2);
             }
             ar.remove(beg - 1);
             ar.remove(beg - 2);
-            return beg - 2;
+            return true;
         }
-        else return beg;
+        else return false;
     }
     int getHigherObj(ArrayList <StringBuffer> ar, int id, int beg) {
         int lvl = getLevel(ar.get(id));
@@ -149,156 +158,186 @@ public class GetRidOfGOTO {
         }
         return ret.toString();
     }
-    int GotoForward(int beg, int jump, ArrayList <StringBuffer> ar) {
-        // Adding flag
-        currFlag = new StringBuffer("flag" + String.valueOf(cntOfFlags));
+    int GotoForward(int beg, int jump, String nameOfObject, ArrayList <StringBuffer> ar) {
+        /*
+         * Making a flag
+         */
+        currFlag = new StringBuffer("flag" + cntOfFlags);
         ar.add(0, new StringBuffer("memory > " + currFlag));
         ar.add(1, new StringBuffer(currFlag + ".write 0"));
         cntOfFlags++;
         beg += 2;
         jump += 2;
 
-        int initLevel = getLevel(ar.get(jump));
+        /*
+         * initLevelOfJump - nesting of Beginning of goto-object
+         * retValueOfJump - object that will return if Jump statement is TRUE
+         * endOfObj - last line in goto-object (exclusive)
+         * cond - condition of Jump
+         */
+        int initLevelOfJump = getLevel(ar.get(jump));
         StringBuffer retValueOfJump = new StringBuffer(ar.get(jump).substring(ar.get(jump).indexOf(".forward") + 9));
-        int en = findObjectEnding(ar, beg);
+        int endOfObj = findObjectEnding(ar, beg);
+        StringBuffer cond = new StringBuffer(ar.get(jump - 1));
 
-        // Finding all while-loops
-        for (int i = beg; i < jump; ) {
+        /*
+         * Deleting declaration of goto-object
+         */
+        if (!delDclr.containsKey(nameOfObject)) {
+            delDclr.put(nameOfObject, true);
+            rmvDclr(ar, beg, endOfObj);
+            beg -= 2;
+            jump -= 2;
+            endOfObj -= 2;
+            initLevelOfJump -= 2;
+        }
+
+        /*
+         * Adding additional condition to all while loops, which occurs before Jump
+         */
+        for (int i = beg; i < endOfObj; ) {
             if (ar.get(i).indexOf("while.") != -1) {
+                int remLevel = getLevel(ar.get(i + 1));
                 int curEn = findObjectEnding(ar, i + 1);
                 for (int j = i + 1; j < curEn; j++) {
+                    if (j == jump) initLevelOfJump++;
                     setTab(ar, j, getLevel(ar.get(j)) + 1);
                 }
                 ar.add(i + 1, new StringBuffer("and."));
-                setTab(ar, i + 1, getLevel(ar.get(i + 2)) - 1);
                 ar.add(curEn + 1, new StringBuffer("(eq. (" + currFlag + " 1)).not"));
-                setTab(ar, curEn + 1, getLevel(ar.get(i + 2)));
+                setTab(ar, i + 1, remLevel);
+                setTab(ar, curEn + 1, remLevel + 1);
                 jump += 2;
-                en += 2;
+                endOfObj += 2;
                 i = curEn + 2;
             }
             else i++;
         }
 
-        // Inverting Jump statement and Modifying new if-statement
-        ar.set(jump - 1, invertingCond(ar.get(jump - 1)));
-
-        // REWRITE !!!!!!!!
+        /*
+         * Modifying Jump statement
+         */
+        ar.set(jump - 1, invertingCond(cond));
         ar.remove(jump);
         int curEn = findObjectEnding(ar, jump);
         ar.add(curEn, new StringBuffer("seq"));
         ar.add(curEn + 1, retValueOfJump);
         ar.add(curEn + 2, new StringBuffer(currFlag + ".write 1"));
-        setTab(ar, curEn, getLevel(ar.get(jump)));
-        setTab(ar, curEn + 1, getLevel(ar.get(jump)) + 1);
-        setTab(ar, curEn + 2, getLevel(ar.get(jump)) + 1);
-        en += 2;
+        setTab(ar, curEn, initLevelOfJump);
+        setTab(ar, curEn + 1, initLevelOfJump + 1);
+        setTab(ar, curEn + 2, initLevelOfJump + 1);
+        endOfObj += 2;
 
-        // Adding if-statement for the rest Objects with nesting >= nesting of goto object
-        int pos = jump + 4;
-        en = procOtherObjects(ar, pos, en);
+        /*
+         * Adding if-statement for the rest Objects with nesting >= nesting of goto object itself
+         */
+        int pos = curEn + 3;
+        procOtherObjects(ar, pos, endOfObj, 1);
 
-        // Deleting declaration of goto-object
-        int ret = rmvDclr(ar, beg, en);
-
-        return ret;
+        return beg;
     }
 
 
-    int GotoBackward(int beg, int jump, ArrayList <StringBuffer> ar) {
-        // Adding flag
-        currFlag = new StringBuffer("flag" + String.valueOf(cntOfFlags));
-        ar.add(0, new StringBuffer("memory > " + currFlag));
-        ar.add(1, new StringBuffer(currFlag + ".write 0"));
-        cntOfFlags++;
-        beg += 2;
-        jump += 2;
+    int GotoBackward(int beg, int jump, String nameOfObject, ArrayList <StringBuffer> ar) {
+        /*
+         * Making a flag
+         */
+        if (!flagForBack.containsKey(nameOfObject)) {
+            currFlag = new StringBuffer("flag" + cntOfFlags);
+            ar.add(0, new StringBuffer("memory > " + currFlag));
+            ar.add(1, new StringBuffer(currFlag + ".write 0"));
+            cntOfFlags++;
+            beg += 2;
+            jump += 2;
+            flagForBack.put(nameOfObject, currFlag);
+        }
+        else currFlag = flagForBack.get(nameOfObject);
 
-        int initLevel = getLevel(ar.get(jump));
-        int en = findObjectEnding(ar, beg);
+        /*
+         * initLevelOfJump - nesting of Beginning of goto-object
+         * initLevelOfBeg - nesting of Jump itself
+         * endOfObj - last line in goto-object (exclusive)
+         * cond - condition of Jump
+         */
+        int initLevelOfJump = getLevel(ar.get(jump));
+        int initLevelOfBeg = getLevel(ar.get(beg));
+        int endOfObj = findObjectEnding(ar, beg);
         StringBuffer cond = new StringBuffer(ar.get(jump - 1));
 
         /*
-
-        MAKE TREE-ADDING STATEMENTS TO JUMP
-
+         * Deleting declaration of goto-object
          */
-        ArrayList <StringBuffer> tmp = new ArrayList<>();
-
-
-        /*for (int i = findObjectEnding(ar, jump + 1) - 1; i >= jump - 2; i--) {
-            tmp.add(0, ar.get(i));
+        if (!delDclr.containsKey(nameOfObject)) {
+            delDclr.put(nameOfObject, true);
+            rmvDclr(ar, beg, endOfObj);
+            beg -= 2;
+            jump -= 2;
+            endOfObj -= 2;
+            initLevelOfBeg -= 2;
+            initLevelOfJump -= 2;
         }
-        int idxBeg = jump - 2;
-        while (idxBeg > beg) {
-            int idx = getHigherObj(ar, idxBeg, beg);
-            if (ar.get(idx).indexOf("if.") != -1) {
-                int currEn = findObjectEnding(ar, idx + 2);
-                if (currEn == idxBeg) {
-                    tmp.add(ar.get(idx + ));
-                }
-                else {
 
-                }
-
-            } else if (ar.get(idx).indexOf("while.") != -1) {
-
-            } else {
-
+        /*
+         * Adding main while loop of goto-object
+         */
+        if (!initBack.containsKey(nameOfObject)) {
+            initBack.put(nameOfObject, true);
+            ar.add(beg, new StringBuffer("while."));
+            ar.add(beg + 1, new StringBuffer("eq. (" + currFlag + "  0)"));
+            ar.add(beg + 2, new StringBuffer("seq"));
+            ar.add(beg + 3, new StringBuffer(currFlag + ".write 1"));
+            setTab(ar, beg, initLevelOfBeg);
+            setTab(ar, beg + 1, initLevelOfBeg + 1);
+            setTab(ar, beg + 2, initLevelOfBeg + 1);
+            setTab(ar, beg + 3, initLevelOfBeg + 2);
+            beg += 4;
+            jump += 4;
+            endOfObj += 4;
+            initLevelOfBeg += 2;
+            initLevelOfJump += 2;
+            for (int i = beg; i < endOfObj; i++) {
+                setTab(ar, i, getLevel(ar.get(i)) + 2);
             }
-        }*/
-
-        // Replacing jump to while-loop
-
-        int remIdOfJump = -1;
-        for (int i = beg; i < en; i++) {
-            tmp.add(ar.get(i));
-            if (ar.get(i).indexOf(".backward") != -1 && remIdOfJump == -1)
-                remIdOfJump = tmp.size() - 1;
         }
 
+        /*
+         * Adding additional condition to all while loops, which occurs before Jump
+         */
+        for (int i = beg; i < endOfObj; ) {
+            if (ar.get(i).indexOf("while.") != -1) {
+                int remLevel = getLevel(ar.get(i + 1));
+                int curEn = findObjectEnding(ar, i + 1);
+                for (int j = i + 1; j < curEn; j++) {
+                    if (j == jump) initLevelOfJump++;
+                    setTab(ar, j, getLevel(ar.get(j)) + 1);
+                }
+                ar.add(i + 1, new StringBuffer("and."));
+                ar.add(curEn + 1, new StringBuffer("(eq. (" + currFlag + " 0)).not"));
+                setTab(ar, i + 1, remLevel);
+                setTab(ar, curEn + 1, remLevel + 1);
+                jump += 2;
+                endOfObj += 2;
+                i = curEn + 2;
+            }
+            else i++;
+        }
+
+        /*
+         * Modifying Jump statement
+         */
+        ar.set(jump - 1, invertingCond(cond));
         ar.remove(jump);
         int curEn = findObjectEnding(ar, jump);
-        ar.add(curEn, new StringBuffer("while."));
-        setTab(ar, curEn, initLevel);
-        ar.add(curEn + 1, cond);
-        setTab(ar, curEn + 1, initLevel + 1);
-        ar.add(curEn + 2, new StringBuffer("seq"));
-        setTab(ar, curEn + 2, initLevel + 1);
-        en += 2;
+        ar.add(curEn, new StringBuffer(currFlag + ".write 0"));
+        setTab(ar, curEn, initLevelOfJump);
 
-        for (int i = 0; i < tmp.size(); i++) {
-            ar.add(curEn + 3 + i, tmp.get(i));
-            setTab(ar, curEn + 3 + i, getLevel(tmp.get(i)) - getLevel(ar.get(beg)) + initLevel + 2);
-            en++;
-        }
-
-        remIdOfJump = curEn + 3 + remIdOfJump;
-        ar.remove(remIdOfJump);
-        curEn = findObjectEnding(ar, remIdOfJump);
-        ar.add(curEn, new StringBuffer(currFlag + ".write 1"));
-        setTab(ar, curEn, getLevel(ar.get(remIdOfJump)));
-        ar.set(jump - 1, invertingCond(ar.get(jump - 1)));
-        ar.set(remIdOfJump - 1, invertingCond(ar.get(remIdOfJump - 1)));
-
-        // Adding if-statement for the rest Objects with nesting >= nesting of goto object
+        /*
+         * Adding if-statement for the rest Objects with nesting >= nesting of goto object itself
+         */
         int pos = curEn + 1;
-        int loopEn = findObjectEnding(ar, jump + 4);
-        int diff = procOtherObjects(ar, pos, loopEn) - loopEn;
-        en += diff;
-        ar.add(loopEn + diff, new StringBuffer(currFlag + ".write 0"));
-        setTab(ar, loopEn + diff, getLevel(ar.get(jump + 4)));
-        en++;
+        procOtherObjects(ar, pos, endOfObj, 0);
 
-        // Deleting declaration of goto-object
-        int ret = rmvDclr(ar, beg, en);
-
-        /*for (StringBuffer now : ar){
-            System.out.println(now);
-        }
-        System.out.println("----------------------");*/
-
-        return ret;
+        return beg;
     }
 
     public String eliminate() {
@@ -338,42 +377,44 @@ public class GetRidOfGOTO {
                     System.out.println(Arrays.toString(e.getStackTrace()));
                 }
             }
-            else if (ar.get(i).indexOf(".forward") != -1) {
-                try {
-                    int posNext = ar.get(i).indexOf(".forward");
-                    posNext--;
-                    if (posNext < 0) sendException("Initialisation of Jump is wrong!");
-                    int pos = posNext;
-                    while (pos >= 0 && ar.get(i).charAt(pos) != ' ') pos--;
-                    pos++;
-                    if (pos > posNext) sendException("Initialisation of Jump is wrong!");
-                    String nameOfObject = ar.get(i).substring(pos, posNext + 1);
-                    if (!mp.containsKey(nameOfObject)) sendException("Initialisation of Jump is wrong!");
-                    int ret = GotoForward(mp.get(nameOfObject), i, ar);
-                    mp.put(nameOfObject, ret);
-                    i = ret;
+            else if (ar.get(i).indexOf(".forward") != -1 || ar.get(i).indexOf(".backward") != -1) {
+                if (ar.get(i).indexOf(".forward") != -1) {
+                    try {
+                        int posNext = ar.get(i).indexOf(".forward");
+                        posNext--;
+                        if (posNext < 0) sendException("Initialisation of Jump is wrong!");
+                        int pos = posNext;
+                        while (pos >= 0 && ar.get(i).charAt(pos) != ' ') pos--;
+                        pos++;
+                        if (pos > posNext) sendException("Initialisation of Jump is wrong!");
+                        String nameOfObject = ar.get(i).substring(pos, posNext + 1);
+                        if (!mp.containsKey(nameOfObject)) sendException("Initialisation of Jump is wrong!");
+                        int ret = GotoForward(mp.get(nameOfObject), i, nameOfObject, ar);
+                        mp.put(nameOfObject, ret);
+                        i = ret;
+                    }
+                    catch (RuntimeException e) {
+                        System.out.println(Arrays.toString(e.getStackTrace()));
+                    }
                 }
-                catch (RuntimeException e) {
-                    System.out.println(Arrays.toString(e.getStackTrace()));
-                }
-            }
-            else if (ar.get(i).indexOf(".backward") != -1) {
-                try {
-                    int posNext = ar.get(i).indexOf(".backward");
-                    posNext--;
-                    if (posNext < 0) sendException("Initialisation of Jump is wrong!");
-                    int pos = posNext;
-                    while (pos >= 0 && ar.get(i).charAt(pos) != ' ') pos--;
-                    pos++;
-                    if (pos > posNext) sendException("Initialisation of Jump is wrong!");
-                    String nameOfObject = ar.get(i).substring(pos, posNext + 1);
-                    if (!mp.containsKey(nameOfObject)) sendException("Initialisation of Jump is wrong!");
-                    int ret = GotoBackward(mp.get(nameOfObject), i, ar);
-                    mp.put(nameOfObject, ret);
-                    i = ret;
-                }
-                catch (RuntimeException e) {
-                    System.out.println(Arrays.toString(e.getStackTrace()));
+                else if (ar.get(i).indexOf(".backward") != -1) {
+                    try {
+                        int posNext = ar.get(i).indexOf(".backward");
+                        posNext--;
+                        if (posNext < 0) sendException("Initialisation of Jump is wrong!");
+                        int pos = posNext;
+                        while (pos >= 0 && ar.get(i).charAt(pos) != ' ') pos--;
+                        pos++;
+                        if (pos > posNext) sendException("Initialisation of Jump is wrong!");
+                        String nameOfObject = ar.get(i).substring(pos, posNext + 1);
+                        if (!mp.containsKey(nameOfObject)) sendException("Initialisation of Jump is wrong!");
+                        int ret = GotoBackward(mp.get(nameOfObject), i, nameOfObject, ar);
+                        mp.put(nameOfObject, ret);
+                        i = ret;
+                    }
+                    catch (RuntimeException e) {
+                        System.out.println(Arrays.toString(e.getStackTrace()));
+                    }
                 }
             }
             else i++;
