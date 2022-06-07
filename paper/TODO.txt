@@ -1,4 +1,0 @@
-1. Draw normal images
-2. Make font/styles right
-3. Make code cases more complex
-4. 
