@@ -1,5 +1,5 @@
 
-Takes an input program in a strictly object-oriented programming language and converts it to a semantically equivalent program, excluding the use of goto objects.
+Takes as an input a program in a strictly object-oriented programming language and converts it to a semantically equivalent program, excluding the use of goto objects.
 The input data is a program in EO in XMIR format, the output program also returns the program in XMIR.
 
 ## Quick start
