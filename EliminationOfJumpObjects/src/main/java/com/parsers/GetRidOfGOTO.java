@@ -1,30 +1,33 @@
 package com.parsers;
 
+import org.eolang.parser.Syntax;
+import org.eolang.parser.XMIR;
+
 import java.util.*;
 
 public class GetRidOfGOTO {
     /*
      * fileName -
      * cntOfFlags - to count number of flags
-     * code -
+     * inputCode -
      * currFlag - Current flag for adding
      * delDclr - Checks if declaration of goto-object is deleted
      * initBack - Checks if main while-loop for GotoBackward is added
      * flagForBack - Gives a flag of goto-object with backward Jump
      */
-    final String fileName;
+    //final String fileName;
     int cntOfFlags;
-    String code;
+    String inputCode;
     StringBuffer currFlag;
     HashMap <String, Boolean> delDclr = new HashMap<String, Boolean>();
     HashMap <String, Boolean> initBack = new HashMap<String, Boolean>();
     HashMap <String, StringBuffer> flagForBack = new HashMap<String, StringBuffer>();
 
-    public GetRidOfGOTO(String FileName) {
-        fileName = FileName;
-        //XMIR xmir = new XMIR(fileName);
-        //code = xmir.toEO();
-        code = """
+    public GetRidOfGOTO(String givenCode) {
+        XMIR xmir = new XMIR(givenCode);
+        inputCode = xmir.toEO();
+        System.out.println(inputCode);
+        /*inputCode = """
 goto
   [g]
     o0
@@ -36,7 +39,7 @@ goto
           TRUE
         o3
       g.backward
-                """;
+                """;*/
         cntOfFlags = 0;
     }
     void sendException(String msg) {
@@ -171,8 +174,8 @@ goto
         int id = 0;
         ArrayList <StringBuffer> ret = new ArrayList<>();
         StringBuffer cur = new StringBuffer();
-        for (int i = 0; i < code.length(); i++) {
-            Character c = code.charAt(i);
+        for (int i = 0; i < inputCode.length(); i++) {
+            Character c = inputCode.charAt(i);
             if (c.equals(sep)) {
                 ret.add(cur);
                 cur = new StringBuffer();
@@ -205,12 +208,10 @@ goto
          * initLevelOfJump - nesting of Beginning of goto-object
          * retValueOfJump - object that will return if Jump statement is TRUE
          * endOfObj - last line in goto-object (exclusive)
-         * cond - condition of Jump
          */
         int initLevelOfJump = getLevel(ar.get(jump));
         StringBuffer retValueOfJump = new StringBuffer(ar.get(jump).substring(ar.get(jump).indexOf(".forward") + 9));
         int endOfObj = findObjectEnding(ar, beg);
-        StringBuffer cond = new StringBuffer(ar.get(jump - 1));
 
         /*
          * Deleting declaration of goto-object
@@ -291,12 +292,10 @@ goto
          * initLevelOfJump - nesting of Beginning of goto-object
          * initLevelOfBeg - nesting of Jump itself
          * endOfObj - last line in goto-object (exclusive)
-         * cond - condition of Jump
          */
         int initLevelOfJump = getLevel(ar.get(jump));
         int initLevelOfBeg = getLevel(ar.get(beg));
         int endOfObj = findObjectEnding(ar, beg);
-        StringBuffer cond = new StringBuffer(ar.get(jump - 1));
 
         /*
          * Deleting declaration of goto-object
@@ -378,11 +377,6 @@ goto
 
     public String eliminate() {
         ArrayList <StringBuffer> ar = separate('\n');
-
-        for (StringBuffer now : ar){
-            System.out.println(now);
-        }
-        System.out.println("----------------------");
 
         /*
          * Adding if-statement if Simple forward/backward
