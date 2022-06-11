@@ -26,7 +26,7 @@ public class GetRidOfGOTO {
     public GetRidOfGOTO(String givenCode) {
         XMIR xmir = new XMIR(givenCode);
         inputCode = xmir.toEO();
-        System.out.println(inputCode);
+
         /*inputCode = """
 goto
   [g]
@@ -40,6 +40,8 @@ goto
         o3
       g.backward
                 """;*/
+        System.out.println(inputCode);
+        System.out.println("-----------------------");
         cntOfFlags = 0;
     }
     void sendException(String msg) {
