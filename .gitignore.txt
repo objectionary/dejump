@@ -1,5 +1,5 @@
 target/
-/EliminationOfJumpObjects
+EliminationOfJumpObjects
 .idea
 .DS_Store
 *.iml
