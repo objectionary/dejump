@@ -1,7 +1,0 @@
-[x y...] > app
-  42 > n!
-  [t] > read
-    n
-    .sub
-      .neg
-      t
