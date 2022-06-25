@@ -1,6 +1,6 @@
 target/
 ../EliminationOfJumpObjects
-.idea
+/idea
 .DS_Store
 *.iml
 .project
