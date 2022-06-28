@@ -2,8 +2,7 @@
 .settings
 .classpath
 .recommenders
-.idea/workspace.xml
 target/
-.idea/
+.idea
 .DS_Store
 *.iml
