@@ -1,0 +1,8 @@
+<o name="circle">
+    <o name="r"/>
+    <o base=".mul" name="circumference">
+        <o base="r"/>
+        <o base="int" data="int">2</o>
+        <o base="float" data="float">3.14</o>
+    </o>
+</o>
