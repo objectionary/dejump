@@ -1,12 +1,42 @@
 \documentclass[sigplan,review,11pt,nonacm,natbib=false]{acmart}
 \settopmatter{printfolios=false,printccs=false,printacmref=false}
 \usepackage[maxnames=1,minnames=1,maxbibnames=100,natbib=true,citestyle=authoryear,bibstyle=authoryear,doi=false,url=false,isbn=false,isbn=false]{biblatex}
-\usepackage[utf8]{inputenc}
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{xcolor}
+
+\usepackage[T2A,T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian,english]{babel}
+  \renewcommand\ttdefault{cmtt}
+\usepackage{csquotes}
 \usepackage{ffcode}
+\usepackage{CJKutf8}
+\usepackage{paralist}
+\usepackage{cancel} % to enable \cancel command
+\usepackage{anyfontsize} % To get rid of font not found warnings
+\usepackage{tabularx} % for special tables
 \usepackage{amsmath}
+\usepackage{to-be-determined}
+\usepackage{href-ul}
+\usepackage{amsthm}
+\usepackage{tcolorbox} % for algorithm
+  \tcbuselibrary{skins}
+\usepackage{fdsymbol} % for \mathbb
+\usepackage{algpseudocode} % for algorithms
+\usepackage{multicol} % for two cols in BNF
+\usepackage{pgffor} % to enable \foreach
+\usepackage{stmaryrd}
+\usepackage{mathtools}
+
+\newcommand\br{\\[-4pt]}
+\newcounter{rule}
+\renewcommand\therule{R\arabic{rule}}
+\newcommand\rr{\smalltriangleright{}}
+\newcommand\rrule[1]{{\scshape\sffamily\ref{rule:#1}}}
+\newcommand{\jrule}[1]{%
+  \refstepcounter{rule}\label{rule:#1}%
+  \text{\textbf{\rrule{#1}}}}
 
 \newtheorem{definition}{Definition}[section]
 
@@ -19,9 +49,6 @@
 \begin{document}
 
 \maketitle
-
-
-\keywords{Object-Oriented Programming, software engineering, algorithms, computer science}
 
 \section{Introduction}
 The problem is known both computer science and soft-
@@ -95,7 +122,7 @@ goto
       stdout "Will never be printed"
 \end{ffcode}
 
-It consists of the goto atom-object, the abstract object \emph{g}, and the g.forward attribute. Several abstract objects such as \emph{g} can be declared inside of goto-object, and the attribute \emph{.forward} can be called to each of them.
+It consists of the goto \emph{atom}-object, the abstract object \emph{g}, and the g.forward attribute. Several abstract objects such as \emph{g} can be declared inside of goto-object, and the attribute \emph{.forward} can be called to each of them.
 
 \subsubsection{Simple Forward}
 Consider the simplest example of using goto-forward:
@@ -120,8 +147,8 @@ This will not violate the program logic, because without the added if-statement,
 
 \begin{equation}
 \begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{if}.( TRUE, \ff{g}.\ff{forward}(\delta_1), TRUE ) \rrbracket) 
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing,\br
+& \quad \varphi \mapsto \ff{if}.( TRUE, \ff{g}.\ff{forward}(\delta_1), TRUE ) \rrbracket)\\
 \end{split}
 \end{equation}
 
@@ -143,7 +170,7 @@ After the conversion described in section 3.1.1, the simplest call of forward ju
 
 \begin{equation}
 \begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
+& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
 & \quad \varphi \mapsto \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2) \rrbracket) \\
 \end{split}
 \end{equation}
@@ -152,21 +179,21 @@ The transformation under consideration involves the following steps:
 
 \begin{equation}
 \begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{if}.(\mu_1.\ff{not}, \ff{g}.\ff{forward}(\delta_1), \delta_2) \rrbracket) \\
+& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{if}.(\mu_1.\ff{not}, \ff{g}.\ff{forward}(\delta_1), \delta_2) \rrbracket) \br
 \end{split}
 \end{equation}
 
 \begin{equation}
 \begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{if}.(\mu_1.\ff{not}, \delta_2, \delta_1) \rrbracket) \\
+& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{if}.(\mu_1.\ff{not}, \delta_2, \delta_1) \rrbracket) \br
 \end{split}
 \end{equation}
 
 \begin{equation}
 \begin{split}
-& \ff{if.}(\mu_1.not, \delta_2, \delta_1) \\
+& \ff{if.}(\mu_1.\ff{not}, \delta_2, \delta_1) \br
 \end{split}
 \end{equation}
 
@@ -174,22 +201,17 @@ The transformation under consideration involves the following steps:
 Expression 3 is semantically equivalent to expression 6:
 \end{theorem}
 
-\begin{equation} \nonumber
-\begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2) \rrbracket) \\
-\end{split}
-\end{equation}
+\begin{equation*}
+\dfrac
+    {\begin{matrix}
+    \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
+    \varphi \mapsto \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2) \rrbracket)
+    \end{matrix}}
+    {\ff{if.}(\mu_1.\ff{not}, \delta_2, \delta_1)}
+    \jrule{1}
+\end{equation*}
 
-\hline
-
-\begin{equation} \nonumber
-\begin{split}
-& \ff{if.}(\mu_1.not, \delta_2, \delta_1) \\
-\end{split}
-\end{equation}
-
-To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto forward.
+To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto-forward.
 
 Consider the following code:
 
@@ -205,16 +227,18 @@ goto
       |\sgm{3}| |$\label{ln:ret1}$|
 \end{ffcode}
 
-Let's denote lines \ref{ln:ret0}-\ref{ln:ret1} as X.
+Let's denote lines \ref{ln:ret0}-\ref{ln:ret1} as $X$.
 
 It is not difficult to notice that statements which goto-forward "jumps through" will be executed if the condition in the if-statement is not equal to TRUE.
 Otherwise statements following the goto-object itself are executed.
 So we can swap statements and invert the condition into if-statement to get rid of the \emph{g.forward} attribute without violating program logic.
 
-Also, after replacing the jump, we must create an additional \emph{flag} object, which will be changed if the jump condition is met, i.e. when in the new if-statement, the 'ELSE' branch will be executed - value of flag will change. This is required so that all objects following the if-statement that are attributes of the abstract object g are not executed.
-So, by wrapping each object following the jump condition and whose nesting is at least that of the g object in an if-statement with a flag value check condition, we make sure that these objects will not be executed when the jump condition is met.
+Also, after replacing the jump, we must create an additional \emph{flag} object, which will be changed if the jump condition is met, i.e. when in the new if-statement, the 'ELSE' branch will be executed - value of flag will change. This is required so that all objects following the if-statement that are attributes of the abstract object \emph{g} are not executed.
+So, by wrapping each object following the jump condition and whose nesting is at least that of the \emph{g} object in an if-statement with a flag value check condition, we make sure that these objects will not be executed when the jump condition is met.
 
-By swapping the statements that follow the if-statement body and after the jump itself, as described above, we get the following replacement for this example: the \m{1} object must be inverted with (\m{1}).not; in 'THEN' brunch of if-statement places \dlt{2}; in the 'ELSE' brunch creates new object seq, consisting of two elements - \dlt{1} and flag's value change, because the jump condition is satisfied.
+By swapping the statements that follow the if-statement body and after the jump itself, as described above, we get the following replacement for this example:
+the \m{1} object must be inverted with (\m{1}).not;
+in 'THEN' brunch of if-statement places \dlt{2}; in the 'ELSE' brunch creates new object \emph{seq}, consisting of two elements - \dlt{1} and flag's value change, because the jump condition is satisfied.
 
 Thus, after transformation, the program converts to:
 \begin{ffcode}
@@ -234,9 +258,10 @@ flag.write 0
     TRUE|$\label{ln:ret3}$|
 \end{ffcode}
 
-Let's denote lines \ref{ln:ret2}-\ref{ln:ret3} as X'.
+Let's denote lines \ref{ln:ret2}-\ref{ln:ret3} as $X'$.
 
-Now let's look at an example program with nested objects containing goto forward:
+Now let's look at an example program with nested objects containing goto-forward:
+
 \begin{ffcode}
 goto
   [g]
@@ -261,17 +286,15 @@ flag.write 0
 \subsubsection{Goto forward inside the while-loop}
 In order to realize the functionality of cycles in EO, generators are provided. A generator is a routine that can be used to control the iteration behaviour of a loop.
 
-The language currently provides a while generator, on which other generators are implemented.
+The language currently provides a \emph{while} generator, on which other generators are implemented.
 
-The simplest way to call goto forward inside a while-loop is represented as:
+The simplest way to call goto-forward inside a \emph{while}-loop is represented as:
 
 \begin{equation}
 \begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\mu_0, \\
-& \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2) \\
-& \quad ) \\
-& \rrbracket) \\
+& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{while}.(\mu_0, \br
+& \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2) ) \rrbracket) \br
 \end{split}
 \end{equation}
 
@@ -292,12 +315,10 @@ The transformation under consideration involves the following steps:
 \begin{split}
 & \ff{memory}(flag), \\
 & flag.\ff{write}(0), \\
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\ff{and}.( \\
-& \quad \quad \mu_0, \ff{eq}.(flag  1).\ff{not}), \\
-& \quad \quad \ff{if}.(\mu_1,  \ff{g}.\ff{forward}(\delta_1), \delta_2) \\
-& \quad ) \\
-& \rrbracket) \\
+& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{while}.(\br
+& \quad \quad \ff{and}.( \mu_0, \ff{eq}.(flag  1).\ff{not}), \br
+& \quad \quad \ff{if}.(\mu_1,  \ff{g}.\ff{forward}(\delta_1), \delta_2) )\rrbracket)\\[-1pt]
 \end{split}
 \end{equation}
 
@@ -305,14 +326,11 @@ The transformation under consideration involves the following steps:
 \begin{split}
 & \ff{memory}(flag), \\
 & flag.\ff{write}(0), \\
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\ff{and}.( \\
-& \quad \quad \mu_0, \ff{eq}.(flag  1).\ff{not}), \\
-& \quad \quad \ff{if}.(\mu_1.\ff{not}, \delta_2, \\
-& \quad \quad \quad \ff{seq}( \delta_1, flag.\ff{write}(0) )\\
-& \quad \quad ) \\
-& \quad ) \\
-& \rrbracket) \\
+& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{while}.(\br
+& \quad \quad \ff{and}.( \mu_0, \ff{eq}.(flag  1).\ff{not}), \br
+& \quad \quad \ff{if}.(\mu_1.\ff{not}, \delta_2, \br
+& \quad \quad \quad \ff{seq}( \delta_1, flag.\ff{write}(0) ) ) ) \rrbracket )\\[-1pt]
 \end{split}
 \end{equation}
 
@@ -320,12 +338,10 @@ The transformation under consideration involves the following steps:
 \begin{split}
 & \ff{memory}(flag), \\
 & flag.\ff{write}(0), \\
-& \ff{while}.(\ff{and}.( \\
-& \quad \mu_0, \ff{eq}.(flag  1).\ff{not}), \\
-& \quad \ff{if}.(\mu_1.\ff{not}, \delta_2, \\
-& \quad \quad \ff{seq}( \delta_1, flag.\ff{write}(0) )\\
-& \quad ) \\
-& ) \\
+& \ff{while}.(\br
+& \quad \ff{and}.(\mu_0, \ff{eq}.(flag  1).\ff{not}), \br
+& \quad \ff{if}.(\mu_1.\ff{not}, \delta_2, \br
+& \quad \quad \ff{seq}( \delta_1, flag.\ff{write}(0) ) ) ) \\[-1pt]
 \end{split}
 \end{equation}
 
@@ -333,32 +349,25 @@ The transformation under consideration involves the following steps:
 Expression 7 is semantically equivalent to expression 10:
 \end{theorem}
 
-\begin{equation} \nonumber
-\begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\mu_0, \\
-& \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2) \\
-& \quad ) \\
-& \rrbracket) \\
-\end{split}
-\end{equation}
+\begin{equation*}
+\dfrac
+    {\begin{matrix}
+    & \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
+    & \quad \varphi \mapsto \ff{while}.(\mu_0, \\
+    & \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2))\rrbracket) \\
+    \end{matrix}}
+    {\begin{matrix}
+    & \ff{memory}(flag), \\
+    & flag.\ff{write}(0), \\
+    & \ff{while}.(\ff{and}.( \\
+    & \quad \mu_0, \ff{eq}.(flag  1).\ff{not}), \\
+    & \quad \ff{if}.(\mu_1.\ff{not}, \delta_2, \\
+    & \quad \quad \ff{seq}( \delta_1, flag.\ff{write}(0))) \\
+    \end{matrix}}
+    \jrule{2}
+\end{equation*}
 
-\hline
-
-\begin{equation} \nonumber
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{while}.(\ff{and}.( \\
-& \quad \mu_0, \ff{eq}.(flag  1).\ff{not}), \\
-& \quad \ff{if}.(\mu_1.\ff{not}, \delta_2, \\
-& \quad \quad \ff{seq}( \delta_1, flag.\ff{write}(0) \\
-& \quad )\\
-& ) \\
-\end{split}
-\end{equation}
-
-To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto forward.
+To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto-forward.
 
 Consider the following code on EO:
 
@@ -377,17 +386,20 @@ goto
           |\sgm{3}||$\label{ln:ret5}$|
 \end{ffcode}
 
-Let's denote lines \ref{ln:ret4}-\ref{ln:ret5} as Y.
+Let's denote lines \ref{ln:ret4}-\ref{ln:ret5} as $Y$.
 
 In this case, goto-forward is used to exit the body of the while loop. However, every iteration of a while loop checks its own condition if it is true. 
 
 Since the jump is executed once the jump condition is true, the while loop will be executed as long as the jump condition is false. We can deduce that the condition for the jump is tested at every iteration of the loop, exactly the same as the condition in the while body itself.
 So by combining the jump condition and the while loop condition do not violate the program logic. But the point is, once the jump condition is true, the next iteration of the while loop will fail and the loop will end.
 So we only care about the first triggering of the jump condition for goto-forward. To do this, we can create an auxiliary object \emph{flag} that will be TRUE as soon as the jump condition is met.
-Otherwise, all statements that came after the jump in the while loop will be executed.
-So the combined condition of the while loop will look like: while (!flag AND condOfWhile).
 
-Thus, the transformation is:
+If the jump condition is met, all objects inside the abstract object \emph{g} and following the goto-forward will not be executed. To do this, each of these objects should be wrapped in an additional if-statement, which will check the value of the flag, in other words - whether the jump condition is met or not.
+
+Otherwise, all statements that came after the jump in the while loop will be executed.
+So the combined condition of the while loop will be presented as: while (!flag AND condOfWhile).
+
+Thus, the transformation will be presented as:
 
 \begin{ffcode}
 memory > flag
@@ -411,7 +423,7 @@ flag.write 0
         TRUE|$\label{ln:ret7}$|
 \end{ffcode}
 
-Let's denote lines \ref{ln:ret6}-\ref{ln:ret7} as Y'.
+Let's denote lines \ref{ln:ret6}-\ref{ln:ret7} as $Y'$.
 
 We create an additional \emph{flag} object that will be equal to 1 when the jump condition is triggered and add this condition to the loop body; modify if-statement as described in Section 3.1.2, except that in the 'ELSE' branch we are changing the flag value because the jump condition has been met and the next iteration of the loop should not be executed.
 
@@ -463,7 +475,7 @@ goto
       g.backward
 \end{ffcode}
 
-Same as with goto forward, there is the goto \emph{atom}-object, the abstract object \emph{g}, and the g.backward attribute. Several abstract objects such as \emph{g} can be declared inside of goto-object, and the attribute \emph{.backward} can be called to each of them.
+Same as with goto-forward, there is the goto \emph{atom}-object, the abstract object \emph{g}, and the g.backward attribute. Several abstract objects such as \emph{g} can be declared inside of goto-object, and the attribute \emph{.backward} can be called to each of them.
 
 \subsubsection{Simple Backward} The simplest example of using goto-backward:
 
@@ -481,12 +493,12 @@ which in terms of $\varphi$-calculus appears as:
 \end{split}
 \end{equation}
 
-This is identical to that discussed in Section 3.1.1. In cases where the jump is performed without condition, you need to add an additional if-statement, similar to the example in Section 3.1.1:
+This is identical case to that discussed in Section 3.1.1. In cases where the jump is performed without condition, we need to add an additional if-statement, similar to the example in Section 3.1.1:
 
 \begin{equation}
 \begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{if}.( TRUE, \ff{g}.\ff{backward}, TRUE ) \rrbracket) \\
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{if}.( TRUE, \ff{g}.\ff{backward}, TRUE ) \rrbracket) \br
 \end{split}
 \end{equation}
 
@@ -506,8 +518,8 @@ After the conversion described in Section 3.2.1, the simplest call of backward j
 
 \begin{equation}
 \begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ) \rrbracket) \\
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ) \rrbracket) \br
 \end{split}
 \end{equation}
 
@@ -517,11 +529,9 @@ The transformation under consideration involves the following steps:
 \begin{split}
 & \ff{memory}(flag), \\
 & flag.\ff{write}(0), \\
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \\
-& \quad \quad \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ) \\
-& \quad ) \\
-& \rrbracket) \\
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \br
+& \quad \quad \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ))\rrbracket) \\[-1pt]
 \end{split}
 \end{equation}
 
@@ -529,13 +539,10 @@ The transformation under consideration involves the following steps:
 \begin{split}
 & \ff{memory}(flag), \\
 & flag.\ff{write}(0), \\
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \\
-& \quad \quad \ff{seq}(flag.\ff{write}(1), \\
-& \quad \quad  \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ) \\
-& \quad \quad ) \\
-& \quad ) \\
-& \rrbracket) \\
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \br
+& \quad \quad \ff{seq}(flag.\ff{write}(1), \br
+& \quad \quad  \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) )))\rrbracket) \\[-1pt]
 \end{split}
 \end{equation}
 
@@ -543,11 +550,9 @@ The transformation under consideration involves the following steps:
 \begin{split}
 & \ff{memory}(flag), \\
 & flag.\ff{write}(0), \\
-& \ff{while}.(\ff{eq}.(flag 0), \\
-& \quad \ff{seq}(flag.\ff{write}(1), \\
-& \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ) \\
-& \quad ) \\
-& ) \\
+& \ff{while}.(\ff{eq}.(flag 0), \br
+& \quad \ff{seq}(flag.\ff{write}(1), \br
+& \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ))) \\[-1pt]
 \end{split}
 \end{equation}
 
@@ -555,35 +560,30 @@ The transformation under consideration involves the following steps:
 Expression 13 is semantically equivalent to expression 16:
 \end{theorem}
 
-\begin{equation} \nonumber
-\begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ) \rrbracket) \\
-\end{split}
-\end{equation}
+\begin{equation*}
+\dfrac
+    {\begin{matrix}
+    & \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
+    & \quad \varphi \mapsto \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ) \rrbracket) \\
+    \end{matrix}}
+    {\begin{matrix}
+    & \ff{memory}(flag), \\
+    & flag.\ff{write}(0), \\
+    & \ff{while}.(\ff{eq}.(flag 0), \\
+    & \quad \ff{seq}(flag.\ff{write}(1), \\
+    & \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ))) \\
+    \end{matrix}}
+    \jrule{3}
+\end{equation*}
 
-\hline
-
-\begin{equation} \nonumber
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{while}.(\ff{eq}.(flag 0), \\
-& \quad \ff{seq}(flag.\ff{write}(1), \\
-& \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ) \\
-& \quad ) \\
-& ) \\
-\end{split}
-\end{equation}
-
-To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto backward.
+To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto-backward.
 
 Consider the following code on EO:
 
 \begin{ffcode}
 goto
   [g]
-    |\sgm{1}||$\label{ln:ret8}$|
+    |\sgm{1}| > @ |$\label{ln:ret8}$|
       |\sgm{2}|
       if.
         |\m{1}|
@@ -592,9 +592,9 @@ goto
       |\sgm{3}||$\label{ln:ret9}$|
 \end{ffcode}
 
-Let's denote lines \ref{ln:ret8}-\ref{ln:ret9} as W.
+Let's denote lines \ref{ln:ret8}-\ref{ln:ret9} as $W$.
 
-Note that goto-backward works the same as do-while construction in other languages: the first iteration of the new loop is always executed, and the next only if the condition is TRUE.
+Note that goto-backward works the same as do-while construction in other languages: the first iteration of the new loop is always executed, and the next only if the condition of loop is TRUE.
 So, all objects that occurs between the declaration of an abstract object \emph{g} and the "jump" itself should be executed before the new while loop once, and all subsequent times were executed depending on the condition of the loop.
 
 Since there is no direct implementation of the do-while construct in EO, but there is an implementation of the while generator, we can resort to a little trick.
@@ -625,15 +625,15 @@ while.
     
 \end{ffcode}
 
-Let's denote lines \ref{ln:ret10}-\ref{ln:ret11} as W'.
+Let's denote lines \ref{ln:ret10}-\ref{ln:ret11} as $W'$.
 
-Let's look at an example of a chain of nested objects containing a goto backward:
+Let's look at an example of a chain of nested objects containing a goto-backward:
 
 \begin{ffcode}
 
 goto
   [g]
-    |\sgm{0}|
+    |\sgm{0}| > @
       W
       |\sgm{4}|
 
@@ -665,11 +665,9 @@ The simplest way to call goto-backward inside a while-loop is represented as:
 
 \begin{equation}
 \begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\mu_0, \\
-& \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{backward}, \delta_2) \\
-& \quad ) \\
-& \rrbracket) \\
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{while}.(\mu_0, \br
+& \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{backward}, \delta_2))\rrbracket) \br
 \end{split}
 \end{equation}
 
@@ -679,13 +677,10 @@ The transformation under consideration involves the following steps:
 \begin{split}
 & \ff{memory}(flag), \\
 & flag.\ff{write}(0), \\
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \\
-& \quad \quad \ff{while}.(\mu_0, \\
-& \quad \quad \quad \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ) \\
-& \quad \quad ) \\
-& \quad ) \\
-& \rrbracket) \\
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \br
+& \quad \quad \ff{while}.(\mu_0, \br
+& \quad \quad \quad \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 )))\rrbracket) \\[-1pt]
 \end{split}
 \end{equation}
 
@@ -693,16 +688,12 @@ The transformation under consideration involves the following steps:
 \begin{split}
 & \ff{memory}(flag), \\
 & flag.\ff{write}(0), \\
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \\
-& \quad \quad \ff{seq}(flag.\ff{write}(1), \\
-& \quad \quad \quad \ff{while}.( \\
-& \quad \quad \quad \quad \ff{and}.(\mu_0, \ff{eq}.(flag 0).\ff{not}), \\
-& \quad \quad \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ) \\
-& \quad \quad \quad ) \\
-& \quad \quad ) \\
-& \quad ) \\
-& \rrbracket) \\
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \br
+& \quad \quad \ff{seq}(flag.\ff{write}(1), \br
+& \quad \quad \quad \ff{while}.( \br
+& \quad \quad \quad \quad \ff{and}.(\mu_0, \ff{eq}.(flag 0).\ff{not}), \br
+& \quad \quad \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ))))\rrbracket) \\[-1pt]
 \end{split}
 \end{equation}
 
@@ -710,14 +701,11 @@ The transformation under consideration involves the following steps:
 \begin{split}
 & \ff{memory}(flag), \\
 & flag.\ff{write}(0), \\
-& \ff{while}.(\ff{eq}.(flag 0), \\
-& \quad \ff{seq}(flag.\ff{write}(1), \\
-& \quad \quad \ff{while}.( \\
-& \quad \quad \quad \ff{and}.(\mu_0, \ff{eq}.(flag 0).\ff{not}), \\
-& \quad \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ) \\
-& \quad \quad ) \\
-& \quad ) \\
-&  ) \\
+& \ff{while}.(\ff{eq}.(flag 0), \br
+& \quad \ff{seq}(flag.\ff{write}(1), \br
+& \quad \quad \ff{while}.( \br
+& \quad \quad \quad \ff{and}.(\mu_0, \ff{eq}.(flag 0).\ff{not}), \br
+& \quad \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) )))) \\[-1pt]
 \end{split}
 \end{equation}
 
@@ -725,38 +713,30 @@ The transformation under consideration involves the following steps:
 Expression 17 is semantically equivalent to expression 20:
 \end{theorem}
 
-\begin{equation} \nonumber
-\begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-& \quad \varphi \mapsto \ff{while}.(\mu_0, \\
-& \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{backward}, \delta_2) \\
-& \quad ) \\
-& \rrbracket) \\
-\end{split}
-\end{equation}
+\begin{equation*}
+\dfrac
+    {\begin{matrix}
+    & \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
+    & \quad \varphi \mapsto \ff{while}.(\mu_0, \\
+    & \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{backward}, \delta_2) ) \rrbracket ) \\
+    \end{matrix}}
+    {\begin{matrix}
+    & \ff{memory}(flag), \\
+    & flag.\ff{write}(0), \\
+    & \ff{while}.(\ff{eq}.(flag 0), \\
+    & \quad \ff{seq}(flag.\ff{write}(1), \\
+    & \quad \quad \ff{while}.( \\
+    & \quad \quad \quad \ff{and}.(\mu_0, \ff{eq}.(flag 0).\ff{not}), \\
+    & \quad \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) )))) \\
+    \end{matrix}}
+    \jrule{4}
+\end{equation*}
 
-\hline
-
-\begin{equation} \nonumber
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{while}.(\ff{eq}.(flag 0), \\
-& \quad \ff{seq}(flag.\ff{write}(1), \\
-& \quad \quad \ff{while}.( \\
-& \quad \quad \quad \ff{and}.(\mu_0, \ff{eq}.(flag 0).\ff{not}), \\
-& \quad \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ) \\
-& \quad \quad ) \\
-& \quad ) \\
-&  ) \\
-\end{split}
-\end{equation}
-
-To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto backward.
+To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto-backward.
 
 As discussed in section 3.1.3, the behavior of while is different from other objects in the language. Therefore, the transformation will be slightly different from that described in section 3.2.2.
 
-To understand that the logic is not broken, let's look at a special case of calling goto backward inside a while-loop.
+To understand that the logic is not broken, let's look at an abstract case of calling goto-backward inside a while-loop.
 
 Let's consider the following code:
 
@@ -776,18 +756,14 @@ goto
         
 \end{ffcode}
 
-Let's denote lines \ref{ln:ret12}-\ref{ln:ret13} as Z.
+Let's denote lines \ref{ln:ret12}-\ref{ln:ret13} as $Z$.
 
-As described in section 3.2.2, the program runs from top to bottom until it meets goto forward and if the jump condition is met, the abstract object g is executed again.
-Similar to what was said in section 3.2.2, all objects inside the abstract object g should be copied at the jump point.
+Similar to the technique we used in section 3.1.3 with goto-forward inside the while loop, in this case, to avoid all subsequent iterations of the inside while loop, we combine its condition with the jump condition. As in Section 3.2.2, we create a global flag object, which will be an indicator of the execution of the jump condition. As soon as the jump condition is met, we change the flag value, and the next iteration of the inside while loop will fail during the check due to our added combined execution condition.
 
-The only difference, when the jump itself frames a while loop, is that when the jump condition is met, we need to interrupt the execution of all the internal while loops inside the new while loop, which we replaced the jump with.
+The rest of the transformation looks identical to that described in section 3.2.2: create a global while loop with a check for moisture values, Invert the jump condition and if the goto-backward condition is met, change the value of the flag object.
+It is also necessary to wrap all objects that lie inside the abstract object \emph{g} in an additional if-statement with a check for the flag value, so that all of them are not fulfilled as soon as the jump condition is met.
 
-In order to interrupt the execution of each of the internal while loops, we can add an additional condition to each of them, whether the jump condition is met or not. This can be done with an additional flag object that will signal for each inner while loop whether the jump condition has been met.
-
-So, all internal while loops will not be executed further if flag shows that the jump condition is met and the logic of the program is not violated. For all other objects inside our new while loop, we should apply the transformation described in section 3.2.2.
-
-The transformation will look like this:
+The transformation will be presented as:
 
 \begin{ffcode}
 
@@ -815,7 +791,7 @@ while.
         
 \end{ffcode}
 
-Let's denote lines \ref{ln:ret14}-\ref{ln:ret15} as Z'.
+Let's denote lines \ref{ln:ret14}-\ref{ln:ret15} as $Z'$.
 
 
 Let's take a look on a program with nested while-loops:
@@ -856,7 +832,7 @@ while.
 
 
 \subsection{Final algorithm}
-To sum up, we can now fully describe the algorithm itself. The first step is to make the transformations, if necessary, described in sections 3.1.1 and 3.2.1, depending on the current transformation. The second step is going through all the jumps in the program - forward and backward, and depending on the jump we carry out the required transformations: if you need to make a replacement in the while loop, containing a jump - we use transformations 3.1.3 and 3.2.3 accordingly. If you need to make a replacement for a normal object that frames the jump - use transformations 3.1.2 and 3.2.2 respectively.
+To sum up, we can now fully describe the algorithm itself. The first step is to make the transformations, if necessary, described in sections 3.1.1 and 3.2.1, depending on the current transformation. The second step is going through all the jumps in the program - forward and backward, and depending on the jump we carry out the required transformations: if needs to make a replacement in the while loop, containing a jump - use transformations 3.1.3 and 3.2.3 accordingly. If needs to make a replacement for a simple object that frames the jump - use transformations 3.1.2 and 3.2.2 respectively.
 
 
 
