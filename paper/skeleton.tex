@@ -1,6 +1,7 @@
 \documentclass[sigplan,review,11pt,nonacm,natbib=false]{acmart}
 \settopmatter{printfolios=false,printccs=false,printacmref=false}
 \usepackage[maxnames=1,minnames=1,maxbibnames=100,natbib=true,citestyle=authoryear,bibstyle=authoryear,doi=false,url=false,isbn=false,isbn=false]{biblatex}
+\usepackage{debate}
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{xcolor}
@@ -38,7 +39,9 @@
   \refstepcounter{rule}\label{rule:#1}%
   \text{\textbf{\rrule{#1}}}}
 
+\newtheorem{theorem}{Theorem}[section]
 \newtheorem{definition}{Definition}[section]
+\newtheorem{corollary}{Corollary}[theorem]
 
 \graphicspath{ {./images/} }
 
@@ -77,16 +80,28 @@ Some objects in EO programs may need to be platform specific and can’t be comp
 So all jump statements are implemented as a
 single \emph{atom}-object GOTO. The implementation of goto-object in EO implies two types of jumps - goto forward and goto backward. So we should consider transformations for both cases.
 
+The proposed algorithm is a series of transformations that are performed depending on the type of "jump".
+In total, we describe 6 types of transformations: \emph{Simple forward}/\emph{backward} (further \emph{SF}/\emph{SB}), \emph{Goto forward/backward wrapped by object} (further \emph{OF}/\emph{OB}) and \emph{Goto forward/ backward inside the while-loop} (further \emph{WF}/\emph{WB}).
+Transformations are not sequential and independent, and each one is executed in its own particular case.
+For example, \emph{SF}/\emph{SB} is only a "preparation" for the actual replacement of the jump by a semantically equivalent analog and is executed if there is no condition before the jump itself.
+\emph{OF}/\emph{OB} is the main transformation, as it contains the jump replacement itself and covers most possible cases of calling forward or backward jump.
+\emph{WF}/\emph{WB} is a "addition" for the previous transformation, since the behavior of the \emph{while.} object in EO is different from all other objects and the call of the jump inside the loop requires separate consideration.
+
+Thus, the algorithm itself consists of the following steps: 
+\begin{inparaenum}[1)]
+\item Apply \emph{SF}/\emph{SB} transformation if necessary,
+\item Find all occurrences of forward/backward jump's calls,
+\item Apply \emph{OF}/\emph{OB} transformations to all of them,
+\item If there is a \emph{while.} object that wraps the jump call, apply the \emph{WF}/\emph{WB} transformation.
+\end{inparaenum}
+
+The combination of all 6 transformations makes a complete algorithm for getting rid of the GOTO object, as they cover all possible cases of using GOTO and forward/backward jumps in the language.
+
 Since we consider a solution to the problem in strictly object-oriented programming languages, which means that the whole program is a set of objects where some objects can contain others.
 It should be noted that each object in the program has its own level of \emph{nesting} relative to other objects.
 
 \begin{definition} The \emph{nesting} of the current object means the number of objects that contain the current object directly, or that contain objects that contain the current object.
 \end{definition}
-
-The solution we propose contains two types of transformations - forward jump and backward jump.
-The algorithm itself consists in applying these transformations to replace both types of jumps.
-
-\vspace{5mm}
 
 \emph{Designations:}
 
@@ -95,17 +110,17 @@ The algorithm itself consists in applying these transformations to replace both 
 
 \item $\delta$ - Denotes a not-empty object or a chain of nested objects that return a not-NULL value when accessed.
 
-\item $\mu$ - Denotes an object or a chain of nested objects that return a boolean value (TRUE/FALSE) when executed.
+\item $\mu$ - Denotes a not-empty object or a chain of nested objects that return a boolean value (TRUE/FALSE) when accessed.
 \end{itemize}
 
 \newcommand\sgm[1]{$\sigma_#1$}
 \newcommand\dlt[1]{$\delta_#1$}
 \newcommand\m[1]{$\mu_#1$}
 
-We will also look at our transformations in the form of $\varphi$-calculus, on which EO is based. The proposed $\varphi$-calculus represents an object model through data and objects, while operations with them are possible through abstraction, application, and decoration.
+We will also consider our transformations in the form of $\varphi$-calculus, on which EO is based. The proposed $\varphi$-calculus represents an object model through data and objects, while operations with them are possible through abstraction, application, and decoration.
 The calculus introduces a formal apparatus for manipulations with objects.
 
-$\varphi$-calculus uses an alternative “arrow notation” to denote an object in a more compact way, where free attributes of an abstract object stay in the parentheses on the left side of the mapping symbol $\mapsto$ and pairs, which represent bound attributes, stay on the right side, in double-square brackets.
+%%$\varphi$-calculus uses an alternative “arrow notation” to denote an object in a more compact way, where free attributes of an abstract object stay in the parentheses on the left side of the mapping symbol $\mapsto$ and pairs, which represent bound attributes, stay on the right side, in double-square brackets.
 
 
 \subsection{Forward jump}
@@ -125,34 +140,43 @@ goto
 It consists of the goto \emph{atom}-object, the abstract object \emph{g}, and the g.forward attribute. Several abstract objects such as \emph{g} can be declared inside of goto-object, and the attribute \emph{.forward} can be called to each of them.
 
 \subsubsection{Simple Forward}
-Consider the simplest example of using goto-forward:
+
+The \ff{goto} object may be used for unconditional forward jumps. In general case, covering most of the cases of calling goto-forward, it appears as:
 
 \begin{ffcode}
 goto
   [g]
-    g.forward |\dlt{1}| > @
+    |\sgm{1}| > @
+      |\sgm{2}|
+      g.forward |\dlt{1}|
+      |\sgm{3}|
 \end{ffcode}
 
-In terms of $\varphi$-calculus, this code will appear as:
+Here, \dlt{1} is any object, which will become the result of dataization of the \ff{goto} object, $\sigma_1$, $\sigma_2$ are ob
+In terms of $\varphi$-calculus, this code may be expressed as:
 
 \begin{equation}
 \begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \varphi \mapsto \ff{g}.\ff{forward} (\delta_1) \rrbracket ) \\
+& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \quad \quad \varphi \mapsto \sigma_1( \sigma_2, \ff{g}.\ff{forward} (\delta_1), \sigma_3) \rrbracket ) \\
 \end{split}
 \end{equation}
 
+Where in parentheses are denoted free attributes, in square brackets are denoted bound attributes and the symbol $\mapsto$ denotes application/decoration of an object.
+
 Note that in this example, g.forward is simply an attribute of the abstract object \emph{g} and is executed as soon as the queue reaches it.
-Our transformation only considers the jumps that are made when a condition for it is fulfilled. In cases where there is unconditional jump, first of all we transform it into conditional jump by adding an additional if-statement - if (TRUE).
+Our transformation only considers the jumps that are made when a condition for it is fulfilled.
+In cases where there is unconditional jump, first of all we transform it into conditional jump by adding an additional if-statement - if (TRUE).
 This will not violate the program logic, because without the added if-statement, the jump would always be executed, and statements coming after this jump with a nesting not less that the nesting of the abstract object \emph{g} would never be executed:
 
 \begin{equation}
 \begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing,\br
-& \quad \varphi \mapsto \ff{if}.( TRUE, \ff{g}.\ff{forward}(\delta_1), TRUE ) \rrbracket)\\
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \varphi \mapsto \sigma_1 (\sigma_2, \br
+& \quad \quad \quad \ff{if}.( TRUE, \ff{g}.\ff{forward}(\delta_1), TRUE ), \sigma_3) \rrbracket)\\
 \end{split}
 \end{equation}
 
-Same example on EO:
+Same example in EO:
 
 \begin{ffcode}
 goto
@@ -164,54 +188,74 @@ goto
 \end{ffcode}
 
 
-\subsubsection{Goto forward wrapped in an object}
+\subsubsection{Goto forward wrapped by object}
 
-After the conversion described in section 3.1.1, the simplest call of forward jump will be presented as:
-
-\begin{equation}
-\begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2) \rrbracket) \\
-\end{split}
-\end{equation}
-
-The transformation under consideration involves the following steps:
+After the transformation described in section 3.1.1, the general case of calling forward jump will be presented as:
 
 \begin{equation}
 \begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{if}.(\mu_1.\ff{not}, \ff{g}.\ff{forward}(\delta_1), \delta_2) \rrbracket) \br
-\end{split}
-\end{equation}
-
-\begin{equation}
-\begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{if}.(\mu_1.\ff{not}, \delta_2, \delta_1) \rrbracket) \br
-\end{split}
-\end{equation}
-
-\begin{equation}
-\begin{split}
-& \ff{if.}(\mu_1.\ff{not}, \delta_2, \delta_1) \br
+& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \varphi \mapsto \sigma_1 (\sigma_2, \br
+& \quad \quad \quad \ff{if}.( \mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2 ), \sigma_3) \rrbracket)\\
 \end{split}
 \end{equation}
 
 \begin{theorem}
-Expression 3 is semantically equivalent to expression 6:
+A goto object that contains an object or a chain of nested objects that wrap the \emph{.forward} attribute can be converted to a similar one, but without using the \emph{.forward} attribute.
 \end{theorem}
+
+In terms of $\varphi$-calculus, it can be represented as the following inference rule:
 
 \begin{equation*}
 \dfrac
     {\begin{matrix}
-    \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-    \varphi \mapsto \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2) \rrbracket)
+    & \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \varphi \mapsto \sigma_1 (\sigma_2, \\
+    & \quad \quad \quad \quad \ff{if}.( \mu_1,     \ff{g}.\ff{forward}(\delta_1), \delta_2 ), \sigma_3) \rrbracket)\\
     \end{matrix}}
-    {\ff{if.}(\mu_1.\ff{not}, \delta_2, \delta_1)}
+    {\begin{matrix}
+    & \sigma_1(\sigma_2, \ff{if.}(\mu_1.\ff{not}, \delta_2, \delta_1), \\
+    & \quad \quad \ff{if.}(\mu_1.\ff{not}, \sigma_3, TRUE)) \\
+    \end{matrix}}
     \jrule{1}
 \end{equation*}
 
-To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto-forward.
+\begin{proof}
+To get rid of using ".forward" attribute, it is required to emulate work of jump itself.
+
+First of all, let's invert condition of jump, swap objects in "THEN"/"ELSE" brunches of if-statement and remove \emph{.forward} attribute:
+
+\begin{equation}
+\begin{split}
+& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \quad \varphi \mapsto \sigma_1 ( \sigma_2,  \ff{if}.(\mu_1.not, \delta_2, \delta_1), \sigma_3) \rrbracket) \\
+\end{split}
+\end{equation}
+
+Since the jump does not execute all statements following the jump itself, we need to protect their execution by checking the jump condition for each of them:
+
+\begin{equation}
+\begin{split}
+& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
+& \quad \quad \varphi \mapsto \sigma_1(\sigma_2,  \ff{if}.(\mu_1.\ff{not}, \delta_2, \delta_1), \br
+& \quad \quad \quad \ff{if.}(\mu_1.\ff{not}, \sigma_3, TRUE)) \rrbracket) \\
+\end{split}
+\end{equation}
+
+Thus, all objects that would not have executed in the presence of the \emph{.forward} attribute will not be executed now. And objects that were returned in branches of the old if-statement will also be executed under the same condition.
+
+\end{proof}
+
+\begin{corollary}
+If there are no \emph{.forward} attributes inside the abstract object goto, no jumps will be performed and therefore it is possible to delete the abstract object goto itself without losing logic.
+\end{corollary}
+
+\begin{equation}
+\begin{split}
+& \sigma_1( \sigma_2, \ff{if}.(\mu_1.\ff{not}, \delta_2, \delta_1), \br
+& \quad \quad \ff{if.}(\mu_1.\ff{not}, \sigma_3, TRUE)) \\
+\end{split}
+\end{equation}
+
+Let's see, how this transformation will be presented in EO.
 
 Consider the following code:
 
@@ -260,7 +304,7 @@ flag.write 0
 
 Let's denote lines \ref{ln:ret2}-\ref{ln:ret3} as $X'$.
 
-Now let's look at an example program with nested objects containing goto-forward:
+Now let's look at an example of transformation, if the code fragment \emph{X} is wrapped into an object:
 
 \begin{ffcode}
 goto
@@ -513,7 +557,7 @@ goto
       TRUE
 \end{ffcode}
 
-\subsubsection{Goto backward wrapped in an object}
+\subsubsection{Goto backward wrapped by object}
 After the conversion described in Section 3.2.1, the simplest call of backward jump will be presented as:
 
 \begin{equation}
@@ -841,6 +885,9 @@ As a result of our research, we described an algorithm that automatically conver
 
 \section{Discussion}
 Our software will simplify programs in EO language and make them more readable without using GOTO objects. In addition, our proof makes it possible to remove all GOTO constructs from programs.
+
+
+
 
 \end{document}
 \endinput
