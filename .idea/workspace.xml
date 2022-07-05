@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="16506fc9-c310-4a45-876f-c82927761a4f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/eolang/jump/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/eolang/jump/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/eolang/jump/RemoveGOTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/eolang/jump/RemoveGOTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/test.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/test.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,12 +72,25 @@
       <updated>1656261185459</updated>
       <workItem from="1656261192339" duration="261000" />
       <workItem from="1656404635660" duration="6438000" />
-      <workItem from="1656424073541" duration="1097000" />
+      <workItem from="1656424073541" duration="4698000" />
+      <workItem from="1656579992130" duration="10437000" />
+      <workItem from="1656936805112" duration="1140000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
