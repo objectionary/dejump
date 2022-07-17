@@ -3,7 +3,7 @@
     <!--
     Goto Backward
     -->
-    <xsl:output indent="no" method="text"/>
+    <xsl:output indent="yes" method="xml"/>
     <xsl:strip-space elements="*"/>
 
     <xsl:template match='node()|@*'>
@@ -11,17 +11,4 @@
             <xsl:apply-templates select='@*|node()'/>
         </xsl:copy>
     </xsl:template>
-
-    <xsl:template match='//o[@base="goto"]'>
-        <o base=".while" line="{@line}" pos="{@pos}">
-            <o base=".eq" line="{@line}" pos="{@pos}">
-                <o base="flag" line="{@line}" pos="{@pos}"/>
-                <o base="int" data="int" line="{@line}" pos="{@pos}">0</o>
-                <xsl:apply-templates/>
-            </o>
-        </o>
-    </xsl:template>
-
-
-
 </xsl:stylesheet>

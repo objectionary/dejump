@@ -3,13 +3,12 @@
     <!--
     Goto forward
     -->
-    <xsl:output indent="no" method="text"/>
+    <xsl:output indent="yes" method="xml"/>
     <xsl:strip-space elements="*"/>
 
     <xsl:template match='node()|@*'>
         <xsl:copy>
-            <xsl:apply-templates select='@*|node()'/>
+            <xsl:apply-templates select='node()|@*'/>
         </xsl:copy>
     </xsl:template>
-
 </xsl:stylesheet>
