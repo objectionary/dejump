@@ -11,12 +11,21 @@
         <xsl:variable name="cur" select="following-sibling::o[1]/@base"/>
         <xsl:choose>
             <xsl:when test='not(parent::o[@base=".if"] and parent::o/o[3][@base=$cur])'>
-                <o base=".if">
-                    <o base="bool" data="bool">true</o>
+                <xsl:element name="o">
+                    <xsl:attribute name="base"><xsl:text>.if</xsl:text></xsl:attribute>
+                    <xsl:element name="o">
+                        <xsl:attribute name="base"><xsl:text>bool</xsl:text></xsl:attribute>
+                        <xsl:attribute name="data"><xsl:text>bool</xsl:text></xsl:attribute>
+                        <xsl:text>true</xsl:text>
+                    </xsl:element>
                     <xsl:copy-of select="."/>
                     <xsl:copy-of select="following-sibling::o[1]"/>
-                    <o base="bool" data="bool">true</o>
-                </o>
+                    <xsl:element name="o">
+                        <xsl:attribute name="base"><xsl:text>bool</xsl:text></xsl:attribute>
+                        <xsl:attribute name="data"><xsl:text>bool</xsl:text></xsl:attribute>
+                        <xsl:text>true</xsl:text>
+                    </xsl:element>
+                </xsl:element>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:copy-of select="."/>
