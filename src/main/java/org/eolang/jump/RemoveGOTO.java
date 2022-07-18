@@ -19,13 +19,13 @@ public class RemoveGOTO {
 
         File in = new File(path);
         XML input = new XMLDocument(in);
-        /*XML input = new XMLDocument(this.getClass().getResource("/hello.xmir"));*/
         XML output = new Xsline(train).pass(input);
 
         File ret = new File(path.substring(0, path.lastIndexOf('\\')) + "\\converted_" + in.getName());
         ret.createNewFile();
-        FileWriter out = new FileWriter(ret);
-        out.write(output.toString());
-        System.out.println(output);
+        try (FileWriter out = new FileWriter(ret)) {
+            out.write(output.toString());
+            out.flush();
+        }
     }
 }
