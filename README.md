@@ -1,6 +1,7 @@
+<img alt="logo" src="https://www.objectionary.com/cactus.svg" height="100px" />
 
-Takes as an input a program in a strictly object-oriented programming language and converts it to a semantically equivalent program, excluding the use of ***goto*** object.
-The input data is a program written in EO in **.XMIR** format, the output program also returns the program in **.XMIR**.
+Takes as an input a program in [EO](https://www.eolang.org/) and converts it to a semantically equivalent program, excluding the use of ***goto*** object.
+The input data is a program in **.XMIR** format, the output program also returns the program in **.XMIR**.
 
 ## Quick start
 To use this program, the first step is to clone this repository to your device locally. This can be done via the command line by writing:
