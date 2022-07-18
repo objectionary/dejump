@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<program ms="106"
+         name="big"
+         source="/home/mlipanin/test/big.eo"
+         time="2022-07-18T13:34:32.658770Z"
+         version="0.25.0">
+   <listing>[] &gt; big
+  memory 0 &gt; x
+  seq &gt; @
+    goto
+      [g]
+        seq &gt; @
+          x.write (x.plus 1)
+          if.
+            eq.
+              mod.
+                QQ.math.number
+                  x
+                10
+              0
+            seq
+              QQ.io.stdout "X mod 10 equals 0!\n"
+              g.forward TRUE
+            QQ.io.stdout "NOT\n"
+          QQ.io.stdout "NEED TO REPEAT!!\n"
+          g.backward
+          QQ.io.stdout "Never be printed!\n"
+</listing>
+   <errors/>
+   <sheets/>
+   <objects>
+      <o abstract="" line="1" name="big" pos="0">
+         <o base="memory" line="2" name="x" pos="2">
+            <o base="int" data="int" line="2" pos="9">0</o>
+         </o>
+         <o base="seq" line="3" name="@" pos="2">
+            <o base="goto" line="4" pos="4">
+               <o abstract="" line="5" pos="6">
+                  <o line="5" name="g" pos="7"/>
+                  <o base="seq" line="6" name="@" pos="8">
+                     <o base="x" line="7" pos="10"/>
+                     <o base=".write" line="7" method="" pos="11">
+                        <o base="x" line="7" pos="19"/>
+                        <o base=".plus" line="7" method="" pos="20">
+                           <o base="int" data="int" line="7" pos="26">1</o>
+                        </o>
+                     </o>
+                     <o base=".if" line="8" pos="10">
+                        <o base=".eq" line="9" pos="12">
+                           <o base=".mod" line="10" pos="14">
+                              <o base="QQ" line="11" pos="16"/>
+                              <o base=".math" line="11" method="" pos="18"/>
+                              <o base=".number" line="11" method="" pos="23">
+                                 <o base="x" line="12" pos="18"/>
+                              </o>
+                              <o base="int" data="int" line="13" pos="16">10</o>
+                           </o>
+                           <o base="int" data="int" line="14" pos="14">0</o>
+                        </o>
+                        <o base="seq" line="15" pos="12">
+                           <o base="QQ" line="16" pos="14"/>
+                           <o base=".io" line="16" method="" pos="16"/>
+                           <o base=".stdout" line="16" method="" pos="19">
+                              <o base="string" data="string" line="16" pos="27">X mod 10 equals 0!\n</o>
+                           </o>
+                           <o base="g" line="17" pos="14"/>
+                           <o base=".forward" line="17" method="" pos="15">
+                              <o base="bool" data="bool" line="17" pos="24">true</o>
+                           </o>
+                        </o>
+                        <o base="QQ" line="18" pos="12"/>
+                        <o base=".io" line="18" method="" pos="14"/>
+                        <o base=".stdout" line="18" method="" pos="17">
+                           <o base="string" data="string" line="18" pos="25">NOT\n</o>
+                        </o>
+                     </o>
+                     <o base="QQ" line="19" pos="10"/>
+                     <o base=".io" line="19" method="" pos="12"/>
+                     <o base=".stdout" line="19" method="" pos="15">
+                        <o base="string" data="string" line="19" pos="23">NEED TO REPEAT!!\n</o>
+                     </o>
+                     <o base="g" line="20" pos="10"/>
+                     <o base=".backward" line="20" method="" pos="11"/>
+                     <o base="QQ" line="21" pos="10"/>
+                     <o base=".io" line="21" method="" pos="12"/>
+                     <o base=".stdout" line="21" method="" pos="15">
+                        <o base="string" data="string" line="21" pos="23">Never be printed!\n</o>
+                     </o>
+                  </o>
+               </o>
+            </o>
+         </o>
+      </o>
+   </objects>
+</program>
