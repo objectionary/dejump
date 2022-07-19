@@ -50,7 +50,9 @@
             </xsl:element>
         </xsl:for-each>
     </xsl:template>
-    <xsl:template match='o[@base="goto"]//*[preceding::o[@base=".if"]/o[2]/o[2][@temp=$g]][preceding-sibling::*[preceding::o[@base=".if"]/o[2]/o[2][@temp=$g]] or ancestor::*[preceding::o[@base=".if"]/o[2]/o[2][@temp=$g]]]'/>
+
+    <xsl:template match='o[@base="goto"]//*[preceding::o[@base=".if"]/o[2]/o[2][@temp=$g]][preceding-sibling::*[preceding::o[@base=".if"]/o[2]/o[2][@temp=$g]]]'/>
+    <xsl:template match='o[@base="goto"]//*[preceding::o[@base=".if"]/o[2]/o[2][@temp=$g]][ancestor::*[preceding::o[@base=".if"]/o[2]/o[2][@temp=$g]]]'/>
     <xsl:template match='node()|@*'>
         <xsl:copy>
             <xsl:apply-templates select='node()|@*'/>
