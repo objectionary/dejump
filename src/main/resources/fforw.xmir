@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<program ms="158"
+         name="fforw"
+         source="/home/mlipanin/test/fforw.eo"
+         time="2022-07-19T11:38:16.884705Z"
+         version="0.25.0">
+   <listing>memory 0 &gt; x
+[] &gt; fforw
+  seq &gt; @
+    QQ.io.stdout "Just a check!\n"
+    goto
+      [g]
+        seq &gt; @
+          x.write (x.plus 1)
+          if.
+            eq.
+              mod.
+                QQ.math.number x
+                2
+              0
+            seq
+              QQ.io.stdout "X mod 2 == 0!\n"
+              if.
+                eq.
+                  mod.
+                    QQ.math.number x
+                    4
+                  0
+                seq
+                  QQ.io.stdout "X mod 4 == 0!!!!\n"
+                  g.forward TRUE
+                seq
+                  QQ.io.stdout "X mod 2 == 0 but X mod 4 != 0 ;(((\n"
+                  g.forward TRUE
+                  QQ.io.stdout "Never :)))\n"
+              QQ.io.stdout "Just hard check\n"
+            seq
+              QQ.io.stdout "AGAIN!!!!!\n"
+              g.backward
+              QQ.io.stdout "NEVER!!!!!\n"
+</listing>
+   <errors/>
+   <sheets/>
+   <objects>
+      <o base="memory" line="1" name="x" pos="0">
+         <o base="int" data="int" line="1" pos="7">0</o>
+      </o>
+      <o abstract="" line="2" name="fforw" pos="0">
+         <o base="seq" line="3" name="@" pos="2">
+            <o base="QQ" line="4" pos="4"/>
+            <o base=".io" line="4" method="" pos="6"/>
+            <o base=".stdout" line="4" method="" pos="9">
+               <o base="string" data="string" line="4" pos="17">Just a check!\n</o>
+            </o>
+            <o base="goto" line="5" pos="4">
+               <o abstract="" line="6" pos="6">
+                  <o line="6" name="g" pos="7"/>
+                  <o base="seq" line="7" name="@" pos="8">
+                     <o base="x" line="8" pos="10"/>
+                     <o base=".write" line="8" method="" pos="11">
+                        <o base="x" line="8" pos="19"/>
+                        <o base=".plus" line="8" method="" pos="20">
+                           <o base="int" data="int" line="8" pos="26">1</o>
+                        </o>
+                     </o>
+                     <o base=".if" line="9" pos="10">
+                        <o base=".eq" line="10" pos="12">
+                           <o base=".mod" line="11" pos="14">
+                              <o base="QQ" line="12" pos="16"/>
+                              <o base=".math" line="12" method="" pos="18"/>
+                              <o base=".number" line="12" method="" pos="23">
+                                 <o base="x" line="12" pos="31"/>
+                              </o>
+                              <o base="int" data="int" line="13" pos="16">2</o>
+                           </o>
+                           <o base="int" data="int" line="14" pos="14">0</o>
+                        </o>
+                        <o base="seq" line="15" pos="12">
+                           <o base="QQ" line="16" pos="14"/>
+                           <o base=".io" line="16" method="" pos="16"/>
+                           <o base=".stdout" line="16" method="" pos="19">
+                              <o base="string" data="string" line="16" pos="27">X mod 2 == 0!\n</o>
+                           </o>
+                           <o base=".if" line="17" pos="14">
+                              <o base=".eq" line="18" pos="16">
+                                 <o base=".mod" line="19" pos="18">
+                                    <o base="QQ" line="20" pos="20"/>
+                                    <o base=".math" line="20" method="" pos="22"/>
+                                    <o base=".number" line="20" method="" pos="27">
+                                       <o base="x" line="20" pos="35"/>
+                                    </o>
+                                    <o base="int" data="int" line="21" pos="20">4</o>
+                                 </o>
+                                 <o base="int" data="int" line="22" pos="18">0</o>
+                              </o>
+                              <o base="seq" line="23" pos="16">
+                                 <o base="QQ" line="24" pos="18"/>
+                                 <o base=".io" line="24" method="" pos="20"/>
+                                 <o base=".stdout" line="24" method="" pos="23">
+                                    <o base="string" data="string" line="24" pos="31">X mod 4 == 0!!!!\n</o>
+                                 </o>
+                                 <o base="g" line="25" pos="18"/>
+                                 <o base=".forward" line="25" method="" pos="19">
+                                    <o base="bool" data="bool" line="25" pos="28">true</o>
+                                 </o>
+                              </o>
+                              <o base="seq" line="26" pos="16">
+                                 <o base="QQ" line="27" pos="18"/>
+                                 <o base=".io" line="27" method="" pos="20"/>
+                                 <o base=".stdout" line="27" method="" pos="23">
+                                    <o base="string" data="string" line="27" pos="31">X mod 2 == 0 but X mod 4 != 0 ;(((\n</o>
+                                 </o>
+                                 <o base="g" line="28" pos="18"/>
+                                 <o base=".forward" line="28" method="" pos="19">
+                                    <o base="bool" data="bool" line="28" pos="28">true</o>
+                                 </o>
+                                 <o base="QQ" line="29" pos="18"/>
+                                 <o base=".io" line="29" method="" pos="20"/>
+                                 <o base=".stdout" line="29" method="" pos="23">
+                                    <o base="string" data="string" line="29" pos="31">Never :)))\n</o>
+                                 </o>
+                              </o>
+                           </o>
+                           <o base="QQ" line="30" pos="14"/>
+                           <o base=".io" line="30" method="" pos="16"/>
+                           <o base=".stdout" line="30" method="" pos="19">
+                              <o base="string" data="string" line="30" pos="27">Just hard check\n</o>
+                           </o>
+                        </o>
+                        <o base="seq" line="31" pos="12">
+                           <o base="QQ" line="32" pos="14"/>
+                           <o base=".io" line="32" method="" pos="16"/>
+                           <o base=".stdout" line="32" method="" pos="19">
+                              <o base="string" data="string" line="32" pos="27">AGAIN!!!!!\n</o>
+                           </o>
+                           <o base="g" line="33" pos="14"/>
+                           <o base=".backward" line="33" method="" pos="15"/>
+                           <o base="QQ" line="34" pos="14"/>
+                           <o base=".io" line="34" method="" pos="16"/>
+                           <o base=".stdout" line="34" method="" pos="19">
+                              <o base="string" data="string" line="34" pos="27">NEVER!!!!!\n</o>
+                           </o>
+                        </o>
+                     </o>
+                  </o>
+               </o>
+            </o>
+         </o>
+      </o>
+   </objects>
+</program>
