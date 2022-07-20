@@ -4,7 +4,6 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        RemoveGOTO run = new RemoveGOTO();
-        run.exec(args[0]);
+        new RemoveGOTO(args[0]).exec();
     }
 }
