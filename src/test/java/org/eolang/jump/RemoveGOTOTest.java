@@ -2,9 +2,9 @@ package org.eolang.jump;
 
 import org.junit.jupiter.api.Test;
 
-public class RemoveGOTOTest {
+public final class RemoveGOTOTest {
 
-    @Test
+    //@Test
     public void check() {
 
     }

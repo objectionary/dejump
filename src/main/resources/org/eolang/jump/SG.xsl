@@ -5,35 +5,29 @@
     -->
     <xsl:output indent="yes" method="xml"/>
     <xsl:strip-space elements="*"/>
-    <xsl:variable name="gotos" select='//o[@base="goto"]'/>
-    <xsl:variable name="g" select='$gotos/o/o[1]/@name'/>
-    <xsl:template match="o[@base=$g]">
-        <xsl:variable name="cur" select="following-sibling::o[1]/@base"/>
+    <xsl:template match='o[@base=".forward" or @base=".backward"]'>
         <xsl:choose>
-            <xsl:when test='not(parent::o[@base=".if"] and parent::o/o[3][@base=$cur])'>
+            <xsl:when test='parent::o[@base=".if"]'>
+                <xsl:copy-of select="."/>
+            </xsl:when>
+            <xsl:otherwise>
                 <xsl:element name="o">
                     <xsl:attribute name="base"><xsl:text>.if</xsl:text></xsl:attribute>
                     <xsl:element name="o">
-                        <xsl:attribute name="base"><xsl:text>bool</xsl:text></xsl:attribute>
+                        <xsl:attribute name="base"><xsl:text>org.eolang.bool</xsl:text></xsl:attribute>
                         <xsl:attribute name="data"><xsl:text>bool</xsl:text></xsl:attribute>
                         <xsl:text>true</xsl:text>
                     </xsl:element>
                     <xsl:copy-of select="."/>
-                    <xsl:copy-of select="following-sibling::o[1]"/>
                     <xsl:element name="o">
-                        <xsl:attribute name="base"><xsl:text>bool</xsl:text></xsl:attribute>
+                        <xsl:attribute name="base"><xsl:text>org.eolang.bool</xsl:text></xsl:attribute>
                         <xsl:attribute name="data"><xsl:text>bool</xsl:text></xsl:attribute>
                         <xsl:text>true</xsl:text>
                     </xsl:element>
                 </xsl:element>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:copy-of select="."/>
-                <xsl:copy-of select="following-sibling::o[1]"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    <xsl:template match='o[@base=".backward" or @base=".forward"]'/>
     <xsl:template match='node()|@*'>
         <xsl:copy>
             <xsl:apply-templates select='node()|@*'/>
