@@ -2,9 +2,7 @@ package org.eolang.jump;
 
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
-import com.jcabi.xml.XSLDocument;
 import com.yegor256.xsline.*;
-import org.cactoos.Output;
 import org.cactoos.io.InputOf;
 import org.cactoos.io.OutputTo;
 import org.eolang.parser.ParsingTrain;
@@ -27,27 +25,25 @@ public final class RemoveGOTO {
     public void exec() throws IOException {
         File curDir = new File(this.path.substring(0, this.path.lastIndexOf('\\')) + "\\generated");
         String curName = new File(this.path).getName().substring(0, new File(this.path).getName().lastIndexOf('.'));
-        File input = new File(curDir.getPath() + '\\' + curName + ".xmir");
+        File input = new File(this.path);
 
         if (curDir.exists() && !deleteDirectory(curDir)) throw new IOException("Can't delete a 'generated' repository");
         if (!(curDir.mkdir())) throw new IOException("Can't create a 'generated' repository");
-        if (!(input.createNewFile())) throw new IOException("Can't create an '../generated/*.xmir' file");
 
         this.xmlIn = getParsedXML(Files.readString(input.toPath()));
-        Train<Shift> train = new ParsingTrain();
-        train = train
-                .with(new StXSL(new XSLDocument(this.getClass().getResource("/org/eolang/jump/SG.xsl"))));
-                //.with(new StXSL(new XSLDocument(this.getClass().getResource("/org/eolang/jump/GF_1.xsl"))));
+        Train<Shift> train = new TrDefault<Shift>()
+                .with(new StClasspath("/org/eolang/jump/SG.xsl"))
+                .with(new StClasspath("/org/eolang/jump/GF_1.xsl"));
                 //.with(new StXSL(new XSLDocument(this.getClass().getResource("/org/eolang/jump/GF_2.xsl"))));
                 //.with(new StXSL(new XSLDocument(this.getClass().getResource("/GB.xsl"))));
                 //.with(new StXSL(new XSLDocument(this.getClass().getResource("/TW.xsl"))));
 
-        this.xmlOut = new Xsline(train).pass(xmlOut);
-        //System.out.println(this.xmlOut);
+        this.xmlOut = new Xsline(train).pass(xmlIn);
+        System.out.println(this.xmlOut);
 
         String ret = new XMIR(xmlOut).toEO();
         File output = new File(curDir.getPath() + '\\' + curName + "_transformed.eo");
-        if (!(output.createNewFile())) throw new IOException("Can't create an '../generated/*_transformed.xmir' file");
+        if (!(output.createNewFile())) throw new IOException("Can't create an '../generated/*_transformed.eo' file");
         try (FileWriter out = new FileWriter(output.getPath())) {
             out.write(ret);
             out.flush();

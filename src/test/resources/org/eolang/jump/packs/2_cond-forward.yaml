@@ -1,0 +1,20 @@
+xsls:
+  - /org/eolang/jump/SG.xsl
+  - /org/eolang/jump/GF_1.xsl
+
+before: |
+  goto
+    [g]
+      seq > @
+        g.forward 228
+
+after: |
+  goto
+    [g]
+      seq > @
+        if.
+          TRUE
+          seq
+            228
+            flag.write 1
+          TRUE

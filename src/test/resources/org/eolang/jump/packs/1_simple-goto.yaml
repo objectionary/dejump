@@ -1,0 +1,17 @@
+xsls:
+  - /org/eolang/jump/SG.xsl
+
+before: |
+  goto
+    [g]
+      seq > @
+        g.backward
+
+after: |
+  goto
+    [g]
+      seq > @
+        if.
+          TRUE
+          g.backward
+          TRUE
