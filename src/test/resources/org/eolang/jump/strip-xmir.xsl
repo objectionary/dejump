@@ -51,6 +51,15 @@ SOFTWARE.
     <xsl:template match="@ref">
         <!-- Not important -->
     </xsl:template>
+    <xsl:template match="@which">
+        <!-- Not important -->
+    </xsl:template>
+    <xsl:template match="@fl">
+        <!-- Not important -->
+    </xsl:template>
+    <xsl:template match="@tt">
+        <!-- Not important -->
+    </xsl:template>
     <xsl:template match='o[starts-with(@base, "flag_")]'>
         <xsl:element name="o">
             <xsl:attribute name="base"><xsl:text>org.eolang.flag</xsl:text></xsl:attribute>

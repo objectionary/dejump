@@ -33,10 +33,11 @@ public final class RemoveGOTO {
         this.xmlIn = getParsedXML(Files.readString(input.toPath()));
         Train<Shift> train = new TrDefault<Shift>()
                 .with(new StClasspath("/org/eolang/jump/SG.xsl"))
-                .with(new StClasspath("/org/eolang/jump/GF_1.xsl"));
-                //.with(new StXSL(new XSLDocument(this.getClass().getResource("/org/eolang/jump/GF_2.xsl"))));
-                //.with(new StXSL(new XSLDocument(this.getClass().getResource("/GB.xsl"))));
+                .with(new StEndless(new StClasspath("/org/eolang/jump/change-condition-of-jump.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/jump/add-fl.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/jump/wrap-other-objects.xsl")));
                 //.with(new StXSL(new XSLDocument(this.getClass().getResource("/TW.xsl"))));
+                //.with(new StClasspath("/org/eolang/jump/rmv-meanless.xsl"));
 
         this.xmlOut = new Xsline(train).pass(xmlIn);
         System.out.println(this.xmlOut);

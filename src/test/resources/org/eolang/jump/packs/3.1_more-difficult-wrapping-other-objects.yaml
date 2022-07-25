@@ -1,0 +1,64 @@
+xsls:
+  - /org/eolang/jump/SG.xsl
+  - /org/eolang/jump/change-condition-of-jump.xsl
+  - /org/eolang/jump/add-fl.xsl
+  - /org/eolang/jump/wrap-other-objects.xsl
+
+before: |
+  [] > app
+    seq > @
+      memory 0 > x
+      goto
+        [g]
+          seq > @
+            x.write (x.plus 1)
+            if.
+              x.lt 5
+              g.backward
+              seq
+                QQ.io.stdout
+                  QQ.txt.sprintf
+                    "WOW! X is %d\n"
+                    x
+                g.forward x
+            QQ.io.stdout "Never!\n"
+            QQ.io.stdout "EVER!\n"
+      QQ.io.stdout "Finally!!!\n"
+
+after: |
+  [] > app
+    seq > @
+      memory 0 > x
+      goto
+        [g]
+          seq > @
+            x.write (x.plus 1)
+            if.
+              x.lt 5
+              flag.write 0
+              seq
+                QQ.io.stdout
+                  QQ.txt.sprintf
+                    "WOW! X is %d\n"
+                    x
+                if.
+                  TRUE
+                  seq
+                    x
+                    flag.write 1
+                  TRUE
+            if.
+              eq.
+                flag
+                0
+              seq
+                if.
+                  eq.
+                    flag
+                    1
+                  seq
+                    QQ.io.stdout "Never!\n"
+                    QQ.io.stdout "EVER!\n"
+                  TRUE
+              TRUE
+      QQ.io.stdout "Finally!!!\n"

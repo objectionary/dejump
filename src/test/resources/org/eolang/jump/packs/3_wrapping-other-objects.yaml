@@ -1,0 +1,28 @@
+xsls:
+  - /org/eolang/jump/SG.xsl
+  - /org/eolang/jump/change-condition-of-jump.xsl
+  - /org/eolang/jump/add-fl.xsl
+  - /org/eolang/jump/wrap-other-objects.xsl
+
+before: |
+  goto
+    [g]
+      seq > @
+        g.backward
+        QQ.io.stdout "Check\n"
+
+after: |
+  goto
+    [g]
+      seq > @
+        if.
+          TRUE
+          flag.write 0
+          TRUE
+        if.
+          eq.
+            flag
+            1
+          seq
+            QQ.io.stdout "Check\n"
+          TRUE
