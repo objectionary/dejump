@@ -35,8 +35,9 @@ public final class RemoveGOTO {
                 .with(new StEndless(new StClasspath("/org/eolang/jump/SG.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/change-condition-of-jump.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/add-fl.xsl")))
-                .with(new StEndless(new StClasspath("/org/eolang/jump/wrap-other-objects.xsl")));
-                //.with(new StXSL(new XSLDocument(this.getClass().getResource("/TW.xsl"))));
+                .with(new StEndless(new StClasspath("/org/eolang/jump/wrap-other-objects.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/jump/goto-to-while.xsl")))
+                .with(new StClasspath("/org/eolang/jump/flags-to-memory.xsl"));
                 //.with(new StEndless(new StClasspath("/org/eolang/jump/rmv-meaningless.xsl")));
 
         this.xmlOut = new Xsline(train).pass(xmlIn);

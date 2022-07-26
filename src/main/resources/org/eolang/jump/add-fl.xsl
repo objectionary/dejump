@@ -9,6 +9,7 @@
         <xsl:element name="o">
             <xsl:attribute name="base" select="@base"/>
             <xsl:attribute name="which" select="@which"/>
+            <xsl:attribute name="rem" select="@which"/>
             <xsl:attribute name="tt" select="@tt"/>
             <xsl:attribute name="fl">
                 <xsl:choose>

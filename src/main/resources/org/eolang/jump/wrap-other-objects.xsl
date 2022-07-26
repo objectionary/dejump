@@ -9,7 +9,7 @@
     <xsl:variable name="curName" select='$curNode/@which'/>
     <xsl:variable name="curFlag" select='$curNode/@fl'/>
     <xsl:variable name="curType" select='$curNode/@tt'/>
-    <xsl:template match='o[ends-with(@base,"goto") and o[1]/o[1][@name=$curName]]//o'>
+    <xsl:template match='o[ends-with(@base,"goto") and o[1]/o[1][@name=$curName]]//o' priority="1">
         <xsl:variable name="current" select="."/>
         <xsl:choose>
             <xsl:when test='$current/preceding::o[count(.|$curNode)=count(.) and count(.)=count($curNode)]'>
@@ -59,7 +59,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    <xsl:template match='objects/descendant::o[@which][1]'>
+    <xsl:template match='objects/descendant::o[@which][1]' priority="2">
         <xsl:copy>
             <xsl:apply-templates select='node()|@* except @which'/>
         </xsl:copy>

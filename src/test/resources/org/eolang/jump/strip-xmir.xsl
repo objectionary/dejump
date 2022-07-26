@@ -60,6 +60,9 @@ SOFTWARE.
     <xsl:template match="@tt">
         <!-- Not important -->
     </xsl:template>
+    <xsl:template match="@rem">
+        <!-- Not important -->
+    </xsl:template>
     <xsl:template match='o[starts-with(@base, "flag_")]'>
         <xsl:element name="o">
             <xsl:attribute name="base"><xsl:text>org.eolang.flag</xsl:text></xsl:attribute>

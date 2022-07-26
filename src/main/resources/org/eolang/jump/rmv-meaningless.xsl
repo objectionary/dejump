@@ -14,6 +14,9 @@
     <xsl:template match="@tt">
         <!-- Not important -->
     </xsl:template>
+    <xsl:template match="@rem">
+        <!-- Not important -->
+    </xsl:template>
     <xsl:template match='node()|@*'>
         <xsl:copy>
             <xsl:apply-templates select='@*|node()'/>
