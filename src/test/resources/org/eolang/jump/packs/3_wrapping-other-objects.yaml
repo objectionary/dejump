@@ -17,7 +17,8 @@ after: |
       seq > @
         if.
           TRUE
-          flag.write 0
+          seq
+            flag.write 0
           TRUE
         if.
           eq.

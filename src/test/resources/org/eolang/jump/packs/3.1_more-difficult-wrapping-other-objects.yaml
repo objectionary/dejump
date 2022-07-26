@@ -35,7 +35,8 @@ after: |
             x.write (x.plus 1)
             if.
               x.lt 5
-              flag.write 0
+              seq
+                flag.write 0
               seq
                 QQ.io.stdout
                   QQ.txt.sprintf

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="rmv" version="2.0">
     <!--
-    Removes attributes "fl", "which" and "tt" from objects
+    Removes meaningless attributes/names
     -->
     <xsl:output indent="yes" method="xml"/>
     <xsl:strip-space elements="*"/>

@@ -5,10 +5,10 @@
     -->
     <xsl:output indent="yes" method="xml"/>
     <xsl:strip-space elements="*"/>
-    <xsl:variable name="curNode" select='//objects/descendant::o[@which][1]'/>
-    <xsl:variable name="curName" select='//objects/descendant::o[@which][1]/@which'/>
-    <xsl:variable name="curFlag" select='//objects/descendant::o[@which][1]/@fl'/>
-    <xsl:variable name="curType" select='//objects/descendant::o[@which][1]/@tt'/>
+    <xsl:variable name="curNode" select='//objects/descendant::*[@which][1]'/>
+    <xsl:variable name="curName" select='$curNode/@which'/>
+    <xsl:variable name="curFlag" select='$curNode/@fl'/>
+    <xsl:variable name="curType" select='$curNode/@tt'/>
     <xsl:template match='o[ends-with(@base,"goto") and o[1]/o[1][@name=$curName]]//o'>
         <xsl:variable name="current" select="."/>
         <xsl:choose>

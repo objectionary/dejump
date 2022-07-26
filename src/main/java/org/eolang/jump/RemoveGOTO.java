@@ -32,12 +32,12 @@ public final class RemoveGOTO {
 
         this.xmlIn = getParsedXML(Files.readString(input.toPath()));
         Train<Shift> train = new TrDefault<Shift>()
-                .with(new StClasspath("/org/eolang/jump/SG.xsl"))
+                .with(new StEndless(new StClasspath("/org/eolang/jump/SG.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/change-condition-of-jump.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/add-fl.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/wrap-other-objects.xsl")));
                 //.with(new StXSL(new XSLDocument(this.getClass().getResource("/TW.xsl"))));
-                //.with(new StClasspath("/org/eolang/jump/rmv-meanless.xsl"));
+                //.with(new StEndless(new StClasspath("/org/eolang/jump/rmv-meaningless.xsl")));
 
         this.xmlOut = new Xsline(train).pass(xmlIn);
         System.out.println(this.xmlOut);
@@ -61,6 +61,7 @@ public final class RemoveGOTO {
         final XML xml = new XMLDocument(baos.toByteArray());
         baos.close();
         Train<Shift> train = new ParsingTrain();
+                //.with(new StClasspath("/org/eolang/jump/strip-and-indent.xsl"));
         return new Xsline(train).pass(xml);
     }
 

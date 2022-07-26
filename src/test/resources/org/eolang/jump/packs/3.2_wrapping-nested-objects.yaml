@@ -1,0 +1,118 @@
+xsls:
+  - /org/eolang/jump/SG.xsl
+  - /org/eolang/jump/change-condition-of-jump.xsl
+  - /org/eolang/jump/add-fl.xsl
+  - /org/eolang/jump/wrap-other-objects.xsl
+
+before: |
+  [] > app
+    seq > @
+      memory 0 > x
+      goto
+        [g]
+          seq > @
+            x.write (x.plus 1)
+            if.
+              x.lt 5
+              goto
+                [g1]
+                  seq > @
+                    QQ.io.stdout "X % 2 == 0 ?\n"
+                    if.
+                      eq.
+                        mod.
+                          QQ.math.number x
+                          2
+                        0
+                      g1.forward x
+                      seq
+                        QQ.io.stdout "Again!\n"
+                        g.backward
+                        QQ.io.stdout "nope\n"
+                    QQ.io.stdout "never\n"
+              g.forward TRUE
+            QQ.io.stdout "X % 2 == 0!\n"
+      QQ.io.stdout "Finally!\n"
+
+after: |
+  [] > app
+    seq > @
+      memory 0 > x
+      goto
+        [g]
+          seq > @
+            x.write (x.plus 1)
+            if.
+              x.lt 5
+              goto
+                [g1]
+                  seq > @
+                    QQ.io.stdout "X % 2 == 0 ?\n"
+                    if.
+                      eq.
+                        mod.
+                          QQ.math.number x
+                          2
+                        0
+                      seq
+                        x
+                        flag.write 1
+                      seq
+                        QQ.io.stdout "Again!\n"
+                        if.
+                          TRUE
+                          seq
+                            flag.write 0
+                          TRUE
+                        if.
+                          eq.
+                            flag
+                            1
+                          seq
+                            QQ.io.stdout "nope\n"
+                          TRUE
+                    if.
+                      eq.
+                        flag
+                        1
+                      seq
+                        if.
+                          eq.
+                            flag
+                            0
+                          seq
+                            QQ.io.stdout "never\n"
+                          TRUE
+                      TRUE
+              if.
+                eq.
+                  flag
+                  1
+                seq
+                  if.
+                    TRUE
+                    seq
+                      TRUE
+                      flag.write 1
+                    TRUE
+                if.
+                  eq.
+                    flag
+                    0
+                  seq
+                    TRUE
+                  TRUE
+            if.
+              eq.
+                flag
+                0
+              seq
+                if.
+                  eq.
+                    flag
+                    1
+                  seq
+                    QQ.io.stdout "X % 2 == 0!\n"
+                  TRUE
+              TRUE
+      QQ.io.stdout "Finally!\n"

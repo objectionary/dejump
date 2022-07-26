@@ -16,7 +16,7 @@
                         <xsl:value-of select="o[2]/o[2]/o[1]/@base"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="o[2]/o[1]/@base"/>
+                        <xsl:value-of select="o[2]/o[1]/o[1]/@base"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>

@@ -7,7 +7,7 @@
     <xsl:strip-space elements="*"/>
     <xsl:template match='o[@base=".forward" or @base=".backward"]'>
         <xsl:choose>
-            <xsl:when test='parent::o[@base=".if"]'>
+            <xsl:when test='parent::o[@base=".if"][o[2][@base=".forward" or @base=".backward"]]'>
                 <xsl:copy-of select="."/>
             </xsl:when>
             <xsl:otherwise>
