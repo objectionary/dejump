@@ -16,12 +16,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public final class RemoveGOTO {
+
     private final String path;
     private XML xmlIn;
     private XML xmlOut;
+
     public RemoveGOTO(String pth) {
         this.path = new File(pth).getAbsolutePath();
     }
+
     public void exec() throws IOException {
         File curDir = new File(this.path.substring(0, this.path.lastIndexOf('\\')) + "\\generated");
         String curName = new File(this.path).getName().substring(0, new File(this.path).getName().lastIndexOf('.'));
@@ -45,7 +48,7 @@ public final class RemoveGOTO {
 
         String ret = new XMIR(xmlOut).toEO();
         File output = new File(curDir.getPath() + '\\' + curName + "_transformed.eo");
-        if (!(output.createNewFile())) throw new IOException("Can't create an '../generated/*_transformed.eo' file");
+        if (!(output.createNewFile())) throw new IOException("Can't create file: '../generated/*_transformed.eo'");
         try (FileWriter out = new FileWriter(output.getPath())) {
             out.write(ret);
             out.flush();
@@ -62,7 +65,6 @@ public final class RemoveGOTO {
         final XML xml = new XMLDocument(baos.toByteArray());
         baos.close();
         Train<Shift> train = new ParsingTrain();
-                //.with(new StClasspath("/org/eolang/jump/strip-and-indent.xsl"));
         return new Xsline(train).pass(xml);
     }
 
