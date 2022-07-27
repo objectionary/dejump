@@ -26,6 +26,17 @@
                     </xsl:element>
                 </xsl:element>
             </xsl:for-each>
+            <xsl:for-each select='//o[@temp]'>
+                <xsl:element name="o">
+                    <xsl:attribute name="base"><xsl:text>org.eolang.memory</xsl:text></xsl:attribute>
+                    <xsl:attribute name="name"><xsl:value-of select="@base"/></xsl:attribute>
+                    <xsl:element name="o">
+                        <xsl:attribute name="base"><xsl:text>org.eolang.int</xsl:text></xsl:attribute>
+                        <xsl:attribute name="data"><xsl:text>int</xsl:text></xsl:attribute>
+                        <xsl:text>0</xsl:text>
+                    </xsl:element>
+                </xsl:element>
+            </xsl:for-each>
         </xsl:copy>
     </xsl:template>
     <xsl:template match='node()|@*'>

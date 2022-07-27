@@ -33,10 +33,14 @@ public final class CheckTF {
         Train<Shift> train = new TrDefault<>();
         if (xsls != null) {
             for (final String xsl : xsls) {
-                train = train.with(new StEndless(new StClasspath(xsl)));
+                if (xsl.lastIndexOf("flags-to-memory.xsl") == -1) {
+                    train = train.with(new StEndless(new StClasspath(xsl)));
+                } else {
+                    train = train.with(new StClasspath(xsl));
+                }
             }
         }
-        train = train.with(new StClasspath("/org/eolang/jump/strip-xmir.xsl"));
+        train = train.with(new StEndless(new StClasspath("/org/eolang/jump/strip-xmir.xsl")));
         final XML xml = new Xsline(train).pass(_xml);
         final XML xmlToCheck = new Xsline(train).pass(_xmlToCheck);
         Logger.debug(this, "Output XML:\n%s", xml);

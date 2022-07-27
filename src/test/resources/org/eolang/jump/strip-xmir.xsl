@@ -63,10 +63,24 @@ SOFTWARE.
     <xsl:template match="@rem">
         <!-- Not important -->
     </xsl:template>
-    <xsl:template match='o[starts-with(@base, "flag_")]'>
-        <xsl:element name="o">
-            <xsl:attribute name="base"><xsl:text>org.eolang.flag</xsl:text></xsl:attribute>
-        </xsl:element>
+    <xsl:template match='o[starts-with(@base, "flag_")]' priority="1">
+        <xsl:copy>
+            <xsl:attribute name="base"><xsl:text>flag</xsl:text></xsl:attribute>
+            <xsl:apply-templates select="node()|@* except @base"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match='o[starts-with(@name, "flag_")]' priority="2">
+        <xsl:copy>
+            <xsl:attribute name="name"><xsl:text>flag</xsl:text></xsl:attribute>
+            <xsl:apply-templates select="node()|@* except @name"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match='o[starts-with(@base,"org.eolang.")]'>
+        <xsl:variable name="pack" select="@base"/>
+        <xsl:copy>
+            <xsl:attribute name="base"><xsl:value-of select="substring($pack,12)"/></xsl:attribute>
+            <xsl:apply-templates select="node()|@* except @base"/>
+        </xsl:copy>
     </xsl:template>
     <xsl:template match="node()|@*">
         <xsl:copy>
