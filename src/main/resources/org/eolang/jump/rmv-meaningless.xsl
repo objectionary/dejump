@@ -20,6 +20,9 @@
     <xsl:template match="@temp">
         <!-- Not important -->
     </xsl:template>
+    <xsl:template match="@ww">
+        <!-- Not important -->
+    </xsl:template>
     <xsl:template match='o[starts-with(@base,"org.eolang.")]'>
         <xsl:variable name="pack" select="@base"/>
         <xsl:copy>

@@ -1,0 +1,35 @@
+xsls:
+  - /org/eolang/jump/simple-goto.xsl
+  - /org/eolang/jump/change-condition-of-jump.xsl
+  - /org/eolang/jump/add-fl.xsl
+  - /org/eolang/jump/add-order-for-while.xsl
+  - /org/eolang/jump/wrap-other-objects.xsl
+  - /org/eolang/jump/terminating-while.xsl
+
+before: |
+  [] > obj
+    goto
+      [g]
+        seq > @
+          while.
+            TRUE
+            [i]
+              seq > @
+                g.backward
+
+after: |
+  [] > obj
+    goto
+      [g]
+        seq > @
+          while.
+            and.
+              flag.eq 1
+              TRUE
+            [i]
+              seq > @
+                if.
+                  TRUE
+                  seq
+                    flag.write 0
+                  TRUE

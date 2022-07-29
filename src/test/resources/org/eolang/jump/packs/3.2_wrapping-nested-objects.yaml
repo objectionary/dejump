@@ -1,7 +1,8 @@
 xsls:
-  - /org/eolang/jump/SG.xsl
+  - /org/eolang/jump/simple-goto.xsl
   - /org/eolang/jump/change-condition-of-jump.xsl
   - /org/eolang/jump/add-fl.xsl
+  - /org/eolang/jump/add-order-for-while.xsl
   - /org/eolang/jump/wrap-other-objects.xsl
 
 before: |

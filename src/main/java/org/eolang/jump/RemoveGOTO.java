@@ -35,10 +35,12 @@ public final class RemoveGOTO {
 
         this.xmlIn = getParsedXML(Files.readString(input.toPath()));
         Train<Shift> train = new TrDefault<Shift>()
-                .with(new StEndless(new StClasspath("/org/eolang/jump/SG.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/jump/simple-goto.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/change-condition-of-jump.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/add-fl.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/jump/add-order-for-while.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/wrap-other-objects.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/jump/terminating-while.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/goto-to-while.xsl")))
                 .with(new StClasspath("/org/eolang/jump/flags-to-memory.xsl"))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/rmv-meaningless.xsl")));
