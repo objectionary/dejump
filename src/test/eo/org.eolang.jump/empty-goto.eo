@@ -1,0 +1,6 @@
+[] > empty-goto
+  seq > @
+    goto
+      [g]
+        seq > @
+          QQ.io.stdout "Check\n"

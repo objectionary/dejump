@@ -16,24 +16,28 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public final class RemoveGOTO {
-
     private final String path;
-    private XML xmlIn;
-    private XML xmlOut;
 
     public RemoveGOTO(String pth) {
         this.path = new File(pth).getAbsolutePath();
     }
 
-    public void exec() throws IOException {
+    public void exec() {
         File curDir = new File(this.path.substring(0, this.path.lastIndexOf('\\')) + "\\generated");
         String curName = new File(this.path).getName().substring(0, new File(this.path).getName().lastIndexOf('.'));
         File input = new File(this.path);
 
-        if (curDir.exists() && !deleteDirectory(curDir)) throw new IOException("Can't delete a 'generated' repository");
-        if (!(curDir.mkdir())) throw new IOException("Can't create a 'generated' repository");
+        if (curDir.exists()) {
+            deleteDirectory(curDir);
+        }
+        curDir.mkdir();
+        XML xmlIn, xmlOut;
+        try {
+            xmlIn = getParsedXML(Files.readString(input.toPath()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        this.xmlIn = getParsedXML(Files.readString(input.toPath()));
         Train<Shift> train = new TrDefault<Shift>()
                 .with(new StEndless(new StClasspath("/org/eolang/jump/simple-goto.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/change-condition-of-jump.xsl")))
@@ -45,15 +49,21 @@ public final class RemoveGOTO {
                 .with(new StClasspath("/org/eolang/jump/flags-to-memory.xsl"))
                 .with(new StEndless(new StClasspath("/org/eolang/jump/rmv-meaningless.xsl")));
 
-        this.xmlOut = new Xsline(train).pass(xmlIn);
-        System.out.println(this.xmlOut);
+        xmlOut = new Xsline(train).pass(xmlIn);
+        System.out.println(xmlOut);
 
         String ret = new XMIR(xmlOut).toEO();
         File output = new File(curDir.getPath() + '\\' + curName + "_transformed.eo");
-        if (!(output.createNewFile())) throw new IOException("Can't create file: '../generated/*_transformed.eo'");
+        try {
+            output.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         try (FileWriter out = new FileWriter(output.getPath())) {
             out.write(ret);
             out.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
