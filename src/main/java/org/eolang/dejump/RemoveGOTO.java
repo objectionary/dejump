@@ -1,4 +1,4 @@
-package org.eolang.jump;
+package org.eolang.dejump;
 
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
@@ -16,10 +16,28 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public final class RemoveGOTO {
+
+    /**
+     * Path to file to be transformed
+     */
     private final String path;
 
     public RemoveGOTO(String pth) {
         this.path = new File(pth).getAbsolutePath();
+    }
+
+    public static XML applyTrain(XML in) {
+        Train<Shift> train = new TrDefault<Shift>()
+                .with(new StEndless(new StClasspath("/org/eolang/dejump/simple-goto.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/dejump/change-condition-of-jump.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/dejump/add-fl.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/dejump/add-order-for-while.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/dejump/wrap-other-objects.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/dejump/terminating-while.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/dejump/goto-to-while.xsl")))
+                .with(new StClasspath("/org/eolang/dejump/flags-to-memory.xsl"))
+                .with(new StEndless(new StClasspath("/org/eolang/dejump/rmv-meaningless.xsl")));
+        return new Xsline(train).pass(in);
     }
 
     public void exec() {
@@ -37,19 +55,7 @@ public final class RemoveGOTO {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        Train<Shift> train = new TrDefault<Shift>()
-                .with(new StEndless(new StClasspath("/org/eolang/jump/simple-goto.xsl")))
-                .with(new StEndless(new StClasspath("/org/eolang/jump/change-condition-of-jump.xsl")))
-                .with(new StEndless(new StClasspath("/org/eolang/jump/add-fl.xsl")))
-                .with(new StEndless(new StClasspath("/org/eolang/jump/add-order-for-while.xsl")))
-                .with(new StEndless(new StClasspath("/org/eolang/jump/wrap-other-objects.xsl")))
-                .with(new StEndless(new StClasspath("/org/eolang/jump/terminating-while.xsl")))
-                .with(new StEndless(new StClasspath("/org/eolang/jump/goto-to-while.xsl")))
-                .with(new StClasspath("/org/eolang/jump/flags-to-memory.xsl"))
-                .with(new StEndless(new StClasspath("/org/eolang/jump/rmv-meaningless.xsl")));
-
-        xmlOut = new Xsline(train).pass(xmlIn);
+        xmlOut = applyTrain(xmlIn);
         System.out.println(xmlOut);
 
         String ret = new XMIR(xmlOut).toEO();

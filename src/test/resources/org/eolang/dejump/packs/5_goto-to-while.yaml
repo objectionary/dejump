@@ -1,11 +1,11 @@
 xsls:
-  - /org/eolang/jump/simple-goto.xsl
-  - /org/eolang/jump/change-condition-of-jump.xsl
-  - /org/eolang/jump/add-fl.xsl
-  - /org/eolang/jump/add-order-for-while.xsl
-  - /org/eolang/jump/wrap-other-objects.xsl
-  - /org/eolang/jump/terminating-while.xsl
-  - /org/eolang/jump/goto-to-while.xsl
+  - /org/eolang/dejump/simple-goto.xsl
+  - /org/eolang/dejump/change-condition-of-jump.xsl
+  - /org/eolang/dejump/add-fl.xsl
+  - /org/eolang/dejump/add-order-for-while.xsl
+  - /org/eolang/dejump/wrap-other-objects.xsl
+  - /org/eolang/dejump/terminating-while.xsl
+  - /org/eolang/dejump/goto-to-while.xsl
 
 before: |
   goto

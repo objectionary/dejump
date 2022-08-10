@@ -1,0 +1,30 @@
+xsls:
+  - /org/eolang/dejump/simple-goto.xsl
+  - /org/eolang/dejump/change-condition-of-jump.xsl
+  - /org/eolang/dejump/add-fl.xsl
+  - /org/eolang/dejump/add-order-for-while.xsl
+  - /org/eolang/dejump/wrap-other-objects.xsl
+  - /org/eolang/dejump/terminating-while.xsl
+  - /org/eolang/dejump/goto-to-while.xsl
+  - /org/eolang/dejump/flags-to-memory.xsl
+  - /org/eolang/dejump/rmv-meaningless.xsl
+
+before: |
+  [] > obj
+    goto
+      [g]
+        seq > @
+          QQ.io.stdout "Check\n"
+
+after: |
+  [] > obj
+    while.
+      eq.
+        flag
+        0
+      [i]
+        seq > @
+          flag.write 1
+          seq
+            QQ.io.stdout "Check\n"
+    memory 0 > flag

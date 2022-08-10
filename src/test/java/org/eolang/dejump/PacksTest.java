@@ -1,4 +1,4 @@
-package org.eolang.jump;
+package org.eolang.dejump;
 
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
@@ -15,16 +15,16 @@ import static org.hamcrest.Matchers.is;
 /**
  * Test case for XSL-transformations packs.
  */
-public final class TFSTest {
+public final class PacksTest {
 
     @ParameterizedTest
     @MethodSource("getYamls")
     public void testTFS(final String tf) throws Exception {
         assertThat(
-                new CheckTF(
+                new CheckPack(
                         new TextOf(
                                 new ResourceOf(
-                                        String.format("org/eolang/jump/packs/%s", tf)
+                                        String.format("org/eolang/dejump/packs/%s", tf)
                                 )
                         ).asString()
                 ).failures(),
@@ -34,7 +34,7 @@ public final class TFSTest {
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Collection<String> getYamls() {
-        return TFSTest.yamls("org/eolang/jump/packs/", "");
+        return PacksTest.yamls("org/eolang/dejump/packs/", "");
     }
 
     private static Collection<String> yamls(final String path,
@@ -48,7 +48,7 @@ public final class TFSTest {
                 out.add(String.format("%s%s", prefix, sub));
             } else {
                 out.addAll(
-                        TFSTest.yamls(
+                        PacksTest.yamls(
                                 String.format("%s%s/", path, sub),
                                 String.format("%s/", sub)
                         )

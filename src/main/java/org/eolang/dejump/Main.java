@@ -1,4 +1,4 @@
-package org.eolang.jump;
+package org.eolang.dejump;
 
 import picocli.CommandLine;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.Callable;
     description = "Replaces objects GOTO with semantically equivalent")
 public final class Main implements Callable<Integer> {
     @CommandLine.Parameters(index = "0",
-        description = "EO-file to transform")
+        description = "Absolute path of file to transform")
     private File file;
     @Override
     public Integer call() {

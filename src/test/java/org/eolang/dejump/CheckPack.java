@@ -1,4 +1,4 @@
-package org.eolang.jump;
+package org.eolang.dejump;
 
 import com.jcabi.log.Logger;
 import com.jcabi.xml.XML;
@@ -11,12 +11,12 @@ import java.util.Map;
 /**
  * Test case for single XSL-transformation pack.
  */
-public final class CheckTF {
+public final class CheckPack {
     /**
      * The scenario in YAML.
      */
     private final String script;
-    CheckTF(final String scr) {
+    CheckPack(final String scr) {
         this.script = scr;
     }
 
@@ -40,7 +40,7 @@ public final class CheckTF {
                 }
             }
         }
-        train = train.with(new StEndless(new StClasspath("/org/eolang/jump/strip-xmir.xsl")));
+        train = train.with(new StEndless(new StClasspath("/org/eolang/dejump/strip-xmir.xsl")));
         final XML xml = new Xsline(train).pass(_xml);
         final XML xmlToCheck = new Xsline(train).pass(_xmlToCheck);
         Logger.debug(this, "Output XML:\n%s", xml);

@@ -1,5 +1,5 @@
 xsls:
-  - /org/eolang/jump/simple-goto.xsl
+  - /org/eolang/dejump/simple-goto.xsl
 
 before: |
   goto

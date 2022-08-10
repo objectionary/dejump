@@ -12,6 +12,8 @@
     <artifactId>EliminationOfJumps</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <name>dejump</name>
+    <description>Replaces all GOTO objects</description>
     <properties>
         <eolang.version>0.26.0</eolang.version>
         <maven.compiler.source>18</maven.compiler.source>
@@ -61,45 +63,43 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>info.picocli</groupId>
-                            <artifactId>picocli-codegen</artifactId>
-                            <version>4.6.3</version>
-                        </path>
-                    </annotationProcessorPaths>
-                    <!--<compilerArgs>
-                        <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
-                    </compilerArgs>-->
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.eolang</groupId>
                 <artifactId>eo-maven-plugin</artifactId>
                 <version>${eolang.version}</version>
                 <executions>
                     <execution>
                         <id>test-compile</id>
-                        <phase>generate-test-sources</phase>
+                        <phase>process-test-sources</phase>
                         <goals>
                             <goal>register</goal>
                             <goal>assemble</goal>
                             <goal>transpile</goal>
-                            <goal>unspile</goal>
                         </goals>
                         <configuration>
                           <scope>test</scope>
-                          <sourcesDir>${project.basedir}/src/test/eo/org/eolang/jump</sourcesDir>
+                          <sourcesDir>src/test/eo/org/eolang/dejump</sourcesDir>
                           <targetDir>${project.basedir}/target/eo-test</targetDir>
                           <addSourcesRoot>false</addSourcesRoot>
                           <addTestSourcesRoot>true</addTestSourcesRoot>
                           <generatedDir>${project.basedir}/target/generated-test-sources</generatedDir>
                         </configuration>
                   </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-eo-itest</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>${project.basedir}/src/test/resources/org/eolang/dejump/apply.groovy</source>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -110,7 +110,7 @@
                     <mergeManifestMode>merge</mergeManifestMode>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>org.eolang.jump.Main</Main-Class>
+                            <Main-Class>org.eolang.dejump.Main</Main-Class>
                         </manifestEntries>
                     </archive>
                     <descriptorRefs>
