@@ -77,25 +77,31 @@
                     </compilerArgs>-->
                 </configuration>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.eolang</groupId>
                 <artifactId>eo-maven-plugin</artifactId>
                 <version>${eolang.version}</version>
                 <executions>
                     <execution>
-                        <id>compile</id>
+                        <id>test-compile</id>
+                        <phase>generate-test-sources</phase>
                         <goals>
                             <goal>register</goal>
-                            <goal>parse</goal>
-                            <goal>optimize</goal>
+                            <goal>assemble</goal>
+                            <goal>transpile</goal>
+                            <goal>unspile</goal>
                         </goals>
                         <configuration>
-                            <sourcesDir>${project.basedir}/eo-tests</sourcesDir>
-                            <targetDir>${project.basedir}/target/eo</targetDir>
+                          <scope>test</scope>
+                          <sourcesDir>${project.basedir}/src/test/eo/org/eolang/jump</sourcesDir>
+                          <targetDir>${project.basedir}/target/eo-test</targetDir>
+                          <addSourcesRoot>false</addSourcesRoot>
+                          <addTestSourcesRoot>true</addTestSourcesRoot>
+                          <generatedDir>${project.basedir}/target/generated-test-sources</generatedDir>
                         </configuration>
-                    </execution>
+                  </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
