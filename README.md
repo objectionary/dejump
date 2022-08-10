@@ -30,6 +30,21 @@ mvn clean test
 There are 2 types of tests:
 1) Validating XSL Transformations
 
-To add more tests, put your .YAML file to `src/test/resources/org/eolang/jump/packs`
+The *before* `eo` code is taken from `yaml` file, applies XSL-transformations, and compares it to `eo` code *after*.
+
+To add more tests, put your `yaml` file to `src/test/resources/org/eolang/jump/packs`.
 
 2) Check for equivalent output for the program BEFORE transformation and AFTER it.
+
+We take the `eo` code, transform it to `XMIR` and apply all the XSL-transformations to it, then transform it back to `eo`.
+After that we create one `eo` file, which has the next structure:
+```
+[] > name_of_test
+  assert-that > @
+    original eo-code
+    $.equal-to
+      eo-code after transformations
+```
+Then, this new `eo`-file executes and if exception didn't throwed, output is equal.
+
+To add more tests, put your `eo` file to `src/test/eo/org/eolang/jump`.
