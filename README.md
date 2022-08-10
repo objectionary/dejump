@@ -1,5 +1,16 @@
 <img alt="logo" src="https://www.objectionary.com/cactus.svg" height="100px" />
 
+[![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
+[![We recommend IntelliJ IDEA](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
+
+[![PDD status](http://www.0pdd.com/svg?name=objectionary/eo)](http://www.0pdd.com/p?name=objectionary/eo)
+[![Maintainability](https://api.codeclimate.com/v1/badges/b8b59692f3c8c973ac54/maintainability)](https://codeclimate.com/github/objectionary/eo/maintainability)
+[![Maven Central](https://img.shields.io/maven-central/v/org.eolang/eo-parent.svg)](https://maven-badges.herokuapp.com/maven-central/org.eolang/eo-parent)
+
+[![Hits-of-Code](https://hitsofcode.com/github/objectionary/dejump)](https://hitsofcode.com/view/github/objectionary/dejump)
+![Lines of code](https://img.shields.io/tokei/lines/github/objectionary/dejump)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/objectionary/dejump/blob/master/LICENSE.txt)
+
 Takes as an input a program in [EO](https://www.eolang.org/) and converts it to a semantically equivalent program, excluding the use of ***goto*** object.
 The input data is a program in **.XMIR** format, the output program also returns the program in **.XMIR**.
 
