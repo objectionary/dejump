@@ -12,6 +12,7 @@
               QQ.io.stdout "Check\n"
               g.forward TRUE
               QQ.io.stdout "Never\n"
+        TRUE
     $.equal-to
       [] > simple_goto1
         memory 0 > flag
@@ -26,3 +27,4 @@
                   flag.eq 1
                   TRUE
                   TRUE
+          TRUE
