@@ -21,7 +21,7 @@ Read its output and proceed.
 
 ## How to Contribute
 
-You will need JDK 8+ and Maven 3.8+. Clone the repo and run the build like this:
+You will need JDK 11+ and Maven 3.8+. Clone the repo and run the build like this:
 
 ```
 $ mvn clean install -Pqulice

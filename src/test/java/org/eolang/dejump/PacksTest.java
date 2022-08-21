@@ -5,10 +5,8 @@ import org.cactoos.text.TextOf;
 import org.cactoos.text.UncheckedText;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import java.util.Collection;
 import java.util.LinkedList;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 

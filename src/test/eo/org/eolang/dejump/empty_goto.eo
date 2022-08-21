@@ -1,4 +1,7 @@
-[] > empty-goto
++junit
++package org.eolang.dejump
+
+[] > empty_goto
   seq > @
     goto
       [g]
