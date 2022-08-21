@@ -6,16 +6,16 @@
     <artifactId>parent</artifactId>
     <version>0.60.4</version>
   </parent>
-  <groupId>org.eolang.jump</groupId>
-  <artifactId>EliminationOfJumps</artifactId>
+  <groupId>org.eolang.dejump</groupId>
+  <artifactId>dejump</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>dejump</name>
   <description>Replaces all GOTO objects</description>
   <properties>
     <eolang.version>0.27.0</eolang.version>
-    <maven.compiler.source>18</maven.compiler.source>
-    <maven.compiler.target>18</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
   </properties>
   <dependencies>
     <dependency>
@@ -24,15 +24,25 @@
       <version>${eolang.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.eolang</groupId>
+      <artifactId>eo-runtime</artifactId>
+      <version>${eolang.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <!--version from parent-->
+      <!-- version from parent POM -->
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <!-- version from parent POM -->
     </dependency>
     <dependency>
       <groupId>com.yegor256</groupId>
       <artifactId>xsline</artifactId>
-      <version>0.5.2</version>
+      <version>0.5.3</version>
     </dependency>
     <dependency>
       <groupId>net.sf.saxon</groupId>
@@ -42,12 +52,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <!--version from parent-->
+      <!-- version from parent POM -->
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <!--version from parent-->
+      <!-- version from parent POM -->
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
@@ -63,12 +73,38 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>1.13.1</version>
+        <executions>
+          <execution>
+            <id>generate-junit-tests</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <scripts>
+            <script>${project.basedir}/src/test/resources/org/eolang/dejump/generate.groovy</script>
+          </scripts>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>3.0.9</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
         <groupId>org.eolang</groupId>
         <artifactId>eo-maven-plugin</artifactId>
         <version>${eolang.version}</version>
         <executions>
           <execution>
-            <id>test-compile</id>
+            <id>process-eo-tests</id>
             <phase>process-test-sources</phase>
             <goals>
               <goal>register</goal>
@@ -76,7 +112,6 @@
               <goal>transpile</goal>
             </goals>
             <configuration>
-              <scope>test</scope>
               <sourcesDir>src/test/eo/org/eolang/dejump</sourcesDir>
               <targetDir>${project.basedir}/target/eo-test</targetDir>
               <addSourcesRoot>false</addSourcesRoot>
@@ -89,7 +124,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <!--version from parent-->
+        <!-- version from parent POM -->
         <configuration>
           <mergeManifestMode>merge</mergeManifestMode>
           <archive>
@@ -121,20 +156,15 @@
           <plugin>
             <groupId>com.qulice</groupId>
             <artifactId>qulice-maven-plugin</artifactId>
-            <!--version from parent-->
+            <!-- version from parent POM -->
             <configuration>
-              <license>file:${basedir}/LICENSE.txt</license>
               <excludes combine.children="append">
                 <exclude>pmd:.*</exclude>
+                <exclude>checkstyle:/src/test/eo/org/eolang/dejump/.*</exclude>
+                <exclude>checkstyle:/src/test/resources/org/eolang/dejump/packs/.*</exclude>
+                <exclude>duplicatefinder:.*</exclude>
               </excludes>
             </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>

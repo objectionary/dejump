@@ -8,7 +8,6 @@ import org.cactoos.io.OutputTo;
 import org.eolang.parser.ParsingTrain;
 import org.eolang.parser.Syntax;
 import org.eolang.parser.XMIR;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
@@ -44,7 +43,6 @@ public final class RemoveGOTO {
         File curDir = new File(this.path.substring(0, this.path.lastIndexOf('\\')) + "\\generated");
         String curName = new File(this.path).getName().substring(0, new File(this.path).getName().lastIndexOf('.'));
         File input = new File(this.path);
-
         if (curDir.exists()) {
             deleteDirectory(curDir);
         }
@@ -55,8 +53,8 @@ public final class RemoveGOTO {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println(xmlIn);
         xmlOut = applyTrain(xmlIn);
-        System.out.println(xmlOut);
 
         String ret = new XMIR(xmlOut).toEO();
         File output = new File(curDir.getPath() + '\\' + curName + "_transformed.eo");
@@ -99,4 +97,5 @@ public final class RemoveGOTO {
         ret &= directory.delete();
         return ret;
     }
+
 }

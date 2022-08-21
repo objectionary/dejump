@@ -1,0 +1,30 @@
++package org.eolang.dejump
++alias org.eolang.hamcrest.assert-that
++junit
+
+[] > test_simple_goto
+  assert-that > @
+    [] > simple_goto
+      seq > @
+        goto
+          [g]
+            seq > @
+              QQ.io.stdout "Check\n"
+              g.forward TRUE
+              QQ.io.stdout "Never\n"
+        TRUE
+    $.equal-to
+      [] > simple_goto1
+        memory 0 > flag
+        seq > @
+          while.
+            flag.eq 0
+            [i]
+              seq > @
+                flag.write 1
+                QQ.io.stdout "Check\n"
+                if.
+                  flag.eq 1
+                  TRUE
+                  TRUE
+          TRUE

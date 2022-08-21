@@ -4,7 +4,6 @@ import com.jcabi.log.Logger;
 import com.jcabi.xml.XML;
 import com.yegor256.xsline.*;
 import org.yaml.snakeyaml.Yaml;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -12,10 +11,12 @@ import java.util.Map;
  * Test case for single XSL-transformation pack.
  */
 public final class CheckPack {
+
     /**
      * The scenario in YAML.
      */
     private final String script;
+
     CheckPack(final String scr) {
         this.script = scr;
     }
@@ -46,4 +47,5 @@ public final class CheckPack {
         Logger.debug(this, "Output XML:\n%s", xml);
         return xmlToCheck.equals(xml);
     }
+
 }
