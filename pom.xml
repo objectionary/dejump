@@ -83,13 +83,13 @@
             <goals>
               <goal>execute</goal>
             </goals>
+            <configuration>
+              <scripts>
+                <script>${project.basedir}/src/test/resources/org/eolang/dejump/generate.groovy</script>
+              </scripts>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <scripts>
-            <script>${project.basedir}/src/test/resources/org/eolang/dejump/generate.groovy</script>
-          </scripts>
-        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -112,7 +112,7 @@
               <goal>transpile</goal>
             </goals>
             <configuration>
-              <sourcesDir>src/test/eo/org/eolang/dejump</sourcesDir>
+              <sourcesDir>target/eo-after</sourcesDir>
               <targetDir>${project.basedir}/target/eo-test</targetDir>
               <addSourcesRoot>false</addSourcesRoot>
               <addTestSourcesRoot>true</addTestSourcesRoot>

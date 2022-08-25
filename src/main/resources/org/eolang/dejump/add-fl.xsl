@@ -24,9 +24,17 @@
       <xsl:apply-templates/>
     </xsl:element>
   </xsl:template>
+  <xsl:template match="o[@tt=&quot;f&quot;]/o[2]/o[1]">
+    <xsl:copy>
+      <xsl:attribute name="cnt">
+        <xsl:value-of select="parent::o/parent::o/@which"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="node()|@*"/>
+    </xsl:copy>
+  </xsl:template>
   <xsl:template match="node()|@*">
     <xsl:copy>
-      <xsl:apply-templates select="@*|node()"/>
+      <xsl:apply-templates select="node()|@*"/>
     </xsl:copy>
   </xsl:template>
 </xsl:stylesheet>

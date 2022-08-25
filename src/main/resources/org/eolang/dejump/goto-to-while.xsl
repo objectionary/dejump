@@ -12,6 +12,9 @@
       <xsl:attribute name="base">
         <xsl:text>.while</xsl:text>
       </xsl:attribute>
+      <xsl:attribute name="conv">
+        <xsl:text>CONVERTED</xsl:text>
+      </xsl:attribute>
       <xsl:choose>
         <xsl:when test="$current//o[@rem=$curName]">
           <xsl:element name="o">
@@ -37,7 +40,7 @@
                   </xsl:attribute>
                   <xsl:choose>
                     <xsl:when test="@tt=&quot;f&quot;">
-                      <xsl:text>3</xsl:text>
+                      <xsl:text>-1</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
                       <xsl:text>0</xsl:text>
