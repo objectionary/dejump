@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="wrap" version="2.0">
   <!--
-    Encapsulating objects, which are inside "goto" and follows ".forward"/".backward", in ".if" object
+    Encapsulating objects, which are inside "goto" and follows ".forward"/".backward", into ".if" object
     -->
   <xsl:output indent="yes" method="xml"/>
   <xsl:strip-space elements="*"/>
@@ -12,9 +12,9 @@
   <xsl:template match="o[ends-with(@base,&quot;goto&quot;) and o[1]/o[1][@name=$curName]]//o" priority="1">
     <xsl:variable name="current" select="."/>
     <xsl:choose>
-      <xsl:when test="$current/preceding::o[count(.|$curNode)=count(.) and count(.)=count($curNode)]">
+      <xsl:when test="$current/preceding::o[generate-id(.)=generate-id($curNode)]">
         <xsl:choose>
-          <xsl:when test="not(preceding-sibling::o[preceding::o[count(.|$curNode)=count(.) and count(.)=count($curNode)]]) and not(ancestor::o[preceding::o[count(.|$curNode)=count(.) and count(.)=count($curNode)]])">
+          <xsl:when test="not(preceding-sibling::o[preceding::o[generate-id(.)=generate-id($curNode)]]) and not(ancestor::o[preceding::o[generate-id(.)=generate-id($curNode)]])">
             <xsl:element name="o">
               <xsl:attribute name="base">
                 <xsl:text>.if</xsl:text>
@@ -51,15 +51,6 @@
                 </xsl:attribute>
                 <xsl:copy-of select="$current"/>
                 <xsl:copy-of select="$current/following-sibling::o"/>
-              </xsl:element>
-              <xsl:element name="o">
-                <xsl:attribute name="base">
-                  <xsl:text>org.eolang.bool</xsl:text>
-                </xsl:attribute>
-                <xsl:attribute name="data">
-                  <xsl:text>bool</xsl:text>
-                </xsl:attribute>
-                <xsl:text>true</xsl:text>
               </xsl:element>
             </xsl:element>
           </xsl:when>

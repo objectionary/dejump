@@ -1,0 +1,112 @@
+xsls:
+  - /org/eolang/dejump/simple-goto.xsl
+  - /org/eolang/dejump/change-condition-of-jump.xsl
+  - /org/eolang/dejump/add-fl.xsl
+  - /org/eolang/dejump/recalculate-flags.xsl
+  - /org/eolang/dejump/add-order-for-while.xsl
+  - /org/eolang/dejump/wrap-other-objects.xsl
+  - /org/eolang/dejump/return-value.xsl
+
+before: |
+  goto
+    [g]
+      seq > @
+        if.
+          228.lt 229
+          g.forward 228
+          TRUE
+        goto
+          [g1]
+            seq > @
+              g.forward 1337
+              QQ.io.stdout "One more!\n"
+              g1.backward
+              goto
+                [g2]
+                  seq > @
+                    if.
+                      4.lt 5
+                      g.forward 1
+                      TRUE
+                    g1.forward 2
+                    g2.forward 3
+        g.backward
+        g.forward 2022
+
+after: |
+  goto
+    [g]
+      seq > @
+        if.
+          228.lt 229
+          seq
+            flag.write 2
+          TRUE
+        goto
+          [g1]
+            seq > @
+              if.
+                TRUE
+                seq
+                  flag.write 3
+                TRUE
+              if.
+                flag.eq 
+              QQ.io.stdout "One more!\n"
+              if.
+                TRUE
+                seq
+                  flag.write 0
+                TRUE
+              goto
+                [g2]
+                  seq > @
+                    if.
+                      4.lt 5
+                      seq
+                        flag.write 4
+                      TRUE
+                    if.
+                      TRUE
+                      seq
+                        flag.write 2
+                      TRUE
+                    if.
+                      TRUE
+                      seq
+                        flag.write 2
+                      TRUE
+              if.
+                flag.eq 2
+                3
+                TRUE
+        if.
+          flag.eq 2
+          2
+          TRUE
+        if.
+          TRUE
+          seq
+            flag.write 0
+          TRUE
+        if.
+          TRUE
+          seq
+            flag.write 5
+          TRUE
+  if.
+    flag.eq 2
+    228
+    TRUE
+  if.
+    flag.eq 3
+    1337
+    TRUE
+  if.
+    flag.eq 4
+    1
+    TRUE
+  if.
+    flag.eq 5
+    2022
+    TRUE

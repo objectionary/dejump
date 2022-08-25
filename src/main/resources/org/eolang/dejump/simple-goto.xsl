@@ -38,6 +38,17 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  <xsl:template match="o[ends-with(@base,&quot;goto&quot;) and not(ends-with(o[1]/o[2]/@base,&quot;seq&quot;))]/o[1]/o[2]">
+    <xsl:element name="o">
+      <xsl:attribute name="base">
+        <xsl:text>org.eolang.seq</xsl:text>
+      </xsl:attribute>
+      <xsl:attribute name="name">
+        <xsl:text>@</xsl:text>
+      </xsl:attribute>
+      <xsl:apply-templates select="node()|@* except @name"/>
+    </xsl:element>
+  </xsl:template>
   <xsl:template match="node()|@*">
     <xsl:copy>
       <xsl:apply-templates select="node()|@*"/>

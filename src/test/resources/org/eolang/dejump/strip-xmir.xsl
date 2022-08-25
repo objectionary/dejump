@@ -69,6 +69,12 @@ SOFTWARE.
   <xsl:template match="@temp">
     <!-- Not important -->
   </xsl:template>
+  <xsl:template match="@cnt">
+    <!-- Not important -->
+  </xsl:template>
+  <xsl:template match="@conv">
+    <!-- Not important -->
+  </xsl:template>
   <xsl:template match="o[starts-with(@base, &quot;flag_&quot;)]" priority="1">
     <xsl:copy>
       <xsl:attribute name="base">

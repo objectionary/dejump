@@ -25,13 +25,20 @@ public final class RemoveGOTO {
         this.path = new File(pth).getAbsolutePath();
     }
 
+    /**
+     * Applies train of XSL-transformations
+     * @param in XML
+     * @return XML
+     */
     public static XML applyTrain(XML in) {
         Train<Shift> train = new TrDefault<Shift>()
                 .with(new StEndless(new StClasspath("/org/eolang/dejump/simple-goto.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/dejump/change-condition-of-jump.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/dejump/add-fl.xsl")))
+                .with(new StEndless(new StClasspath("/org/eolang/dejump/recalculate-flags.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/dejump/add-order-for-while.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/dejump/wrap-other-objects.xsl")))
+                .with(new StClasspath("/org/eolang/dejump/return-value.xsl"))
                 .with(new StEndless(new StClasspath("/org/eolang/dejump/terminating-while.xsl")))
                 .with(new StEndless(new StClasspath("/org/eolang/dejump/goto-to-while.xsl")))
                 .with(new StClasspath("/org/eolang/dejump/flags-to-memory.xsl"))
@@ -53,8 +60,8 @@ public final class RemoveGOTO {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(xmlIn);
         xmlOut = applyTrain(xmlIn);
+        System.out.println(xmlOut);
 
         String ret = new XMIR(xmlOut).toEO();
         File output = new File(curDir.getPath() + '\\' + curName + "_transformed.eo");
@@ -71,6 +78,12 @@ public final class RemoveGOTO {
         }
     }
 
+    /**
+     * Takes EO-source as input,
+     * converts it to .xmir and applies ParsingTrain
+     * @param source String - EO source
+     * @return XML
+     */
     public static XML getParsedXML(String source) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new Syntax(
@@ -84,6 +97,11 @@ public final class RemoveGOTO {
         return new Xsline(train).pass(xml);
     }
 
+    /**
+     * Recursively deletes given directory
+     * @param directory File - directory to delete
+     * @return boolean - True if given directory has been deleted successfully
+     */
     public static boolean deleteDirectory(File directory) {
         boolean ret = true;
         if (directory.isDirectory()) {

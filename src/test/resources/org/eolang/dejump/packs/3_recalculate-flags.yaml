@@ -1,0 +1,42 @@
+xsls:
+  - /org/eolang/dejump/simple-goto.xsl
+  - /org/eolang/dejump/change-condition-of-jump.xsl
+  - /org/eolang/dejump/add-fl.xsl
+  - /org/eolang/dejump/recalculate-flags.xsl
+
+before: |
+  goto
+    [g]
+      seq > @
+        g.forward 228
+        goto
+          [g1]
+            seq > @
+              g.forward 1337
+              g1.forward 229
+
+after: |
+  goto
+    [g]
+      seq > @
+        if.
+          TRUE
+          seq
+            228
+            flag.write 2
+          TRUE
+        goto
+          [g1]
+            seq > @
+              if.
+                TRUE
+                seq
+                  1337
+                  flag.write 3
+                TRUE
+              if.
+                TRUE
+                seq
+                  229
+                  flag.write 2
+                TRUE

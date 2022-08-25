@@ -15,8 +15,8 @@ import static org.hamcrest.Matchers.is;
  */
 public final class PacksTest {
 
-    @ParameterizedTest
-    @MethodSource("getYamls")
+    //@ParameterizedTest
+    //@MethodSource("getYamls")
     public void testTFS(final String tf) throws Exception {
         assertThat(
                 new CheckPack(

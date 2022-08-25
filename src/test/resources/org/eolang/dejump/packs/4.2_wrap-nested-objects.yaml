@@ -2,6 +2,7 @@ xsls:
   - /org/eolang/dejump/simple-goto.xsl
   - /org/eolang/dejump/change-condition-of-jump.xsl
   - /org/eolang/dejump/add-fl.xsl
+  - /org/eolang/dejump/recalculate-flags.xsl
   - /org/eolang/dejump/add-order-for-while.xsl
   - /org/eolang/dejump/wrap-other-objects.xsl
 
@@ -57,7 +58,7 @@ after: |
                         0
                       seq
                         x
-                        flag.write 1
+                        flag.write 2
                       seq
                         QQ.io.stdout "Again!\n"
                         if.
@@ -66,29 +67,18 @@ after: |
                             flag.write 0
                           TRUE
                         if.
-                          eq.
-                            flag
-                            1
+                          flag.eq 1
                           seq
                             QQ.io.stdout "nope\n"
-                          TRUE
                     if.
-                      eq.
-                        flag
-                        1
+                      flag.eq 1
                       seq
                         if.
-                          eq.
-                            flag
-                            0
+                          flag.eq 0
                           seq
                             QQ.io.stdout "never\n"
-                          TRUE
-                      TRUE
               if.
-                eq.
-                  flag
-                  1
+                flag.eq 1
                 seq
                   if.
                     TRUE
@@ -96,24 +86,11 @@ after: |
                       TRUE
                       flag.write 1
                     TRUE
-                if.
-                  eq.
-                    flag
-                    0
-                  seq
-                    TRUE
-                  TRUE
             if.
-              eq.
-                flag
-                0
+              flag.eq 0
               seq
                 if.
-                  eq.
-                    flag
-                    1
+                  flag.eq 1
                   seq
                     QQ.io.stdout "X % 2 == 0!\n"
-                  TRUE
-              TRUE
       QQ.io.stdout "Finally!\n"

@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-    paths-ignore: ['paper/**', 'README.md']
+    paths-ignore: ['paper/**', 'README.md', 'LICENSE.txt']
   pull_request:
     branches:
       - main
-    paths-ignore: ['paper/**', 'README.md']
+    paths-ignore: ['paper/**', 'README.md', 'LICENSE.txt']
 jobs:
   test:
     name: Tests

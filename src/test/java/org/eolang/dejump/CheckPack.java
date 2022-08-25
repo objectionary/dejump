@@ -34,7 +34,8 @@ public final class CheckPack {
         Train<Shift> train = new TrDefault<>();
         if (xsls != null) {
             for (final String xsl : xsls) {
-                if (xsl.lastIndexOf("flags-to-memory.xsl") == -1) {
+                if (xsl.lastIndexOf("flags-to-memory.xsl") == -1
+                    && xsl.lastIndexOf("return-value.xsl") == -1) {
                     train = train.with(new StEndless(new StClasspath(xsl)));
                 } else {
                     train = train.with(new StClasspath(xsl));
@@ -45,6 +46,9 @@ public final class CheckPack {
         final XML xml = new Xsline(train).pass(_xml);
         final XML xmlToCheck = new Xsline(train).pass(_xmlToCheck);
         Logger.debug(this, "Output XML:\n%s", xml);
+        System.out.println(xml);
+        System.out.println("=========================");
+        System.out.println(xmlToCheck);
         return xmlToCheck.equals(xml);
     }
 
