@@ -1,0 +1,12 @@
+[] > returns_from_methods_body
+  [a b] > max
+    goto > @
+      [g]
+        seq > @
+          if.
+            a.gt b
+            g.forward a
+            TRUE
+          b
+  seq > @
+    max 1337 228

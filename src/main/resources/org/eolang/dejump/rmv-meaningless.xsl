@@ -11,6 +11,7 @@
     @ww - marks unprocessed ".while" objects
     @cnt - for counting preceding return-values for ".forward" jump
     @conv - marks ".while" objects, that was "goto" objects
+    @uniq - unique name for each "goto" object to remind its result of dataization
 
     -->
   <xsl:output indent="yes" method="xml"/>
@@ -37,6 +38,9 @@
     <!-- Not important -->
   </xsl:template>
   <xsl:template match="@conv">
+    <!-- Not important -->
+  </xsl:template>
+  <xsl:template match="@uniq">
     <!-- Not important -->
   </xsl:template>
   <xsl:template match="o[starts-with(@base,&quot;org.eolang.&quot;)]">

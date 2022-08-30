@@ -12,6 +12,12 @@
       <xsl:attribute name="base">
         <xsl:text>.while</xsl:text>
       </xsl:attribute>
+      <xsl:attribute name="name">
+        <xsl:value-of select="$current/@name"/>
+      </xsl:attribute>
+      <xsl:attribute name="const">
+        <xsl:value-of select="$current/@const"/>
+      </xsl:attribute>
       <xsl:attribute name="conv">
         <xsl:text>CONVERTED</xsl:text>
       </xsl:attribute>

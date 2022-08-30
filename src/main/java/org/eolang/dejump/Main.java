@@ -15,12 +15,11 @@ public final class Main implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        new RemoveGOTO(file.toString()).exec();
+        new RemoveGOTO(this.file.toString()).exec();
         return 0;
     }
 
-    public static void main(String[] args) {
-        int exitCode = new CommandLine(new Main()).execute(args);
-        System.exit(exitCode);
+    public static void main(final String[] args) {
+        new CommandLine(new Main()).execute(args);
     }
 }

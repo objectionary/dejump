@@ -23,8 +23,7 @@ after: |
             flag.write 0
           TRUE
         if.
-          eq.
-            flag
-            1
+          flag.eq 1
           seq
             QQ.io.stdout "Check\n"
+          TRUE

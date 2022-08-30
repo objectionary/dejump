@@ -19,94 +19,118 @@ before: |
           [g1]
             seq > @
               g.forward 1337
-              QQ.io.stdout "One more!\n"
-              g1.backward
-              goto
-                [g2]
-                  seq > @
-                    if.
-                      4.lt 5
-                      g.forward 1
-                      TRUE
-                    g1.forward 2
-                    g2.forward 3
-        g.backward
+              seq
+                if.
+                  4.lt 5
+                  g.forward 1
+                  TRUE
+                g1.forward 2
         g.forward 2022
 
 after: |
-  goto
-    [g]
-      seq > @
-        if.
-          228.lt 229
-          seq
-            flag.write 2
-          TRUE
-        goto
-          [g1]
-            seq > @
+  seq
+    goto > g_!
+      [g]
+        seq > @
+          if.
+            228.lt 229
+            seq
+              flag.write 2
+            TRUE
+          if.
+            flag.eq 0
+            seq
+              seq
+                goto > g_!
+                  [g1]
+                    seq > @
+                      if.
+                        TRUE
+                        seq
+                          flag.write 3
+                        TRUE
+                      if.
+                        flag.eq 0
+                        seq
+                          seq
+                            if.
+                              4.lt 5
+                              seq
+                                flag.write 4
+                              TRUE
+                            if.
+                              flag.eq 0
+                              seq
+                                if.
+                                  TRUE
+                                  seq
+                                    flag.write 2
+                                  TRUE
+                              if.
+                                flag.eq 0
+                                seq
+                                  TRUE
+                                TRUE
+                        if.
+                          flag.eq 0
+                          seq
+                            if.
+                              flag.eq 0
+                              seq
+                                TRUE
+                              TRUE
+                          TRUE
+                if.
+                  flag.eq 2
+                  2
+                  g_
               if.
-                TRUE
+                flag.eq 0
                 seq
-                  flag.write 3
-                TRUE
-              if.
-                flag.eq 
-              QQ.io.stdout "One more!\n"
-              if.
-                TRUE
-                seq
-                  flag.write 0
-                TRUE
-              goto
-                [g2]
-                  seq > @
+                  if.
+                    flag.eq 0
+                    seq
+                      TRUE
+                      .if
+                        seq
+                          flag.write 5
+                        TRUE
                     if.
-                      4.lt 5
+                      flag.eq 0
                       seq
-                        flag.write 4
+                        TRUE
                       TRUE
+                if.
+                  flag.eq 0
+                  seq
+                    TRUE
+                  TRUE
+            if.
+              flag.eq 0
+              seq
+                if.
+                  flag.eq 0
+                  seq
                     if.
-                      TRUE
+                      flag.eq 0
                       seq
-                        flag.write 2
+                        TRUE
                       TRUE
-                    if.
-                      TRUE
-                      seq
-                        flag.write 2
-                      TRUE
-              if.
-                flag.eq 2
-                3
-                TRUE
-        if.
-          flag.eq 2
-          2
-          TRUE
-        if.
-          TRUE
-          seq
-            flag.write 0
-          TRUE
-        if.
-          TRUE
-          seq
-            flag.write 5
-          TRUE
-  if.
-    flag.eq 2
-    228
-    TRUE
-  if.
-    flag.eq 3
-    1337
-    TRUE
-  if.
-    flag.eq 4
-    1
-    TRUE
-  if.
-    flag.eq 5
-    2022
-    TRUE
+                  TRUE
+              TRUE
+    if.
+      flag.eq 2
+      228
+      g_
+    if.
+      flag.eq 3
+      1337
+      g_
+    if.
+      flag.eq 4
+      1
+      g_
+    if.
+      flag.eq 5
+      2022
+      g_

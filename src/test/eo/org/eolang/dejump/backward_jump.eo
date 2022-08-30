@@ -1,0 +1,13 @@
+[] > backward_jump
+  memory 0 > i
+  seq > @
+    goto
+      [g]
+        seq > @
+          i.write (i.plus 1)
+          if.
+            i.lt 10
+            g.backward
+            TRUE
+    QQ.io.stdout "Finished!\n"
+    i
