@@ -51,11 +51,17 @@ after: |
                     flag.write 2
                   TRUE
             if.
-              flag.eq 0
+              eq.
+                flag
+                0
               seq
                 if.
-                  flag.eq 1
+                  eq.
+                    flag
+                    1
                   seq
                     QQ.io.stdout "Never!\n"
                     QQ.io.stdout "EVER!\n"
+                  TRUE
+              TRUE
       QQ.io.stdout "Finally!!!\n"

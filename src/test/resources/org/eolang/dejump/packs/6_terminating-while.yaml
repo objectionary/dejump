@@ -3,9 +3,9 @@ xsls:
   - /org/eolang/dejump/change-condition-of-jump.xsl
   - /org/eolang/dejump/add-fl.xsl
   - /org/eolang/dejump/recalculate-flags.xsl
-  - /org/eolang/dejump/return-value.xsl
   - /org/eolang/dejump/add-order-for-while.xsl
   - /org/eolang/dejump/wrap-other-objects.xsl
+  - /org/eolang/dejump/return-value.xsl
   - /org/eolang/dejump/terminating-while.xsl
 
 before: |
@@ -17,21 +17,26 @@ before: |
             TRUE
             [i]
               seq > @
-                g.backward
+                g.forward 1337
 
 after: |
   [] > obj
-    goto
-      [g]
-        seq > @
-          while.
-            and.
-              flag.eq 1
-              TRUE
-            [i]
-              seq > @
-                if.
-                  TRUE
-                  seq
-                    flag.write 0
-                  TRUE
+    seq
+      goto > g_!
+        [g]
+          seq > @
+            while.
+              and.
+                flag.eq 0
+                TRUE
+              [i]
+                seq > @
+                  if.
+                    TRUE
+                    seq
+                      flag.write 2
+                    TRUE
+      if.
+        flag.eq 2
+        1337
+        g_

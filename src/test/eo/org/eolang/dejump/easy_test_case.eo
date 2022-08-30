@@ -1,0 +1,12 @@
+[] > easy_test_case
+  memory 0 > x
+  goto > @
+    [g]
+      seq > @
+        if. > y
+          x.eq 5
+          g.forward x
+          42.div x
+        QQ.io.stdout
+          QQ.txt.sprintf "42/x = %d\n" y
+        x.write (x.plus 1)

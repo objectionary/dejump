@@ -17,6 +17,12 @@
         </xsl:attribute>
       </xsl:if>
       <xsl:copy>
+        <xsl:attribute name="name">
+          <xsl:value-of select="$curGOTO/@uniq"/>
+        </xsl:attribute>
+        <xsl:attribute name="const">
+          <xsl:text></xsl:text>
+        </xsl:attribute>
         <xsl:apply-templates select="node()|@* except @name"/>
       </xsl:copy>
       <xsl:for-each select="descendant::o[@tt=&quot;f&quot; and @rem=$curGOTO/o[1]/o[1]/@name and o[2]/o[1]/@base!=&quot;.write&quot;]">
@@ -45,6 +51,11 @@
             </xsl:element>
           </xsl:element>
           <xsl:copy-of select="$current/o[2]/o[1]"/>
+          <xsl:element name="o">
+            <xsl:attribute name="base">
+              <xsl:value-of select="$curGOTO/@uniq"/>
+            </xsl:attribute>
+          </xsl:element>
         </xsl:element>
       </xsl:for-each>
     </xsl:element>

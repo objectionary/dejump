@@ -52,6 +52,15 @@
                 <xsl:copy-of select="$current"/>
                 <xsl:copy-of select="$current/following-sibling::o"/>
               </xsl:element>
+              <xsl:element name="o">
+                <xsl:attribute name="base">
+                  <xsl:text>org.eolang.bool</xsl:text>
+                </xsl:attribute>
+                <xsl:attribute name="data">
+                  <xsl:text>bool</xsl:text>
+                </xsl:attribute>
+                <xsl:text>true</xsl:text>
+              </xsl:element>
             </xsl:element>
           </xsl:when>
           <xsl:otherwise>

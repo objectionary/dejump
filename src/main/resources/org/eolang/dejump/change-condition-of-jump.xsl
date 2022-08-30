@@ -10,6 +10,11 @@
       <xsl:attribute name="base">
         <xsl:value-of select="@base"/>
       </xsl:attribute>
+      <xsl:if test="@name">
+        <xsl:attribute name="name">
+          <xsl:value-of select="@name"/>
+        </xsl:attribute>
+      </xsl:if>
       <xsl:attribute name="which">
         <xsl:value-of select="o[2]/o[1]/@base"/>
       </xsl:attribute>
@@ -48,6 +53,11 @@
       <xsl:attribute name="base">
         <xsl:value-of select="@base"/>
       </xsl:attribute>
+      <xsl:if test="@name">
+        <xsl:attribute name="name">
+          <xsl:value-of select="@name"/>
+        </xsl:attribute>
+      </xsl:if>
       <xsl:attribute name="which">
         <xsl:value-of select="o[2]/o[1]/@base"/>
       </xsl:attribute>

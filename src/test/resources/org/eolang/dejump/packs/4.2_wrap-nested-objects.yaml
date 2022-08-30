@@ -67,30 +67,54 @@ after: |
                             flag.write 0
                           TRUE
                         if.
-                          flag.eq 1
+                          eq.
+                            flag
+                            1
                           seq
                             QQ.io.stdout "nope\n"
+                          TRUE
                     if.
-                      flag.eq 1
+                      eq.
+                        flag
+                        1
                       seq
                         if.
-                          flag.eq 0
+                          eq.
+                            flag
+                            0
                           seq
                             QQ.io.stdout "never\n"
+                          TRUE
+                      TRUE
               if.
-                flag.eq 1
+                eq.
+                  flag
+                  1
                 seq
                   if.
                     TRUE
                     seq
                       TRUE
-                      flag.write 1
+                      flag.write 2
                     TRUE
+                if.
+                  eq.
+                    flag
+                    0
+                  seq
+                    TRUE
+                  TRUE
             if.
-              flag.eq 0
+              eq.
+                flag
+                0
               seq
                 if.
-                  flag.eq 1
+                  eq.
+                    flag
+                    1
                   seq
                     QQ.io.stdout "X % 2 == 0!\n"
+                  TRUE
+              TRUE
       QQ.io.stdout "Finally!\n"

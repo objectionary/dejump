@@ -3,42 +3,43 @@ xsls:
   - /org/eolang/dejump/change-condition-of-jump.xsl
   - /org/eolang/dejump/add-fl.xsl
   - /org/eolang/dejump/recalculate-flags.xsl
-  - /org/eolang/dejump/return-value.xsl
   - /org/eolang/dejump/add-order-for-while.xsl
   - /org/eolang/dejump/wrap-other-objects.xsl
+  - /org/eolang/dejump/return-value.xsl
   - /org/eolang/dejump/terminating-while.xsl
   - /org/eolang/dejump/goto-to-while.xsl
-  - /org/eolang/dejump/flags-to-memory.xsl
 
 before: |
-  [] > obj
-    goto
-      [g]
-        seq > @
-          g.backward
-          QQ.io.stdout "Check\n"
+  goto
+    [g]
+      seq > @
+        g.forward 1337
+        QQ.io.stdout "Check\n"
 
 after: |
-  [] > obj
-    while.
+  seq
+    while. > g_!
       or.
         eq.
           flag
-          0
+          -1
       [i]
         seq > @
-          flag.write 1
+          flag.write 0
           seq
             if.
               TRUE
               seq
-                flag.write 0
+                flag.write 2
               TRUE
             if.
               eq.
                 flag
-                1
+                0
               seq
                 QQ.io.stdout "Check\n"
               TRUE
-    memory 0 > flag
+    if.
+      flag.eq 2
+      1337
+      g_

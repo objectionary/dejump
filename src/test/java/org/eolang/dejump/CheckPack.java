@@ -1,8 +1,13 @@
 package org.eolang.dejump;
 
-import com.jcabi.log.Logger;
 import com.jcabi.xml.XML;
-import com.yegor256.xsline.*;
+import com.yegor256.xsline.Shift;
+import com.yegor256.xsline.StClasspath;
+import com.yegor256.xsline.StEndless;
+import com.yegor256.xsline.TrDefault;
+import com.yegor256.xsline.Train;
+import com.yegor256.xsline.Xsline;
+import org.eolang.parser.XMIR;
 import org.yaml.snakeyaml.Yaml;
 import java.io.IOException;
 import java.util.Map;
@@ -42,13 +47,21 @@ public final class CheckPack {
                 }
             }
         }
-        train = train.with(new StEndless(new StClasspath("/org/eolang/dejump/strip-xmir.xsl")));
-        final XML xml = new Xsline(train).pass(_xml);
-        final XML xmlToCheck = new Xsline(train).pass(_xmlToCheck);
-        Logger.debug(this, "Output XML:\n%s", xml);
-        System.out.println(xml);
+        train = train.with(new StEndless(new StClasspath("/org/eolang/dejump/rmv-meaningless.xsl")));
+        final Train<Shift> strip = new TrDefault<Shift>()
+            .with(new StEndless(new StClasspath("/org/eolang/dejump/strip-xmir.xsl")));
+        final XML xml = new Xsline(strip).pass(
+            RemoveGOTO.getParsedXML(
+                new XMIR(
+                    new Xsline(train).pass(_xml)
+                ).toEO()
+            )
+        );
+        final XML xmlToCheck = new Xsline(strip).pass(_xmlToCheck);
+        // How to debug via Logger.debug() ? Unless it, uncomment these lines for debug
+        /*System.out.println(xml);
         System.out.println("=========================");
-        System.out.println(xmlToCheck);
+        System.out.println(xmlToCheck);*/
         return xmlToCheck.equals(xml);
     }
 
