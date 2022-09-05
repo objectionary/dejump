@@ -15,17 +15,25 @@ new File("${project.basedir}/src/test/eo/org/eolang/dejump/").eachFile {
     String testName = it.name.substring(0, it.name.lastIndexOf("."))
 
     def todo = [
-        "empty_goto",        // remove when "while." object's return value will fixed
         "easy_test_case",     // consider @name in "if." object
-        "backward_jump"       // ???????????
     ]
 
     if (!(testName in todo)) {
         String src = it.getText()
-        XML xml = RemoveGOTO.applyTrain(RemoveGOTO.getParsedXML(src))
-        String srcTransformed = new XMIR(xml).toEO()
-        srcTransformed = srcTransformed.substring(0, srcTransformed.indexOf("\n")) + "Test" + srcTransformed.substring(srcTransformed.indexOf("\n"))
-        File file = new File(new String("${project.basedir}/target/eo-after/process_" + "${testName}" + ".eo"))
+        String srcTransformed = new XMIR(
+            RemoveGOTO.applyTrain(
+                RemoveGOTO.getParsedXML(src)
+            )
+        ).toEO()
+        srcTransformed = String.format(
+            "%sTest%s",
+            srcTransformed.substring(0, srcTransformed.indexOf("\n")),
+            srcTransformed.substring(srcTransformed.indexOf("\n"))
+        )
+        File file = new File(String.format(
+            "%s/target/eo-after/process_%s.eo",
+            "${project.basedir}", "${testName}"
+        ))
         file.createNewFile()
         file.append("+alias org.eolang.hamcrest.assert-that\n")
         file.append("+junit\n")

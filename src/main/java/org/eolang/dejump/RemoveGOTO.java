@@ -10,7 +10,6 @@ import com.yegor256.xsline.Train;
 import com.yegor256.xsline.Xsline;
 import org.cactoos.io.InputOf;
 import org.cactoos.io.OutputTo;
-import org.eolang.parser.ParsingTrain;
 import org.eolang.parser.Syntax;
 import org.eolang.parser.XMIR;
 import java.io.ByteArrayOutputStream;
@@ -26,17 +25,23 @@ public final class RemoveGOTO {
      */
     private final String path;
 
-    public RemoveGOTO(final String pth) {
+    /**
+     * Format of file to transform ("xmir" or "eo")
+     */
+    private final String format;
+
+    public RemoveGOTO(final String pth, final String fmt) {
         this.path = new File(pth).getAbsolutePath();
+        this.format = fmt;
     }
 
     /**
      * Applies train of XSL-transformations
      *
-     * @param in XML
+     * @param xml XML
      * @return XML
      */
-    public static XML applyTrain(final XML in) {
+    public static XML applyTrain(final XML xml) {
         final Train<Shift> train = new TrDefault<Shift>()
             .with(new StEndless(new StClasspath("/org/eolang/dejump/simple-goto.xsl")))
             .with(new StEndless(new StClasspath("/org/eolang/dejump/change-condition-of-jump.xsl")))
@@ -49,46 +54,63 @@ public final class RemoveGOTO {
             .with(new StEndless(new StClasspath("/org/eolang/dejump/goto-to-while.xsl")))
             .with(new StClasspath("/org/eolang/dejump/flags-to-memory.xsl"))
             .with(new StEndless(new StClasspath("/org/eolang/dejump/rmv-meaningless.xsl")));
-        return new Xsline(train).pass(in);
+        return new Xsline(train).pass(xml);
     }
 
-    public void exec() {
-        final File curDir = new File(this.path.substring(0, this.path.lastIndexOf('\\')) + "\\generated");
-        final String curName = new File(this.path).getName().substring(0, new File(this.path).getName().lastIndexOf('.'));
+    public void exec() throws IOException {
+        final File dir = new File(this.path.substring(0, this.path.lastIndexOf('\\')) + "\\generated");
+        final String filename = new File(this.path).getName().substring(0, new File(this.path).getName().lastIndexOf('.'));
         final File input = new File(this.path);
-        if (curDir.exists()) {
-            RemoveGOTO.deleteDirectory(curDir);
+        if (dir.exists()) {
+            RemoveGOTO.deleteDirectory(dir);
         }
-        curDir.mkdir();
-        final XML xmlIn;
-        try {
-            xmlIn = RemoveGOTO.getParsedXML(Files.readString(input.toPath()));
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        dir.mkdir();
+        final XML before;
+        if ("eo".equals(this.format)) {
+            before = RemoveGOTO.getParsedXML(Files.readString(input.toPath()));
+        } else {
+            before = RemoveGOTO.getParsedXML(new XMLDocument(Files.readString(input.toPath())));
         }
-        final XML xmlOut = RemoveGOTO.applyTrain(xmlIn);
-        System.out.println(xmlOut);
+        final XML after = RemoveGOTO.applyTrain(before);
+        System.out.println(after);
 
-        final String ret = new XMIR(xmlOut).toEO();
-        final File output = new File(curDir.getPath() + '\\' + curName + "_transformed.eo");
-        try {
-            output.createNewFile();
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        final String ret;
+        if ("eo".equals(this.format)) {
+            ret = new XMIR(after).toEO();
+        } else {
+            ret = after.toString();
         }
+        final File output = new File(
+            String.format(
+                "%s\\%s_transformed.%s",
+                dir.getPath(), filename, this.format
+            )
+        );
+        output.createNewFile();
         try (final FileWriter out = new FileWriter(output.getPath())) {
             out.write(ret);
             out.flush();
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
     /**
-     * Takes EO-source as input,
-     * converts it to .xmir and applies ParsingTrain
+     * Takes XMIR-source as input,
+     * converts it to ".eo" and calls overridden method
      *
-     * @param source String - EO source
+     * @param xml XML ".xmir" source
+     * @return XML
+     */
+    public static XML getParsedXML(final XML xml) throws IOException {
+        return RemoveGOTO.getParsedXML(
+            new XMIR(xml).toEO()
+        );
+    }
+
+    /**
+     * Takes EO-source as input,
+     * converts it to ".xmir" and applies ParsingTrain
+     *
+     * @param source String EO-source
      * @return XML
      */
     public static XML getParsedXML(final String source) throws IOException {
@@ -100,8 +122,9 @@ public final class RemoveGOTO {
         ).parse();
         final XML xml = new XMLDocument(baos.toByteArray());
         baos.close();
-        final Train<Shift> train = new ParsingTrain();
-        return new Xsline(train).pass(xml);
+        return new Xsline(
+            new TrDefault<Shift>().with(new StClasspath("/org/eolang/parser/wrap-method-calls.xsl"))
+        ).pass(xml);
     }
 
     /**

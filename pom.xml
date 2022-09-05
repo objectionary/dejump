@@ -15,7 +15,7 @@
   <name>dejump</name>
   <description>Replaces all GOTO objects</description>
   <properties>
-    <eolang.version>0.27.2</eolang.version>
+    <eolang.version>0.28.0</eolang.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
   </properties>

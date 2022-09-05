@@ -9,4 +9,6 @@
             TRUE
           b
   seq > @
-    max 1337 228
+    QQ.io.stdout
+      QQ.txt.sprintf "MAX_VAL is %d\n"
+        max 228 1337
