@@ -44,22 +44,12 @@
     <dependency>
       <groupId>com.yegor256</groupId>
       <artifactId>xsline</artifactId>
-      <version>0.5.3</version>
+      <version>0.10.0</version>
     </dependency>
     <dependency>
       <groupId>net.sf.saxon</groupId>
       <artifactId>Saxon-HE</artifactId>
-      <version>9.8.0-5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <!-- version from parent POM -->
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <!-- version from parent POM -->
+      <version>11.4</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
