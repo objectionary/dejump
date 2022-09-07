@@ -22,7 +22,7 @@ before: |
 after: |
   [] > obj
     seq
-      goto > g_!
+      goto > g_
         [g]
           seq > @
             while.

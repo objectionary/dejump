@@ -20,9 +20,6 @@
         <xsl:attribute name="name">
           <xsl:value-of select="$curGOTO/@uniq"/>
         </xsl:attribute>
-        <xsl:attribute name="const">
-          <xsl:text></xsl:text>
-        </xsl:attribute>
         <xsl:apply-templates select="node()|@* except @name"/>
       </xsl:copy>
       <xsl:for-each select="descendant::o[@tt=&quot;f&quot; and @rem=$curGOTO/o[1]/o[1]/@name and o[2]/o[1]/@base!=&quot;.write&quot;]">

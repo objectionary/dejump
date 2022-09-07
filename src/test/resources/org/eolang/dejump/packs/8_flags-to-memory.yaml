@@ -21,7 +21,7 @@ before: |
 after: |
   [] > obj
     seq
-      while. > g_!
+      while. > g_
         or.
           eq.
             flag

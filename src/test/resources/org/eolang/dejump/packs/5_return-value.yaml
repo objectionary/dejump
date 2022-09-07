@@ -16,7 +16,7 @@ before: |
 
 after: |
   seq
-    goto > g_!
+    goto > g_
       [g]
         seq > @
           if.
