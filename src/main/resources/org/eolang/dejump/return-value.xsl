@@ -2,6 +2,26 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="return-value" version="2.0">
   <!--
     Adds argument of ".forward" object after "goto"
+    this one:
+      goto > uniq!
+        [g]
+          seq > @
+            ...
+            flag.write 0
+            ...
+    maps to:
+      seq
+        flag.write -1
+        goto > uniq!
+          [g]
+            seq > @
+              ...
+              flag.write 1
+              ...
+        if.
+          flag.eq 1
+          smth
+          uniq
     -->
   <xsl:output indent="yes" method="xml"/>
   <xsl:strip-space elements="*"/>
@@ -16,9 +36,65 @@
           <xsl:value-of select="$curGOTO/@name"/>
         </xsl:attribute>
       </xsl:if>
+      <xsl:choose>
+        <xsl:when test="not($curGOTO[@temp])">
+          <xsl:for-each select="$curGOTO//o[@rem=$curGOTO/o[1]/o[1]/@name]">
+            <xsl:element name="o">
+              <xsl:attribute name="base">
+                <xsl:text>.write</xsl:text>
+              </xsl:attribute>
+              <xsl:element name="o">
+                <xsl:attribute name="base">
+                  <xsl:value-of select="@fl"/>
+                </xsl:attribute>
+              </xsl:element>
+              <xsl:element name="o">
+                <xsl:attribute name="base">
+                  <xsl:text>org.eolang.int</xsl:text>
+                </xsl:attribute>
+                <xsl:attribute name="data">
+                  <xsl:text>int</xsl:text>
+                </xsl:attribute>
+                <xsl:choose>
+                  <xsl:when test="@tt=&quot;f&quot;">
+                    <xsl:text>-1</xsl:text>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:text>0</xsl:text>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:element>
+            </xsl:element>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:element name="o">
+            <xsl:attribute name="base">
+              <xsl:text>.write</xsl:text>
+            </xsl:attribute>
+            <xsl:element name="o">
+              <xsl:attribute name="base">
+                <xsl:value-of select="@temp"/>
+              </xsl:attribute>
+            </xsl:element>
+            <xsl:element name="o">
+              <xsl:attribute name="base">
+                <xsl:text>org.eolang.int</xsl:text>
+              </xsl:attribute>
+              <xsl:attribute name="data">
+                <xsl:text>int</xsl:text>
+              </xsl:attribute>
+              <xsl:text>0</xsl:text>
+            </xsl:element>
+          </xsl:element>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:copy>
         <xsl:attribute name="name">
           <xsl:value-of select="$curGOTO/@uniq"/>
+        </xsl:attribute>
+        <xsl:attribute name="const">
+          <xsl:text></xsl:text>
         </xsl:attribute>
         <xsl:apply-templates select="node()|@* except @name"/>
       </xsl:copy>

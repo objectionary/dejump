@@ -19,6 +19,9 @@
   <xsl:template match="program/sheets">
     <!-- Not important -->
   </xsl:template>
+  <xsl:template match="@alias">
+    <!-- Not important -->
+  </xsl:template>
   <xsl:template match="@line">
     <!-- Not important -->
   </xsl:template>

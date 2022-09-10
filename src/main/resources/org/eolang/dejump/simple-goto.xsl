@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="SG" version="2.0">
   <!--
-    Simple goto
+    Simple goto + adding "seq > @" inside "goto"
     -->
   <xsl:output indent="yes" method="xml"/>
   <xsl:strip-space elements="*"/>
