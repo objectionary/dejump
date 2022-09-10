@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="add-fl" version="2.0">
   <!--
     Add "fl" attribute to each object ".if" that encapsulates ".forward" or ".backward"
+    and "uniq" attribute to each object "goto"
     -->
   <xsl:output indent="yes" method="xml"/>
   <xsl:strip-space elements="*"/>
@@ -34,9 +35,6 @@
       <xsl:attribute name="uniq">
         <xsl:value-of select="concat(&quot;g_&quot;,generate-id())"/>
       </xsl:attribute>
-      <!--<xsl:attribute name="const">
-        <xsl:text>""</xsl:text>
-      </xsl:attribute>-->
       <xsl:apply-templates select="node()|@*"/>
     </xsl:copy>
   </xsl:template>

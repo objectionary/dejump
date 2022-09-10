@@ -5,6 +5,7 @@ xsls:
   - /org/eolang/dejump/recalculate-flags.xsl
   - /org/eolang/dejump/add-order-for-while.xsl
   - /org/eolang/dejump/wrap-other-objects.xsl
+  - /org/eolang/dejump/add-temp-flags.xsl
   - /org/eolang/dejump/return-value.xsl
   - /org/eolang/dejump/terminating-while.xsl
 
@@ -22,7 +23,8 @@ before: |
 after: |
   [] > obj
     seq
-      goto > g_
+      flag.write -1
+      goto > g_!
         [g]
           seq > @
             while.

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<program>
+   <objects>
+      <o abstract="" name="obj">
+         <o base="seq" name="@">
+            <o base=".write">
+               <o base="flag"/>
+               <o base="int" data="bytes">00 00 00 00 00 00 00 00</o>
+            </o>
+            <o base=".while" const="" name="g_">
+               <o base=".eq">
+                  <o base="flag"/>
+                  <o base="int" data="bytes">00 00 00 00 00 00 00 00</o>
+               </o>
+               <o abstract="">
+                  <o name="i"/>
+                  <o base="seq" name="@">
+                     <o base=".write">
+                        <o base="flag"/>
+                        <o base="int" data="bytes">00 00 00 00 00 00 00 01</o>
+                     </o>
+                     <o base=".stdout">
+                        <o base=".io">
+                           <o base="QQ"/>
+                        </o>
+                        <o base="string" data="string">Check\n</o>
+                     </o>
+                  </o>
+               </o>
+            </o>
+         </o>
+      </o>
+      <o base="memory" name="flag">
+         <o base="int" data="bytes">00 00 00 00 00 00 00 00</o>
+      </o>
+   </objects>
+</program>

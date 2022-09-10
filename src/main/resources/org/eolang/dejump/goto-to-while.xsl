@@ -15,6 +15,9 @@
       <xsl:attribute name="name">
         <xsl:value-of select="$current/@name"/>
       </xsl:attribute>
+      <xsl:attribute name="const">
+        <xsl:value-of select="$current/@const"/>
+      </xsl:attribute>
       <xsl:attribute name="conv">
         <xsl:text>CONVERTED</xsl:text>
       </xsl:attribute>
@@ -100,7 +103,7 @@
           </xsl:element>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:variable name="tempFlag" select="concat(&quot;flag_temp_&quot;,generate-id())"/>
+          <xsl:variable name="tempFlag" select="$current/@temp"/>
           <xsl:element name="o">
             <xsl:attribute name="base">
               <xsl:text>.eq</xsl:text>

@@ -49,6 +49,7 @@ public final class RemoveGOTO {
             .with(new StEndless(new StClasspath("/org/eolang/dejump/recalculate-flags.xsl")))
             .with(new StEndless(new StClasspath("/org/eolang/dejump/add-order-for-while.xsl")))
             .with(new StEndless(new StClasspath("/org/eolang/dejump/wrap-other-objects.xsl")))
+            .with(new StClasspath("/org/eolang/dejump/add-temp-flags.xsl"))
             .with(new StClasspath("/org/eolang/dejump/return-value.xsl"))
             .with(new StEndless(new StClasspath("/org/eolang/dejump/terminating-while.xsl")))
             .with(new StEndless(new StClasspath("/org/eolang/dejump/goto-to-while.xsl")))
@@ -108,7 +109,7 @@ public final class RemoveGOTO {
 
     /**
      * Takes EO-source as input,
-     * converts it to ".xmir" and applies ParsingTrain
+     * converts it to ".xmir" and applies 'wrap-method-calls.xsl'
      *
      * @param source String EO-source
      * @return XML

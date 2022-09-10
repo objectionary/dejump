@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="rmv" version="2.0">
   <!--
-    Removes meaningless attributes/names:
+    Removes meaningless attributes/names: (in "{}" brackets - first occurrence)
 
-    @fl - flagName for ".if", containing .forward/.backward
-    @which - name of GOTO argument, which calls the corresponding jump
-    @rem - same as @which
-    @tt - type of jump 'f'/'b' for ".if" object, which encapsulates it
-    @temp - flagName for other flags (which are don't replace jumps)
-    @ww - marks unprocessed ".while" objects
-    @cnt - for counting preceding return-values for ".forward" jump
-    @conv - marks ".while" objects, that was "goto" objects
-    @uniq - unique name for each "goto" object to remind its result of dataization
+    @which - name of GOTO argument, which calls the corresponding jump             { change-condition-of-jump.xsl }
+    @tt - type of jump 'f'/'b' for ".if" object, which encapsulates it             { change-condition-of-jump.xsl }
+    @fl - flagName for ".if", containing .forward/.backward                        { add-fl.xsl }
+    @cnt - for counting preceding return-values for ".forward" jump                { add-fl.xsl }
+    @rem - same as @which                                                          { add-fl.xsl }
+    @uniq - unique name for each "goto" object to remind its result of dataization { add-fl.xsl }
+    @ww - marks unprocessed ".while" objects                                       { add-order-for-while.xsl }
+    @temp - flagName for other flags (which are don't replace jumps)               { goto-to-while.xsl }
+    @conv - marks ".while" objects, that was "goto" objects                        { goto-to-while.xsl }
 
     -->
   <xsl:output indent="yes" method="xml"/>
