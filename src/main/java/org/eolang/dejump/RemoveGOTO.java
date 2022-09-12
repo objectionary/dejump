@@ -84,7 +84,7 @@ public final class RemoveGOTO {
         final File output = new File(
             String.format(
                 "%s\\%s_transformed.%s",
-                dir.getPath(), filename, this.format
+                dir.getPath(), filename, this.format ? "eo" : "xmir"
             )
         );
         output.createNewFile();
