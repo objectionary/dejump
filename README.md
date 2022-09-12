@@ -4,6 +4,9 @@
 [![We recommend IntelliJ IDEA](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
 
 [![mvn-linux](https://github.com/objectionary/dejump/actions/workflows/build.yml/badge.svg)](https://github.com/objectionary/dejump/actions/workflows/build.yml)
+[![PDD status](http://www.0pdd.com/svg?name=objectionary/dejump)](http://www.0pdd.com/p?name=objectionary/dejump)
+[![Hits-of-Code](https://hitsofcode.com/github/objectionary/dejump?branch=main)](https://hitsofcode.com/github/objectionary/dejump/view?branch=main)
+![Lines of code](https://img.shields.io/tokei/lines/github/objectionary/dejump)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/objectionary/dejump/blob/master/LICENSE.txt)
 
 Takes as an input a program in [EO](https://www.eolang.org/) and converts it to a semantically equivalent program, excluding the use of `goto` object.
@@ -28,8 +31,61 @@ Replaces objects GOTO with semantically equivalent
 ```
 
 Depending on the input file format, the output file format will be similar.
-
 By default, the input file format is `.xmir`.
+
+In the directory that contains the file passed as a parameter, a new directory `generated` is created, in which, after the program is executed, the transformed file will be located.
+
+## Example
+
+For the following `.eo`-code, which appears at `temp/example.eo`:
+
+```
+[] > example
+  memory 0 > x
+  goto > @
+    [g]
+      seq > @
+        x.write (x.plus 1)
+        if.
+          x.eq 5
+          g.forward x
+          QQ.io.stdout "Again\n"
+        g.backward
+```
+
+After the application is executed, the file `temp/generated/example_transformed.eo` will be created:
+
+```
+[] > example
+  memory 0 > x
+  seq > @
+    flag_fwd.write -1
+    flag_bwd.write 0
+    while. > g_rem!
+      or.
+        flag_fwd.eq -1
+        flag_bwd.eq 0
+      [i]
+        seq > @
+          flag_fwd.write 0
+          flag_bwd.write 1
+          seq
+            x.write (x.plus 1)
+            if.
+              x.eq 5
+              flag_fwd.write 2
+              QQ.io.stdout "Again\n"
+            if.
+              flag_fwd.eq 0
+              flag_bwd.write 0
+              TRUE
+    if.
+      flag_fwd.eq 2
+      x
+      g_rem
+  memory -1 > flag_fwd
+  memory 0 > flag_bwd
+```
 
 ## How to Contribute
 
