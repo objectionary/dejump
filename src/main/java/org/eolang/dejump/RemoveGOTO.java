@@ -28,9 +28,9 @@ public final class RemoveGOTO {
     /**
      * Format of file to transform ("xmir" or "eo")
      */
-    private final String format;
+    private final boolean format;
 
-    public RemoveGOTO(final String pth, final String fmt) {
+    public RemoveGOTO(final String pth, final boolean fmt) {
         this.path = new File(pth).getAbsolutePath();
         this.format = fmt;
     }
@@ -67,7 +67,7 @@ public final class RemoveGOTO {
         }
         dir.mkdir();
         final XML before;
-        if ("eo".equals(this.format)) {
+        if (this.format) {
             before = RemoveGOTO.getParsedXML(Files.readString(input.toPath()));
         } else {
             before = RemoveGOTO.getParsedXML(new XMLDocument(Files.readString(input.toPath())));
@@ -76,7 +76,7 @@ public final class RemoveGOTO {
         System.out.println(after);
 
         final String ret;
-        if ("eo".equals(this.format)) {
+        if (this.format) {
             ret = new XMIR(after).toEO();
         } else {
             ret = after.toString();
