@@ -9,34 +9,34 @@
 Takes as an input a program in [EO](https://www.eolang.org/) and converts it to a semantically equivalent program, excluding the use of `goto` object.
 The input data is a program in `.eo`/`.xmir` format, as the output the program returns `.eo`/`.xmir` respectively.
 
-## Quick Start
-
+## Usage
 To use this program, the first step is to download the JAR. Then:
 
 ```
 $ java -jar dejump-0.0.0-jar-with-dependencies.jar --help
 ```
 
-Read its output and proceed.
-
-## Usage
-
 An application has a CLI (Command line interface), which appears as:
 
 ```
-Usage: dejump [-hV] <file>
+Usage: dejump [-hV] [--eo] <file>
 Replaces objects GOTO with semantically equivalent
       <file>      Absolute path of file to transform
+      --eo        treat input file as EO program (not XMIR)
   -h, --help      Show this help message and exit.
   -V, --version   Print version information and exit.
 ```
+
+Depending on the input file format, the output file format will be similar.
+
+By default, the input file format is `.xmir`.
 
 ## How to Contribute
 
 You will need JDK 11+ and Maven 3.8+. Clone the repo and run the build like this:
 
 ```
-$ mvn clean install
+$ mvn clean install -Pqulice
 ```
 
 There are `.eo` files in `src/test/eo/org/eolang/dejump`, which you can edit or add your own source there. There are the following build steps that process these files:

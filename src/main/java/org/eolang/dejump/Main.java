@@ -17,7 +17,7 @@ public final class Main implements Callable<Integer> {
     boolean asEO;
 
     @CommandLine.Parameters(index = "0",
-        description = "Absolute path of file to transform (extension should be \".eo\" or \".xmir\")")
+        description = "Absolute path of file to transform")
     File file;
 
     @Override
