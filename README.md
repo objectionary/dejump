@@ -6,7 +6,7 @@
 [![mvn-linux](https://github.com/objectionary/dejump/actions/workflows/build.yml/badge.svg)](https://github.com/objectionary/dejump/actions/workflows/build.yml)
 [![PDD status](http://www.0pdd.com/svg?name=objectionary/dejump)](http://www.0pdd.com/p?name=objectionary/dejump)
 [![Hits-of-Code](https://hitsofcode.com/github/objectionary/dejump?branch=main)](https://hitsofcode.com/github/objectionary/dejump/view?branch=main)
-![Lines of code](https://img.shields.io/tokei/lines/github/objectionary/dejump)
+[![Lines of code](https://img.shields.io/tokei/lines/github/objectionary/dejump)](https://img.shields.io/tokei/lines/github/objectionary/dejump)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/objectionary/dejump/blob/master/LICENSE.txt)
 
 Takes as an input a program in [EO](https://www.eolang.org/) and converts it to a semantically equivalent program, excluding the use of `goto` object.
