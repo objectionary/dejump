@@ -1,3 +1,26 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2022 Mikhail Lipanin
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package org.eolang.dejump;
 
 import com.jcabi.xml.XML;
@@ -8,35 +31,46 @@ import com.yegor256.xsline.StEndless;
 import com.yegor256.xsline.TrDefault;
 import com.yegor256.xsline.Train;
 import com.yegor256.xsline.Xsline;
-import org.cactoos.io.InputOf;
-import org.cactoos.io.OutputTo;
-import org.eolang.parser.Syntax;
-import org.eolang.parser.XMIR;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import org.cactoos.io.InputOf;
+import org.cactoos.io.OutputTo;
+import org.eolang.parser.Syntax;
+import org.eolang.parser.XMIR;
 
-public final class RemoveGOTO {
+/**
+ * The main logic of application.
+ *
+ * @since 0.0.1
+ */
+public final class RemoveGoto {
 
     /**
-     * Path to file to be transformed
+     * Path to file to be transformed.
      */
     private final String path;
 
     /**
-     * Format of file to transform ("xmir" or "eo")
+     * Format of file to transform ("xmir" or "eo").
      */
     private final boolean format;
 
-    public RemoveGOTO(final String pth, final boolean fmt) {
+    /**
+     * Ctor.
+     *
+     * @param pth Path to input file
+     * @param fmt True, if input is EO-program
+     */
+    public RemoveGoto(final String pth, final boolean fmt) {
         this.path = new File(pth).getAbsolutePath();
         this.format = fmt;
     }
 
     /**
-     * Applies train of XSL-transformations
+     * Applies train of XSL-transformations.
      *
      * @param xml XML
      * @return XML
@@ -58,37 +92,54 @@ public final class RemoveGOTO {
         return new Xsline(train).pass(xml);
     }
 
+    /**
+     * Applies XSL-transformations and saves to output file.
+     *
+     * @throws IOException If fails
+     */
     public void exec() throws IOException {
-        final File dir = new File(this.path.substring(0, this.path.lastIndexOf('\\')) + "\\generated");
-        final String filename = new File(this.path).getName().substring(0, new File(this.path).getName().lastIndexOf('.'));
+        final File dir = new File(
+            String.format(
+                "%s\\generated",
+                this.path.substring(0, this.path.lastIndexOf('\\'))
+            )
+        );
+        final String filename = new File(this.path).getName()
+            .substring(0, new File(this.path).getName().lastIndexOf('.'));
         final File input = new File(this.path);
         if (dir.exists()) {
-            RemoveGOTO.deleteDirectory(dir);
+            RemoveGoto.deleteDirectory(dir);
         }
         dir.mkdir();
         final XML before;
         if (this.format) {
-            before = RemoveGOTO.getParsedXML(Files.readString(input.toPath()));
+            before = RemoveGoto.getParsedXml(Files.readString(input.toPath()));
         } else {
-            before = RemoveGOTO.getParsedXML(new XMLDocument(Files.readString(input.toPath())));
+            before = RemoveGoto.getParsedXml(new XMLDocument(Files.readString(input.toPath())));
         }
-        final XML after = RemoveGOTO.applyTrain(before);
+        final XML after = RemoveGoto.applyTrain(before);
         System.out.println(after);
-
         final String ret;
+        final File output;
         if (this.format) {
             ret = new XMIR(after).toEO();
+            output = new File(
+                String.format(
+                    "%s\\%s_transformed.%s",
+                    dir.getPath(), filename, "eo"
+                )
+            );
         } else {
             ret = after.toString();
+            output = new File(
+                String.format(
+                    "%s\\%s_transformed.%s",
+                    dir.getPath(), filename, "xmir"
+                )
+            );
         }
-        final File output = new File(
-            String.format(
-                "%s\\%s_transformed.%s",
-                dir.getPath(), filename, this.format ? "eo" : "xmir"
-            )
-        );
         output.createNewFile();
-        try (final FileWriter out = new FileWriter(output.getPath())) {
+        try (FileWriter out = new FileWriter(output.getPath())) {
             out.write(ret);
             out.flush();
         }
@@ -96,25 +147,27 @@ public final class RemoveGOTO {
 
     /**
      * Takes XMIR-source as input,
-     * converts it to ".eo" and calls overridden method
+     * converts it to ".eo" and calls overridden method.
      *
      * @param xml XML ".xmir" source
      * @return XML
+     * @throws IOException When Parsing EO fails
      */
-    public static XML getParsedXML(final XML xml) throws IOException {
-        return RemoveGOTO.getParsedXML(
+    public static XML getParsedXml(final XML xml) throws IOException {
+        return RemoveGoto.getParsedXml(
             new XMIR(xml).toEO()
         );
     }
 
     /**
      * Takes EO-source as input,
-     * converts it to ".xmir" and applies 'wrap-method-calls.xsl'
+     * converts it to ".xmir" and applies "wrap-method-calls.xsl".
      *
      * @param source String EO-source
      * @return XML
+     * @throws IOException When Parsing EO fails
      */
-    public static XML getParsedXML(final String source) throws IOException {
+    public static XML getParsedXml(final String source) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new Syntax(
             "scenario",
@@ -129,10 +182,10 @@ public final class RemoveGOTO {
     }
 
     /**
-     * Recursively deletes given directory
+     * Recursively deletes given directory.
      *
-     * @param directory File - directory to delete
-     * @return boolean - True if given directory has been deleted successfully
+     * @param directory File directory to delete
+     * @return True if given directory has been deleted successfully
      */
     public static boolean deleteDirectory(final File directory) {
         boolean ret = true;
@@ -140,7 +193,7 @@ public final class RemoveGOTO {
             final File[] files = directory.listFiles();
             if (files != null) {
                 for (final File file : files) {
-                    ret &= RemoveGOTO.deleteDirectory(file);
+                    ret &= RemoveGoto.deleteDirectory(file);
                 }
             }
         }
