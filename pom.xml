@@ -63,6 +63,11 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration combine.self="override"/>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.gmavenplus</groupId>
         <artifactId>gmavenplus-plugin</artifactId>
         <version>1.13.1</version>
@@ -75,9 +80,7 @@
             </goals>
             <configuration>
               <scripts>
-                <script>
-                  ${project.basedir}/src/test/resources/org/eolang/dejump/generate.groovy
-                </script>
+                <script>${project.basedir}/src/test/resources/org/eolang/dejump/generate.groovy</script>
               </scripts>
             </configuration>
           </execution>
@@ -108,9 +111,7 @@
               <targetDir>${project.basedir}/target/eo-test</targetDir>
               <addSourcesRoot>false</addSourcesRoot>
               <addTestSourcesRoot>true</addTestSourcesRoot>
-              <generatedDir>
-                ${project.basedir}/target/generated-test-sources
-              </generatedDir>
+              <generatedDir>${project.basedir}/target/generated-test-sources</generatedDir>
             </configuration>
           </execution>
         </executions>
@@ -155,10 +156,7 @@
               <excludes combine.children="append">
                 <exclude>pmd:.*</exclude>
                 <exclude>checkstyle:/src/test/eo/org/eolang/dejump/.*</exclude>
-                <exclude>
-                  checkstyle:/src/test/resources/org/eolang/dejump/packs/.*
-                </exclude>
-                <exclude>duplicatefinder:.*</exclude>
+                <exclude>checkstyle:/src/test/resources/org/eolang/dejump/packs/.*</exclude>
               </excludes>
             </configuration>
           </plugin>
