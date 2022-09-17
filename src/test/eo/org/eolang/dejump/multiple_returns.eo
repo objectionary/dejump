@@ -1,0 +1,15 @@
+[] > multiple_returns
+  [x] > abs
+    goto > @
+      [g]
+        seq > @
+          if.
+            x.gt 0
+            g.forward x
+            TRUE
+          g.forward
+            -1.times x
+  QQ.io.stdout > @
+    QQ.txt.sprintf "%d equals to %d\n"
+      abs 228
+      abs 228

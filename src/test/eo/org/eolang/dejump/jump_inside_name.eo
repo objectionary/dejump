@@ -1,6 +1,9 @@
-[] > easy_test_case
-  memory 0 > x
-  goto > @
+[] > jump_inside_name
+  memory 1 > x
+  QQ.io.stdout > @
+    QQ.txt.sprintf "result is %d\n"
+      run
+  goto > run
     [g]
       seq > @
         if. > y
@@ -10,3 +13,4 @@
         QQ.io.stdout
           QQ.txt.sprintf "42/x = %d\n" y
         x.write (x.plus 1)
+        g.backward

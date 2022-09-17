@@ -27,7 +27,10 @@ import org.eolang.parser.XMIR
 
 /**
  * Script that generates EO junit tests
- * from EO sources at 'src/test/eo/org/eolang/dejump/'.
+ * from EO sources at 'src/test/eo/org/eolang/dejump/',
+ * which checks, that result of dataization EO-code BEFORE
+ * transformations are equal to result of dataization same code,
+ * but AFTER transformations.
  */
 
 def dir = new File("${project.basedir}/target/eo-after/")
@@ -37,7 +40,7 @@ new File("${project.basedir}/src/test/eo/org/eolang/dejump/").eachFile {
     String testName = it.name.substring(0, it.name.lastIndexOf("."))
 
     def todo = [
-        "easy_test_case",     // consider @name in "if." object
+        "multiple_returns" // converting negative numbers to "bytes" attribute ?
     ]
 
     if (!(testName in todo)) {
