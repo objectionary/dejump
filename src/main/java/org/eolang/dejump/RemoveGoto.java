@@ -117,6 +117,8 @@ public final class RemoveGoto {
         } else {
             before = RemoveGoto.getParsedXml(new XMLDocument(Files.readString(input.toPath())));
         }
+        System.out.println(before);
+        System.out.println("========================================");
         final XML after = RemoveGoto.applyTrain(before);
         System.out.println(after);
         final String ret;
