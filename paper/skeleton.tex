@@ -1,15 +1,11 @@
 \documentclass[sigplan,review,11pt,nonacm,natbib=false]{acmart}
 \settopmatter{printfolios=false,printccs=false,printacmref=false}
-\usepackage[maxnames=1,minnames=1,maxbibnames=100,natbib=true,citestyle=authoryear,bibstyle=authoryear,doi=false,url=false,isbn=false,isbn=false]{biblatex}
+\usepackage[maxnames=1,minnames=1,maxbibnames=100,natbib=true,citestyle=authoryear,bibstyle=authoryear,doi=false,url=false,isbn=false,isbn=false,backend=biber]{biblatex}
 \usepackage{debate}
-\usepackage{listings}
-\usepackage{graphicx}
-\usepackage{xcolor}
-
 \usepackage[T2A,T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[russian,english]{babel}
-  \renewcommand\ttdefault{cmtt}
+\renewcommand\ttdefault{cmtt}
 \usepackage{csquotes}
 \usepackage{ffcode}
 \usepackage{CJKutf8}
@@ -21,14 +17,30 @@
 \usepackage{to-be-determined}
 \usepackage{href-ul}
 \usepackage{amsthm}
+\usepackage{cleveref}
 \usepackage{tcolorbox} % for algorithm
-  \tcbuselibrary{skins}
+\tcbuselibrary{skins}
 \usepackage{fdsymbol} % for \mathbb
 \usepackage{algpseudocode} % for algorithms
 \usepackage{multicol} % for two cols in BNF
 \usepackage{pgffor} % to enable \foreach
 \usepackage{stmaryrd}
 \usepackage{mathtools}
+\newtheoremstyle{theorems}
+{} % Space above
+{} % Space below
+{} % Theorem body font % (default is "\upshape")
+{} % Indent amount
+{\scshape} % Theorem head font % (default is \mdseries)
+{.} % Punctuation after theorem head % default: no punctuation
+{ } % Space after theorem head
+{} % Theorem head spec
+\theoremstyle{theorems}
+\newtheorem{eodefinition}{Definition}
+\newtheorem{eotheorem}{Theorem}
+
+
+\addbibresource{refs.bib}
 
 \newcommand\br{\\[-4pt]}
 \newcounter{rule}
@@ -36,858 +48,803 @@
 \newcommand\rr{\smalltriangleright{}}
 \newcommand\rrule[1]{{\scshape\sffamily\ref{rule:#1}}}
 \newcommand{\jrule}[1]{%
-  \refstepcounter{rule}\label{rule:#1}%
-  \text{\textbf{\rrule{#1}}}}
+    \refstepcounter{rule}\label{rule:#1}%
+    \text{\textbf{\rrule{#1}}}}
 
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}{Definition}[section]
-\newtheorem{corollary}{Corollary}[theorem]
-
-\graphicspath{ {./images/} }
-
+\newcommand\sgm[1]{$\sigma_#1$}
+\newcommand\dlt[1]{$\delta_#1$}
+\newcommand\m[1]{$\mu_#1$}
 
 \title{Elimination Of Jump Objects}
 \author{author}
 
 \begin{document}
 
-\maketitle
-
-\section{Introduction}
-The problem is known both computer science and soft-
-ware engineering communities for a few decades and formulated by several scientists.
-
-Many of them have offered solutions to this problem. (Look at Related Work)
-
-The presence of jump statements in the source code makes it impossible to use the functional method of analysis.
-
-There are an "object-flow" languages where we can control flow through an objects. An example of such language is EO (Elementary Objects language). This is a strictly object-oriented programming language in which any action is described by creating a new object, or decorating an existing one.
-
-We are trying to answer the following research question: "Is it possible for any program, written on "object-flow" language like EO and containing GOTO objects to find a semantically equivalent program, but without using them?"
-
-\section{Related work}
-To solve the problem of eliminating Jump statements in other programming languages, the following works were published:
-Morris suggested to use regular expressions for replacing GOTO with IF-THEN-ELSE constructs;
-Ramshow proposed an algorithm for Pascal programs;
-Ceccato suggested how to eliminate GOTO during migration of legacy code to Java.
-
-To our knowledge, there is still no method which enables automatic elimination of jump objects in programs written in such an object-flow languages.
-
-\section{Method}
-In this article, we will describe an algorithm that will convert an EO program in such a way that the output returns a semantically equivalent program, but without using the GOTO object.
-
-Some objects in EO programs may need to be platform specific and can’t be composed from other existing objects—they are called \emph{atoms}. 
-So all jump statements are implemented as a
-single \emph{atom}-object GOTO. The implementation of goto-object in EO implies two types of jumps - goto forward and goto backward. So we should consider transformations for both cases.
-
-The proposed algorithm is a series of transformations that are performed depending on the type of "jump".
-In total, we describe 6 types of transformations: \emph{Simple forward}/\emph{backward} (further \emph{SF}/\emph{SB}), \emph{Goto forward/backward wrapped by object} (further \emph{OF}/\emph{OB}) and \emph{Goto forward/ backward inside the while-loop} (further \emph{WF}/\emph{WB}).
-Transformations are not sequential and independent, and each one is executed in its own particular case.
-For example, \emph{SF}/\emph{SB} is only a "preparation" for the actual replacement of the jump by a semantically equivalent analog and is executed if there is no condition before the jump itself.
-\emph{OF}/\emph{OB} is the main transformation, as it contains the jump replacement itself and covers most possible cases of calling forward or backward jump.
-\emph{WF}/\emph{WB} is a "addition" for the previous transformation, since the behavior of the \emph{while.} object in EO is different from all other objects and the call of the jump inside the loop requires separate consideration.
-
-Thus, the algorithm itself consists of the following steps: 
-\begin{inparaenum}[1)]
-\item Apply \emph{SF}/\emph{SB} transformation if necessary,
-\item Find all occurrences of forward/backward jump's calls,
-\item Apply \emph{OF}/\emph{OB} transformations to all of them,
-\item If there is a \emph{while.} object that wraps the jump call, apply the \emph{WF}/\emph{WB} transformation.
-\end{inparaenum}
-
-The combination of all 6 transformations makes a complete algorithm for getting rid of the GOTO object, as they cover all possible cases of using GOTO and forward/backward jumps in the language.
-
-Since we consider a solution to the problem in strictly object-oriented programming languages, which means that the whole program is a set of objects where some objects can contain others.
-It should be noted that each object in the program has its own level of \emph{nesting} relative to other objects.
-
-\begin{definition} The \emph{nesting} of the current object means the number of objects that contain the current object directly, or that contain objects that contain the current object.
-\end{definition}
-
-\emph{Designations:}
-
-\begin{itemize}
-\item $\sigma$ - Denotes either an object, a chain of nested objects or the absence of an object.
-
-\item $\delta$ - Denotes a not-empty object or a chain of nested objects that return a not-NULL value when accessed.
-
-\item $\mu$ - Denotes a not-empty object or a chain of nested objects that return a boolean value (TRUE/FALSE) when accessed.
-\end{itemize}
-
-\newcommand\sgm[1]{$\sigma_#1$}
-\newcommand\dlt[1]{$\delta_#1$}
-\newcommand\m[1]{$\mu_#1$}
-
-We will also consider our transformations in the form of $\varphi$-calculus, on which EO is based. The proposed $\varphi$-calculus represents an object model through data and objects, while operations with them are possible through abstraction, application, and decoration.
-The calculus introduces a formal apparatus for manipulations with objects.
-
-%%$\varphi$-calculus uses an alternative “arrow notation” to denote an object in a more compact way, where free attributes of an abstract object stay in the parentheses on the left side of the mapping symbol $\mapsto$ and pairs, which represent bound attributes, stay on the right side, in double-square brackets.
-
-
-\subsection{Forward jump}
-Goto forward in EO is implemented as:
-
-\begin{ffcode}
-+import org.eolang.gray.goto
-+import org.eolang.io.stdout
-
-goto
-  [g]
-    |\sgm{1}| > @
-      g.forward |\dlt{1}|
-      stdout "Will never be printed"
-\end{ffcode}
-
-It consists of the goto \emph{atom}-object, the abstract object \emph{g}, and the g.forward attribute. Several abstract objects such as \emph{g} can be declared inside of goto-object, and the attribute \emph{.forward} can be called to each of them.
-
-\subsubsection{Simple Forward}
-
-The \ff{goto} object may be used for unconditional forward jumps. In general case, covering most of the cases of calling goto-forward, it appears as:
-
-\begin{ffcode}
-goto
-  [g]
-    |\sgm{1}| > @
-      |\sgm{2}|
-      g.forward |\dlt{1}|
-      |\sgm{3}|
-\end{ffcode}
-
-Here, \dlt{1} is any object, which will become the result of dataization of the \ff{goto} object, $\sigma_1$, $\sigma_2$ are ob
-In terms of $\varphi$-calculus, this code may be expressed as:
-
-\begin{equation}
-\begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \quad \quad \varphi \mapsto \sigma_1( \sigma_2, \ff{g}.\ff{forward} (\delta_1), \sigma_3) \rrbracket ) \\
-\end{split}
-\end{equation}
-
-Where in parentheses are denoted free attributes, in square brackets are denoted bound attributes and the symbol $\mapsto$ denotes application/decoration of an object.
-
-Note that in this example, g.forward is simply an attribute of the abstract object \emph{g} and is executed as soon as the queue reaches it.
-Our transformation only considers the jumps that are made when a condition for it is fulfilled.
-In cases where there is unconditional jump, first of all we transform it into conditional jump by adding an additional if-statement - if (TRUE).
-This will not violate the program logic, because without the added if-statement, the jump would always be executed, and statements coming after this jump with a nesting not less that the nesting of the abstract object \emph{g} would never be executed:
-
-\begin{equation}
-\begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \varphi \mapsto \sigma_1 (\sigma_2, \br
-& \quad \quad \quad \ff{if}.( TRUE, \ff{g}.\ff{forward}(\delta_1), TRUE ), \sigma_3) \rrbracket)\\
-\end{split}
-\end{equation}
-
-Same example in EO:
-
-\begin{ffcode}
-goto
-  [g]
-    if. > @
-      TRUE
-      g.forward |\dlt{1}|
-      TRUE
-\end{ffcode}
-
-
-\subsubsection{Goto forward wrapped by object}
-
-After the transformation described in section 3.1.1, the general case of calling forward jump will be presented as:
-
-\begin{equation}
-\begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \varphi \mapsto \sigma_1 (\sigma_2, \br
-& \quad \quad \quad \ff{if}.( \mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2 ), \sigma_3) \rrbracket)\\
-\end{split}
-\end{equation}
-
-\begin{theorem}
-A goto object that contains an object or a chain of nested objects that wrap the \emph{.forward} attribute can be converted to a similar one, but without using the \emph{.forward} attribute.
-\end{theorem}
-
-In terms of $\varphi$-calculus, it can be represented as the following inference rule:
-
-\begin{equation*}
-\dfrac
-    {\begin{matrix}
-    & \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \varphi \mapsto \sigma_1 (\sigma_2, \\
-    & \quad \quad \quad \quad \ff{if}.( \mu_1,     \ff{g}.\ff{forward}(\delta_1), \delta_2 ), \sigma_3) \rrbracket)\\
-    \end{matrix}}
-    {\begin{matrix}
-    & \sigma_1(\sigma_2, \ff{if.}(\mu_1.\ff{not}, \delta_2, \delta_1), \\
-    & \quad \quad \ff{if.}(\mu_1.\ff{not}, \sigma_3, TRUE)) \\
-    \end{matrix}}
-    \jrule{1}
-\end{equation*}
-
-\begin{proof}
-To get rid of using ".forward" attribute, it is required to emulate work of jump itself.
-
-First of all, let's invert condition of jump, swap objects in "THEN"/"ELSE" brunches of if-statement and remove \emph{.forward} attribute:
-
-\begin{equation}
-\begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \quad \varphi \mapsto \sigma_1 ( \sigma_2,  \ff{if}.(\mu_1.not, \delta_2, \delta_1), \sigma_3) \rrbracket) \\
-\end{split}
-\end{equation}
-
-Since the jump does not execute all statements following the jump itself, we need to protect their execution by checking the jump condition for each of them:
-
-\begin{equation}
-\begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \quad \varphi \mapsto \sigma_1(\sigma_2,  \ff{if}.(\mu_1.\ff{not}, \delta_2, \delta_1), \br
-& \quad \quad \quad \ff{if.}(\mu_1.\ff{not}, \sigma_3, TRUE)) \rrbracket) \\
-\end{split}
-\end{equation}
-
-Thus, all objects that would not have executed in the presence of the \emph{.forward} attribute will not be executed now. And objects that were returned in branches of the old if-statement will also be executed under the same condition.
-
-\end{proof}
-
-\begin{corollary}
-If there are no \emph{.forward} attributes inside the abstract object goto, no jumps will be performed and therefore it is possible to delete the abstract object goto itself without losing logic.
-\end{corollary}
-
-\begin{equation}
-\begin{split}
-& \sigma_1( \sigma_2, \ff{if}.(\mu_1.\ff{not}, \delta_2, \delta_1), \br
-& \quad \quad \ff{if.}(\mu_1.\ff{not}, \sigma_3, TRUE)) \\
-\end{split}
-\end{equation}
-
-Let's see, how this transformation will be presented in EO.
-
-Consider the following code:
-
-\begin{ffcode}
-goto
-  [g]
-    |\sgm{1}| > @ |$\label{ln:ret0}$|
-      |\sgm{2}|
-      if.
-        |\m{1}|
-        g.forward |\dlt{1}|
-        |\dlt{2}|
-      |\sgm{3}| |$\label{ln:ret1}$|
-\end{ffcode}
-
-Let's denote lines \ref{ln:ret0}-\ref{ln:ret1} as $X$.
-
-It is not difficult to notice that statements which goto-forward "jumps through" will be executed if the condition in the if-statement is not equal to TRUE.
-Otherwise statements following the goto-object itself are executed.
-So we can swap statements and invert the condition into if-statement to get rid of the \emph{g.forward} attribute without violating program logic.
-
-Also, after replacing the jump, we must create an additional \emph{flag} object, which will be changed if the jump condition is met, i.e. when in the new if-statement, the 'ELSE' branch will be executed - value of flag will change. This is required so that all objects following the if-statement that are attributes of the abstract object \emph{g} are not executed.
-So, by wrapping each object following the jump condition and whose nesting is at least that of the \emph{g} object in an if-statement with a flag value check condition, we make sure that these objects will not be executed when the jump condition is met.
-
-By swapping the statements that follow the if-statement body and after the jump itself, as described above, we get the following replacement for this example:
-the \m{1} object must be inverted with (\m{1}).not;
-in 'THEN' brunch of if-statement places \dlt{2}; in the 'ELSE' brunch creates new object \emph{seq}, consisting of two elements - \dlt{1} and flag's value change, because the jump condition is satisfied.
-
-Thus, after transformation, the program converts to:
-\begin{ffcode}
-memory > flag
-flag.write 0
-|\sgm{1}||$\label{ln:ret2}$|
-  |\sgm{2}|
-  if.
-    |\m{1}|.not
-    |\dlt{2}|
-    seq
-      |\dlt{1}|
-      flag.write 1
-  if.
-    (eq. (flag 1)).not
-    |\sgm{3}|
-    TRUE|$\label{ln:ret3}$|
-\end{ffcode}
-
-Let's denote lines \ref{ln:ret2}-\ref{ln:ret3} as $X'$.
-
-Now let's look at an example of transformation, if the code fragment \emph{X} is wrapped into an object:
-
-\begin{ffcode}
-goto
-  [g]
-    |\sgm{0}| > @
-      X
-      |\sgm{4}|
-\end{ffcode}
-
-Applying the transformation, we get:
-\begin{ffcode}
-memory > flag
-flag.write 0
-|\sgm{0}|
-  X'
-  if.
-    (eq. (flag 1)).not
-    |\sgm{4}|
-    TRUE
-\end{ffcode}
-
-
-\subsubsection{Goto forward inside the while-loop}
-In order to realize the functionality of cycles in EO, generators are provided. A generator is a routine that can be used to control the iteration behaviour of a loop.
-
-The language currently provides a \emph{while} generator, on which other generators are implemented.
-
-The simplest way to call goto-forward inside a \emph{while}-loop is represented as:
-
-\begin{equation}
-\begin{split}
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{while}.(\mu_0, \br
-& \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2) ) \rrbracket) \br
-\end{split}
-\end{equation}
-
-The transformation under consideration involves the following steps:
-
-%%\begin{equation}
-%%\begin{split}
-%%& \ff{memory}(flag), \\
-%%& flag.\ff{write}(0), \\
-%%& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} %%\mapsto \varnothing, \\
-%%& \quad \varphi \mapsto \ff{while}.(\mu_0, \\
-%%& \quad \ff{if}.(\mu_1, %%\ff{g}.\ff{forward}(\delta_1), \delta_2) \\
-%%& \quad )\rrbracket) \\
-%%\end{split}
-%%\end{equation}
-
-\begin{equation}
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{while}.(\br
-& \quad \quad \ff{and}.( \mu_0, \ff{eq}.(flag  1).\ff{not}), \br
-& \quad \quad \ff{if}.(\mu_1,  \ff{g}.\ff{forward}(\delta_1), \delta_2) )\rrbracket)\\[-1pt]
-\end{split}
-\end{equation}
-
-\begin{equation}
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{while}.(\br
-& \quad \quad \ff{and}.( \mu_0, \ff{eq}.(flag  1).\ff{not}), \br
-& \quad \quad \ff{if}.(\mu_1.\ff{not}, \delta_2, \br
-& \quad \quad \quad \ff{seq}( \delta_1, flag.\ff{write}(0) ) ) ) \rrbracket )\\[-1pt]
-\end{split}
-\end{equation}
-
-\begin{equation}
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{while}.(\br
-& \quad \ff{and}.(\mu_0, \ff{eq}.(flag  1).\ff{not}), \br
-& \quad \ff{if}.(\mu_1.\ff{not}, \delta_2, \br
-& \quad \quad \ff{seq}( \delta_1, flag.\ff{write}(0) ) ) ) \\[-1pt]
-\end{split}
-\end{equation}
-
-\begin{theorem}
-Expression 7 is semantically equivalent to expression 10:
-\end{theorem}
-
-\begin{equation*}
-\dfrac
-    {\begin{matrix}
-    & \ff{goto} ( \alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-    & \quad \varphi \mapsto \ff{while}.(\mu_0, \\
-    & \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{forward}(\delta_1), \delta_2))\rrbracket) \\
-    \end{matrix}}
-    {\begin{matrix}
-    & \ff{memory}(flag), \\
-    & flag.\ff{write}(0), \\
-    & \ff{while}.(\ff{and}.( \\
-    & \quad \mu_0, \ff{eq}.(flag  1).\ff{not}), \\
-    & \quad \ff{if}.(\mu_1.\ff{not}, \delta_2, \\
-    & \quad \quad \ff{seq}( \delta_1, flag.\ff{write}(0))) \\
-    \end{matrix}}
-    \jrule{2}
-\end{equation*}
-
-To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto-forward.
-
-Consider the following code on EO:
-
-\begin{ffcode}
-goto
-  [g]
-    |\sgm{0}| > @ |$\label{ln:ret4}$|
-      while.
-        |\m{0}|
-        |\sgm{1}|
-          |\sgm{2}|
-          if.
-            |\m{1}|
-            g.forward |\dlt{1}|
-            |\dlt{2}|
-          |\sgm{3}||$\label{ln:ret5}$|
-\end{ffcode}
-
-Let's denote lines \ref{ln:ret4}-\ref{ln:ret5} as $Y$.
-
-In this case, goto-forward is used to exit the body of the while loop. However, every iteration of a while loop checks its own condition if it is true. 
-
-Since the jump is executed once the jump condition is true, the while loop will be executed as long as the jump condition is false. We can deduce that the condition for the jump is tested at every iteration of the loop, exactly the same as the condition in the while body itself.
-So by combining the jump condition and the while loop condition do not violate the program logic. But the point is, once the jump condition is true, the next iteration of the while loop will fail and the loop will end.
-So we only care about the first triggering of the jump condition for goto-forward. To do this, we can create an auxiliary object \emph{flag} that will be TRUE as soon as the jump condition is met.
-
-If the jump condition is met, all objects inside the abstract object \emph{g} and following the goto-forward will not be executed. To do this, each of these objects should be wrapped in an additional if-statement, which will check the value of the flag, in other words - whether the jump condition is met or not.
-
-Otherwise, all statements that came after the jump in the while loop will be executed.
-So the combined condition of the while loop will be presented as: while (!flag AND condOfWhile).
-
-Thus, the transformation will be presented as:
-
-\begin{ffcode}
-memory > flag
-flag.write 0
-|\sgm{0}||$\label{ln:ret6}$|
-  while.
-    and.
-      (eq. (flag 1)).not
-      |\m{0}|
-    |\sgm{1}|
-      |\sgm{2}|
-      if.
-        |\m{1}|.not
-        |\dlt{2}|
-        seq
-          |\dlt{1}|
-          flag.write 1
-      if.
-        (eq. (flag 1)).not
-        |\sgm{3}|
-        TRUE|$\label{ln:ret7}$|
-\end{ffcode}
-
-Let's denote lines \ref{ln:ret6}-\ref{ln:ret7} as $Y'$.
-
-We create an additional \emph{flag} object that will be equal to 1 when the jump condition is triggered and add this condition to the loop body; modify if-statement as described in Section 3.1.2, except that in the 'ELSE' branch we are changing the flag value because the jump condition has been met and the next iteration of the loop should not be executed.
-
-It is worth noting that if goto-forward represent several nested while-loops, then in each of them should be added to the condition of the loop check whether the flag is equal to 1, as in the inner while, from where the jump is made. So, every while that has a nesting less than the original nesting and more than the nesting of the abstract object \emph{g} will end without performing the next iteration.
-
-For example, a program with nested while-loops may look like this:
-\begin{ffcode}
-goto
-  [g]
-    while. > @
-      |\m{9}|
-      |\sgm{9}|
-        Y
-        |\sgm{4}|
-\end{ffcode}
-
-After transformation it will look like:
-\begin{ffcode}
-memory > flag
-flag.write 0
-while.
-  and.
-    (eq. (flag 1)).not
-    |\m{9}|
-  |\sgm{9}|
-    Y'
-    if.
-      (eq. (flag 1)).not
-      |\sgm{4}|
-      TRUE
-\end{ffcode}
-
-
-
-
-
-
-\subsection{Backward jump}
-Goto backward in EO is implemented as:
-
-\begin{ffcode}
-+import org.eolang.gray.goto
-+import org.eolang.io.stdout
-
-goto
-  [g]
-    |\sgm{1}| > @
-      stdout "Will be printed forever"
-      g.backward
-\end{ffcode}
-
-Same as with goto-forward, there is the goto \emph{atom}-object, the abstract object \emph{g}, and the g.backward attribute. Several abstract objects such as \emph{g} can be declared inside of goto-object, and the attribute \emph{.backward} can be called to each of them.
-
-\subsubsection{Simple Backward} The simplest example of using goto-backward:
-
-\begin{ffcode}
-goto
-  [g]
-    g.backward > @
-\end{ffcode}
-
-which in terms of $\varphi$-calculus appears as:
-
-\begin{equation}
-\begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \varphi \mapsto \ff{g}.\ff{backward} \rrbracket ) \\
-\end{split}
-\end{equation}
-
-This is identical case to that discussed in Section 3.1.1. In cases where the jump is performed without condition, we need to add an additional if-statement, similar to the example in Section 3.1.1:
-
-\begin{equation}
-\begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{if}.( TRUE, \ff{g}.\ff{backward}, TRUE ) \rrbracket) \br
-\end{split}
-\end{equation}
-
-Same code on EO:
-
-\begin{ffcode}
-goto
-  [g]
-    if. > @
-      TRUE
-      g.backward
-      TRUE
-\end{ffcode}
-
-\subsubsection{Goto backward wrapped by object}
-After the conversion described in Section 3.2.1, the simplest call of backward jump will be presented as:
-
-\begin{equation}
-\begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ) \rrbracket) \br
-\end{split}
-\end{equation}
-
-The transformation under consideration involves the following steps:
-
-\begin{equation}
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \br
-& \quad \quad \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ))\rrbracket) \\[-1pt]
-\end{split}
-\end{equation}
-
-\begin{equation}
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \br
-& \quad \quad \ff{seq}(flag.\ff{write}(1), \br
-& \quad \quad  \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) )))\rrbracket) \\[-1pt]
-\end{split}
-\end{equation}
-
-\begin{equation}
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{while}.(\ff{eq}.(flag 0), \br
-& \quad \ff{seq}(flag.\ff{write}(1), \br
-& \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ))) \\[-1pt]
-\end{split}
-\end{equation}
-
-\begin{theorem}
-Expression 13 is semantically equivalent to expression 16:
-\end{theorem}
-
-\begin{equation*}
-\dfrac
-    {\begin{matrix}
-    & \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-    & \quad \varphi \mapsto \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 ) \rrbracket) \\
-    \end{matrix}}
-    {\begin{matrix}
-    & \ff{memory}(flag), \\
-    & flag.\ff{write}(0), \\
-    & \ff{while}.(\ff{eq}.(flag 0), \\
-    & \quad \ff{seq}(flag.\ff{write}(1), \\
-    & \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ))) \\
-    \end{matrix}}
-    \jrule{3}
-\end{equation*}
-
-To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto-backward.
-
-Consider the following code on EO:
-
-\begin{ffcode}
-goto
-  [g]
-    |\sgm{1}| > @ |$\label{ln:ret8}$|
-      |\sgm{2}|
-      if.
-        |\m{1}|
-        g.backward
-        |\dlt{1}|
-      |\sgm{3}||$\label{ln:ret9}$|
-\end{ffcode}
-
-Let's denote lines \ref{ln:ret8}-\ref{ln:ret9} as $W$.
-
-Note that goto-backward works the same as do-while construction in other languages: the first iteration of the new loop is always executed, and the next only if the condition of loop is TRUE.
-So, all objects that occurs between the declaration of an abstract object \emph{g} and the "jump" itself should be executed before the new while loop once, and all subsequent times were executed depending on the condition of the loop.
-
-Since there is no direct implementation of the do-while construct in EO, but there is an implementation of the while generator, we can resort to a little trick.
-
-To create a do-while emission, we can create a flag globally that will be a condition for our outer loop, whose execution condition will depend on this value. The initial value of this flag will be such that the condition for the execution of the added while loop is fulfilled. Then, in the body of the loop, we change the value of the flag to the opposite. When the jump condition is met, we again change the value of the flag so that as soon as the iteration of the loop is completed, the next iteration will begin, since the loop execution condition will be met.
-
-In order to ensure that when the jump condition is met, all other objects in the body of the newly added while loop are not executed, we wrap them in an additional if-statement, in which we will check whether the jump condition was previously executed.
-
-So, after transformation, the program converts to:
-\begin{ffcode}
-
-memory > flag
-flag.write 0
-while.
-  eq. (flag 0)
-  seq
-    flag.write 1
-    |\sgm{1}||$\label{ln:ret10}$|
-      |\sgm{2}|
-      if.
-        (|\m{1}|).not
-        |\dlt{1}|
-        flag.write 0
-      if.
-        (eq. (flag 0)).not
-        |\sgm{3}|
-        TRUE|$\label{ln:ret11}$|
-    
-\end{ffcode}
-
-Let's denote lines \ref{ln:ret10}-\ref{ln:ret11} as $W'$.
-
-Let's look at an example of a chain of nested objects containing a goto-backward:
-
-\begin{ffcode}
-
-goto
-  [g]
-    |\sgm{0}| > @
-      W
-      |\sgm{4}|
-
-\end{ffcode}
-
-Applying transformation, we get:
-\begin{ffcode}
-
-memory > flag
-flag.write 0
-while.
-  eq. (flag 0)
-  seq
-    flag.write 1
-    |\sgm{0}|
-      W'
-      if.
-        (eq. (flag 0)).not
-        |\sgm{4}|
-        TRUE
-
-\end{ffcode}
-
-
-\subsubsection{Goto backward inside the while-loop}
-Goto backward also can be called inside a while-loop body.
-
-The simplest way to call goto-backward inside a while-loop is represented as:
-
-\begin{equation}
-\begin{split}
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{while}.(\mu_0, \br
-& \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{backward}, \delta_2))\rrbracket) \br
-\end{split}
-\end{equation}
-
-The transformation under consideration involves the following steps:
-
-\begin{equation}
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \br
-& \quad \quad \ff{while}.(\mu_0, \br
-& \quad \quad \quad \ff{if}.( \mu_1, \ff{g}.\ff{backward}, \delta_1 )))\rrbracket) \\[-1pt]
-\end{split}
-\end{equation}
-
-\begin{equation}
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \br
-& \quad \varphi \mapsto \ff{while}.(\ff{eq}.(flag 0), \br
-& \quad \quad \ff{seq}(flag.\ff{write}(1), \br
-& \quad \quad \quad \ff{while}.( \br
-& \quad \quad \quad \quad \ff{and}.(\mu_0, \ff{eq}.(flag 0).\ff{not}), \br
-& \quad \quad \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) ))))\rrbracket) \\[-1pt]
-\end{split}
-\end{equation}
-
-\begin{equation}
-\begin{split}
-& \ff{memory}(flag), \\
-& flag.\ff{write}(0), \\
-& \ff{while}.(\ff{eq}.(flag 0), \br
-& \quad \ff{seq}(flag.\ff{write}(1), \br
-& \quad \quad \ff{while}.( \br
-& \quad \quad \quad \ff{and}.(\mu_0, \ff{eq}.(flag 0).\ff{not}), \br
-& \quad \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) )))) \\[-1pt]
-\end{split}
-\end{equation}
-
-\begin{theorem}
-Expression 17 is semantically equivalent to expression 20:
-\end{theorem}
-
-\begin{equation*}
-\dfrac
-    {\begin{matrix}
-    & \ff{goto}(\alpha_1 \mapsto \llbracket \ff{g} \mapsto \varnothing, \\
-    & \quad \varphi \mapsto \ff{while}.(\mu_0, \\
-    & \quad \quad \ff{if}.(\mu_1, \ff{g}.\ff{backward}, \delta_2) ) \rrbracket ) \\
-    \end{matrix}}
-    {\begin{matrix}
-    & \ff{memory}(flag), \\
-    & flag.\ff{write}(0), \\
-    & \ff{while}.(\ff{eq}.(flag 0), \\
-    & \quad \ff{seq}(flag.\ff{write}(1), \\
-    & \quad \quad \ff{while}.( \\
-    & \quad \quad \quad \ff{and}.(\mu_0, \ff{eq}.(flag 0).\ff{not}), \\
-    & \quad \quad \quad \ff{if}.( \mu_1.\ff{not}, \delta_1, flag.\ff{write}(0) )))) \\
-    \end{matrix}}
-    \jrule{4}
-\end{equation*}
-
-To prove that the transformation does not violate program logic, let's consider it with the following abstract case of calling goto-backward.
-
-As discussed in section 3.1.3, the behavior of while is different from other objects in the language. Therefore, the transformation will be slightly different from that described in section 3.2.2.
-
-To understand that the logic is not broken, let's look at an abstract case of calling goto-backward inside a while-loop.
-
-Let's consider the following code:
-
-\begin{ffcode}
-goto
-  [g]
-    |\sgm{0}| > @|$\label{ln:ret12}$|
-      while.
-        |\m{0}|
-        |\sgm{1}|
-          |\sgm{2}|
-          if.
-            |\m{1}|
-            g.backward
-            |\dlt{1}|
-          |\sgm{3}||$\label{ln:ret13}$|
-        
-\end{ffcode}
-
-Let's denote lines \ref{ln:ret12}-\ref{ln:ret13} as $Z$.
-
-Similar to the technique we used in section 3.1.3 with goto-forward inside the while loop, in this case, to avoid all subsequent iterations of the inside while loop, we combine its condition with the jump condition. As in Section 3.2.2, we create a global flag object, which will be an indicator of the execution of the jump condition. As soon as the jump condition is met, we change the flag value, and the next iteration of the inside while loop will fail during the check due to our added combined execution condition.
-
-The rest of the transformation looks identical to that described in section 3.2.2: create a global while loop with a check for moisture values, Invert the jump condition and if the goto-backward condition is met, change the value of the flag object.
-It is also necessary to wrap all objects that lie inside the abstract object \emph{g} in an additional if-statement with a check for the flag value, so that all of them are not fulfilled as soon as the jump condition is met.
-
-The transformation will be presented as:
-
-\begin{ffcode}
-
-memory > flag
-flag.write 0
-while.
-  eq. (flag 0)
-  seq
-    flag.write 1
-    |\sgm{0}||$\label{ln:ret14}$|
-      while.
-        and.
-          (eq. (flag 0)).not
-          |\m{0}|
-        |\sgm{1}|
-          |\sgm{2}|
-          if.
-            |\m{1}|.not
-            |\dlt{1}|
-            flag.write 0
-          if.
-            (eq. (flag 0)).not
-            |\sgm{3}|
-            TRUE|$\label{ln:ret15}$|
-        
-\end{ffcode}
-
-Let's denote lines \ref{ln:ret14}-\ref{ln:ret15} as $Z'$.
-
-
-Let's take a look on a program with nested while-loops:
-\begin{ffcode}
-
-goto
-  [g]
-    while. > @
-      |\m{9}|
-      |\sgm{9}|
-        Z
-        |\sgm{4}|
-
-\end{ffcode}
-
-After transformation it will look like:
-\begin{ffcode}
-
-memory > flag
-flag.write 0
-while.
-  eq. (flag 0)
-  seq
-    flag.write 1
-    while.
-      and.
-        (eq. (flag 0)).not
-        |\m{9}|
-      |\sgm{9}|
-        Z'
+    \maketitle
+
+    \section{Introduction}
+    The problem of eliminating Jump-like statements is known for both computer science and software engineering communities for a few decades and formulated by several scientists, some of which have suggested solutions for this problem.
+
+    The presence of jump statements in the source code makes it impossible to use the functional method of analysis.
+    Other program analysis methods, including those based on symbolic execution techniques, will also benefit from the removal of jump statements, which are well-known obstacles to the precision of analysis, as explained by \citet{baldoni2018survey}.
+
+    There are an "object-flow" languages where the execution flow is controlled by object composition.
+    An example of such a language is EO, which is based on $\varphi$-calculus introduced by \citet{bugayenko2021eolang} and formalized by \citet{kudasov2021}.
+    This is a strictly object-oriented programming language in which any action is described by creating a new object, or decorating an existing one.
+
+    We are trying to answer the following research question: "Is it possible for any program, written in 'object-flow' language like EO and containing GOTO objects, to find a semantically equivalent program, but without GOTO objects?"
+
+    \section{Related work}
+    The problem was firstly formulated by \citet{dijkstra1968letters}: he affirmed that the use of GOTO has disastrous effect and proposed to remove it from all programming languages.
+    Even though a few years later \citet{knuth1974structured} showed a manner for structuring programs with the GOTO statement and argued that it could be a powerful tool if it is well used, researchers got interested in finding a way for restructuring programs and eliminating GOTO statements \citep{arsac1977construction}.
+
+    To solve the problem of eliminating Jump statements in other programming languages, the following works were published:
+    \Citet{williams1985restructuring} created a tool for restructuring Pascal code;
+    \Citet{jonsson1989next} was one of the first who made a summary of so called GOTO-patches, which are design techniques for eliminating GOTO statements;
+    \Citet{erosa1994taming} suggested an algorithm for automatic elimination of GOTO statements in~C;
+    \Citet{zegour1994new} explained how GOTO elimination may work in any language, as long as it has jump statements and control structures;
+    \Citet{morris1997goto} suggested to use regular expressions for replacing GOTO with IF-THEN-ELSE constructs;
+    \Citet{ramshaw1988eliminating} proposed an algorithm for Pascal programs;
+    \Citet{ganapathi2008shim} introduced optimization method for SHIM IR;
+    \Citet{ceccato2008goto} suggested how to eliminate GOTO during migration of legacy code to Java.
+
+    However, to our knowledge, there is still no method available, which enables automatic elimination of jump objects in programs written in such an object-flow languages.
+
+
+    \section{Definitions and designations}
+    \begin{eodefinition}
+        \emph{Dataization} in $\varphi$-calculus is a process of retrieving data from an object.
+        The dataization of an object at the highest level of composition leads to the execution of a program.
+    \end{eodefinition}
+    \begin{eodefinition} \emph{Nesting} of the current object determines the number of objects that encapsulate current object via abstraction, application, or decoration directly or through other objects.
+
+    For example, here object $x$ has 3-rd level of nesting:
+    \begin{ffcode}
+        o1
+        o2
+        ...
+        o3
+        o4
+        x
+    \end{ffcode}
+    \end{eodefinition}
+    \begin{eodefinition}
+        \emph{Forwarding goto} denotes an object \ff{goto}, which encapsulate object \ff{forward} directly or through other objects:
+        \begin{ffcode}
+            goto
+            [o1]
+            ...
+            |$\leadsto$|o1.forward o2
+            ...
+        \end{ffcode}
+    \end{eodefinition}
+    \begin{eodefinition}
+        \emph{Backwarding goto} denotes an object \ff{goto}, which encapsulate object \ff{backward} directly or through other objects:
+        \begin{ffcode}
+            goto
+            [o1]
+            ...
+            |$\leadsto$|o1.backward
+            ...
+        \end{ffcode}
+    \end{eodefinition}
+    \emph{Designations:}
+    \begin{itemize}
+        \item "$>$" is used to name attributes of an object, where on the left side of ">" is attribute itself and its name on the right side,
+        \item "$[]$" is used for the specification of parameters of abstract objects,
+        \item "$@$" is used to denote the object being decorated,
+        \item "$\mapsto$" is used to denote an object, where free attributes stay in the parentheses on the left side and pairs, which represent bound attributes, stay on the right side, in double-square brackets,
+        \item "$\leadsto$" denotes an arbitrary \emph{nesting} of an object, i.e. it can be encapsulated by an arbitrary number of objects.
+    \end{itemize}
+
+
+    \section{Sample}
+    Let's consider the following example of code in EO, which uses GOTO object:
+
+    \begin{ffcode}
+        memory 0 > x
+        [] > func
+        goto > @
+        [g]
+        seq > @
+        x.write (x.plus 1)
         if.
-          (eq. (flag 0)).not
-          |\sgm{4}|
-          TRUE
+        x.lt 10
+        g.backward
+        QQ.io.stdout "X >= 10!\n"
+        g.forward x
+    \end{ffcode}
 
-\end{ffcode}
+    \debate[Yegor]{Here I suggest we briefly explain the syntax of EO, since the language is not widely known. The reader will not understand what this code means and won't be able to digest it. Moreover, I would even suggest to also show a similar code in C++ language, so that the reader understand it better.
+
+    ----------------Done}
+
+    In this code snippet declares an \emph{atom}-object \ff{goto} with attribute \ff{g};
+    mutable object \ff{memory}, which allows to reinitialize the bound object \ff{x} via \ff{.write} attribute;
+    object \ff{eq}, which checks the equality of the objects passed to it;
+    object \ff{if}, implementing behavior of branching;
+    object \ff{seq}, which contains bound attributes as objects, which will be sequentially dataized;
+    objects \ff{backward} and \ff{forward}, which are implementing behaviour of jumps: first of them starts dataization of object \ff{g} again, while the second one dataizes an object, passed as an attribute, and terminates dataization of object \ff{g}.
+
+    Similar code snippet on C++ will be represented as:
+    \begin{ffcode}
+        int x = 0;
+        int func() {
+            l1:
+            x = x + 1;
+            if (x < 10)
+            goto l1;
+            else
+            cout << "X >= 10!\n";
+            return x;
+        }
+    \end{ffcode}
+
+    We provide four independent transformations that replace \ff{goto} objects with a semantically equivalent analogue. After transformations, this example will appear as:
+    \begin{ffcode}
+        memory 0 > fl_1
+        memory -1 > fl_2
+        memory 0 > x
+        [] > func
+        seq > @
+        fl_1.write 0
+        fl_2.write -1
+        while. > rem!
+        or.
+        fl_1.eq 0
+        fl_2.eq -1
+        [i]
+        seq > @
+        fl_1.write 1
+        fl_2.write 0
+        x.write (x.plus 1)
+        if.
+        x.lt 10
+        fl_1.write 0
+        QQ.io.stdout "X >= 10!\n"
+        if.
+        fl_1.eq 1
+        fl_2.write 1
+        TRUE
+        if.
+        fl_2.eq 1
+        x
+        rem
+    \end{ffcode}
+
+    Here, \ff{while} is an object, implementing behavior of loops: its first bound attribute implements condition of loop dataization and second one implies "body" of loop.
+
+    On C++, the code snippet above after transformation will presented as:
+    \begin{ffcode}
+        int fl_1 = 0;
+        int fl_2 = 0;
+        int x = 0;
+        int func() {
+            fl_1 = 0;
+            fl_2 = -1;
+            do {
+                fl_1 = 1;
+                fl_2 = 0;
+                x = x + 1;
+                if (x < 10)
+                fl_1 = 0;
+                else
+                cout << "X >= 10!\n";
+                if (fl_1 == 1)
+                fl_2 = 1;
+            } while (fl_1 == 0 || fl_2 == -1);
+            if (fl_2 == 1)
+            return x;
+        }
+    \end{ffcode}
 
 
 
-\subsection{Final algorithm}
-To sum up, we can now fully describe the algorithm itself. The first step is to make the transformations, if necessary, described in sections 3.1.1 and 3.2.1, depending on the current transformation. The second step is going through all the jumps in the program - forward and backward, and depending on the jump we carry out the required transformations: if needs to make a replacement in the while loop, containing a jump - use transformations 3.1.3 and 3.2.3 accordingly. If needs to make a replacement for a simple object that frames the jump - use transformations 3.1.2 and 3.2.2 respectively.
+    Thus, the main purpose of our research is:
+    \begin{enumerate}
+        \item To formulate inference rules for the transformations that we propose,
+        \item proof that these 4 transformations are necessary and sufficient to solve the problem under consideration,
+        \item suggest a program tool, which
+        enables automatic elimination of jump objects in programs written in EO.
+    \end{enumerate}
 
 
 
-\section{Conclusion}
-As a result of our research, we described an algorithm that automatically converts an input program to an equivalent analog, but without using the \emph{atom} object GOTO. We also showed that the program at the output will contain the same logic as the program at the input.
+    \section{Method}
+    In this article, we will describe an algorithm that will convert an EO program in such a way that the output returns a semantically equivalent program, but without using the GOTO object.
 
-\section{Discussion}
-Our software will simplify programs in EO language and make them more readable without using GOTO objects. In addition, our proof makes it possible to remove all GOTO constructs from programs.
+    Some objects in EO may need to be platform specific and can’t be composed from other existing objects — they are called \emph{atoms}.
+    All jump statements are implemented as a
+    single \emph{atom}-object \ff{goto}.
+    The implementation of \ff{goto} in EO implies two types of jumps - forward jump and backward jump.
+    It is required to cover all possible cases for both of them.
+
+%%The proposed algorithm is a series of transformations that are performed depending on the type of "jump".
+    In total, we describe 4 types of transformations:
+    \begin{inparaenum}[1)]
+    \item \emph{Simple goto} (further \emph{SG}),
+    \item \emph{Goto forward/backward} (further \emph{GF}/\emph{GB}) and
+    \item \emph{Terminating the while object} (further \emph{TW}).
+
+    Transformations are independent and not sequential, and each one is executed in its own particular case.
+    For example, \emph{SG} is only a "preparation" for the actual replacement of the jump by a semantically equivalent analog and is executed if there is no condition before the jump itself.
+    \emph{GF}/\emph{GB} are the main transformations, as they contain the jump replacement itself and cover most possible cases of using forward and backward jumps.
+    \emph{TW} is an "addition" for \emph{GF} and \emph{GB} transformations, since the behavior of the \ff{while} object in EO is different from all other objects and dataization of jump inside the loop requires separate consideration.
+    \end{inparaenum}
+
+%%Thus, the algorithm itself consists of the following steps:
+%%\begin{inparaenum}[1)]
+%%\item Apply \emph{SF}/\emph{SB} transformation if necessary,
+%%\item Find all occurrences of forward/backward jump's calls,
+%%\item Apply \emph{GF}/\emph{GB} transformations to all of them,
+%%\item If there is a \emph{while.} object that wraps the jump call, apply the \emph{WF}/\emph{WB} transformation.
+%%\end{inparaenum}
+
+    The combination of all 4 transformations implies a complete algorithm for getting rid of the GOTO object, as they cover all possible cases of using GOTO and forward/backward jumps in the language.
+
+    Since we consider a solution to the problem in strictly object-oriented programming languages, which means that the whole program is a set of objects where some objects can encapsulate others.
+    It should be noted that each object in the program has its own level of \emph{nesting} relative to other objects.
+
+
+
+    \debate[Yegor]{If you give a definition, make sure it's followed by example. Now it's not really clear what it means.
+
+    -----------------Done}
+
+    We will also consider our transformations in the form of $\varphi$-calculus, on which EO is based.
+    The proposed $\varphi$-calculus represents an object model through data and objects, while operations with them are possible through abstraction, application and decoration.
+    The calculus introduces a formal apparatus for manipulations with objects.
 
 
 
 
+    \subsection{Simple goto} \label{SG}
+    As mentioned above, this transformation is a "preparation" for \emph{GF}/\emph{GB} which are make the replacement of object \ff{goto} itself.
+    Since \emph{GF} and \emph{GB} only consider the use of the \ff{forward}/\ff{backward} objects when they are directly encapsulated in the \ff{if} object(\cref{GF}/\cref{GB}), it is required to add an additional \ff{if} when it is absent before the jump.
+    Thus, the transformation under consideration adds an additional fictitious condition $\emph{if (true)}$ if it necessary.
+
+    Let's consider the case where the \ff{forward} is not directly encapsulated in the \ff{if} object:
+    \begin{ffcode}
+        goto
+        [g]
+        |$\leadsto$|x|$\label{ln:sf0}$|
+        |$\alpha_1$|
+        ...
+        |$\alpha_n$|
+        g.forward y
+        |$\alpha_{n+1}$|
+        ...
+        |$\alpha_{m}$||$\label{ln:sf1}$|
+    \end{ffcode}
+    Here, $\alpha_{i}$, $x$ and $y$ defines any object in the language, excluding \ff{if}.
+
+    Applying the transformation, the example above maps to:
+    \begin{ffcode}
+        goto
+        [g]
+        |$\leadsto$|x|$\label{ln:tsf0}$|
+        |$\alpha_1$|
+        ...
+        |$\alpha_n$|
+        if.
+        TRUE
+        g.forward y
+        TRUE
+        |$\alpha_{n+1}$|
+        ...
+        |$\alpha_{m}$||$\label{ln:tsf1}$|
+    \end{ffcode}
+
+    Describing transformation in terms of $\varphi$-calculus, code at lines ~\ref{ln:sf0}---\ref{ln:sf1} will be represented as:
+    \begin{equation}
+        \begin{split}
+            & x(\alpha_1,\,\ldots\,,\,\alpha_n, \br
+            & \quad \emph{g}.\ff{forward}( y ), \br
+            & \quad \alpha_{n+1},\,\ldots\,,\,\alpha_m) \\
+        \end{split}
+    \end{equation}
+    and code at lines ~\ref{ln:tsf0}---\ref{ln:tsf1} as:
+    \begin{equation}
+        \begin{split}
+            & x(\alpha_1,\,\ldots\,,\,\alpha_n, \br
+            & \quad \ff{TRUE}.\ff{if}(\emph{g}.\ff{forward}( y )), \br
+            & \quad \alpha_{n+1},\,\ldots\,,\,\alpha_m) \\
+        \end{split}
+    \end{equation}
+
+    \begin{eotheorem}
+        Any object is semantically equivalent to the same object encapsulated in \ff{TRUE}.\ff{if}:
+        \begin{equation*}
+            \forall x (x \equiv \ff{TRUE}.\ff{if}(x)).
+        \end{equation*}
+    \end{eotheorem}
+
+    \begin{proof}
+        By definition of the language, if there is any object \emph{Z}, then the following equivalence follows:
+        \begin{equation}
+            Z \equiv if(true,\,Z,\,true),
+        \end{equation}
+        where first argument in \emph{if} is condition itself, second argument dataizes when condition is \emph{true} and third argument dataizes when condition is \emph{false}.
+    \end{proof}
+
+    \begin{equation*}
+        \dfrac
+        {\begin{split}
+             & x(\alpha_1,\,\ldots\,,\,\alpha_n, \br
+             & \quad \emph{g}.\ff{forward}( y ), \br
+             & \quad \alpha_{n+1},\,\ldots\,,\,\alpha_m) \\
+        \end{split}}
+        {\begin{split}
+             & x(\alpha_1,\,\ldots\,,\,\alpha_n, \br
+             & \quad \ff{TRUE}.\ff{if}(\emph{g}.\ff{forward}( y )), \br
+             & \quad \alpha_{n+1},\,\ldots\,,\,\alpha_m) \\
+        \end{split}}
+        \jrule{1}
+    \end{equation*}
+
+%%Note that in this example, \ff{forward} is simply an attribute of the abstract object \emph{g} and is dataized as soon as the queue reaches it.
+    In such cases where there is an "unconditional" jump, first of all we transform it into "conditional" jump by encapsulating it in additional object \ff{if}---\emph{if (true)}.
+    This will not violate the program logic, since added condition will always be \emph{TRUE} and "THEN" brunch of if-statement with object \ff{forward} will always be dataized.
+
+    The same logic applies with the \ff{backward} object.
+
+
+
+
+
+    \subsection{Goto forward} \label{GF}
+    In this section, we discuss the transformation by replacing \emph{forwarding goto} with a semantic equivalent.
+    Based on the concept of transformation, only cases in which \ff{forward} is directly encapsulated in the object \ff{if} are considered.
+
+    The essence of the transformation is that we create an additional $flag$ object which will assign as "0" or "1" and will show whether the jump condition has been met.
+    Instead of dataization \ff{forward}, we will dataize the object passed to it as an argument and reinitialize the $flag$ object.
+    Moreover, it is necessary to protect from dataization all objects following the \ff{if} object containing the jump, and with \emph{nesting} not less than that of the goto object itself, since they should not be dataized when the jump condition is met.
+    This requires encapsulating each such object with an additional object \ff{if} to check the equality $flag$ to an object \ff{TRUE} - i.e. whether the jump condition has been met before or not.
+
+    Let's consider the following example:
+    \begin{ffcode}
+        goto
+        [g]
+        |$\leadsto$|x|$\label{ln:of0}$|
+        |$\alpha_1$|
+        ...
+        |$\alpha_n$|
+        if.
+        k
+        g.forward y
+        |$\alpha_{n+1}$|
+        |$\alpha_{n+2}$|
+        ...
+        |$\alpha_{m}$|
+        |$\alpha_{m+1}$||$\label{ln:of1}$|
+        ...
+    \end{ffcode}
+    Here, $\alpha_i$, $x$ and $y$ defines any object in the language, $k$ defines an object, which when dataized equals to a data object \ff{TRUE}.
+
+    \debate[Yegor]{We don't have 'values' in EO. We only have objects. Moreover, we don't 'return' anything. The result of dataization may be equal to a data object 'TRUE'.}
+
+    Applying the transformation, the example above maps
+    to:
+    \begin{ffcode}
+        memory 0 > flag
+        goto
+        [g]
+        |$\leadsto$|x|$\label{ln:tof0}$|
+        |$\alpha_1$|
+        ...
+        |$\alpha_n$|
+        if.
+        k
+        seq
+        y
+        flag.write 1
+        |$\alpha_{n+1}$|
+        if.
+        eq. (flag 0)
+        |$\alpha_{n+2}$|
+        TRUE
+        ...
+        if.
+        eq. (flag 0)
+        |$\alpha_{m}$|
+        TRUE
+        if.
+        eq. (flag 0)
+        |$\alpha_{m+1}$|
+        TRUE|$\label{ln:tof1}$|
+        ...
+    \end{ffcode}
+
+    In terms of $\varphi$-calculus lines ~\ref{ln:of0}--\ref{ln:of1} appears as:
+    \begin{equation}
+        \begin{split}
+            & x (\alpha_1,\,\ldots\,,\,\alpha_n, \br
+            & \quad k.\ff{if}(\,\emph{g}.\ff{forward}( y ),\,\alpha_{n+1}),\br
+            & \quad \alpha_{n+2},\,\ldots\,,\,\alpha_m), \\
+            & \alpha_{m+1} \\
+        \end{split}
+    \end{equation}
+    whereas the lines ~\ref{ln:tof0}--\ref{ln:tof1} will be represented as:
+    \begin{equation}
+        \begin{split}
+            & x (\alpha_1,\,\ldots\,,\,\alpha_n, \br
+            & \quad k.\ff{if}(\ff{seq}(y,\,flag.\ff{write}(1)),\,\alpha_{n+1}),\br
+            & \quad flag.\ff{eq}(0).\ff{if}(\alpha_{n+2}),\,\ldots\,,\br
+            & \quad flag.\ff{eq}(0).\ff{if}(\alpha_m)), \\
+            & flag.\ff{eq}(0).\ff{if}(\alpha_{m+1}) \\
+        \end{split}
+    \end{equation}
+
+    \begin{eotheorem}
+        \emph{Forwarding goto} maps to semantically equivalent analog without \ff{forward} objects:
+        \begin{equation*}
+            \begin{split}
+                & \ff{goto}(\llbracket g\,\mapsto\,\varnothing,\,\varphi\,\leadsto\,x(\ldots,\,\leadsto g.\ff{forward}(y),\,\ldots)\rrbracket) \\
+                & \downarrow \\
+                & \ff{goto}(\llbracket g\,\mapsto\,\varnothing,\,\varphi\,\leadsto\,x(\ldots,\,\leadsto y,\,\ldots)\rrbracket) \\
+            \end{split}
+        \end{equation*}
+    \end{eotheorem}
+
+    \begin{proof}
+        Let's introduce the following recursive function:
+        \begin{equation}
+            \begin{split}
+            (\forall x\,\in\,\emph{attr}(\emph{g})):\,\phi(x)\,&\rightarrow\,(\mu(x),\,\phi(x'\,\neq\,x)) \\
+            &\rightarrow\,(\mu(x),\,(\mu(x'),\,\phi(x''))) \\
+            &\ldots
+            \end{split}
+        \end{equation}
+        where \emph{attr}(\ldots) denotes all attributes of an object,
+        \begin{equation}
+            \begin{split}
+                & \mu(x)\,\rightarrow flag.\ff{eq}(0).\ff{if}(x) .\\
+            \end{split}
+        \end{equation}
+        Then the Ex. \ref{GFex1} maps to Ex. \ref{GFex2} according to the logic of dataization of \ff{goto} object with an attribute \ff{forward}.
+        \debate[Yegor]{The discussion flow is broken here. Why this expression is here? What it belongs to? You can't start a sentence with an expression.}
+        \begin{equation}\label{GFex1}
+        \begin{split}
+            & \ff{goto}(\llbracket\,\emph{g}\,\mapsto\,\varnothing,\br
+            & \quad \quad \varphi\,\leadsto\,x(\ldots,\br
+            & \quad \quad \quad k.\ff{if}(\emph{g}.\ff{forward}(y),\,z),\br
+            & \quad \quad \quad w,\,\ldots)\rrbracket) \\
+        \end{split}
+        \end{equation}
+        Here, $x$, $w$, $y$ and $z$ defines any object in the language, $k$ defines an object, which when dataized equals to a data object \ff{TRUE}.
+        \begin{equation}\label{GFex2}
+        \begin{split}
+            & \ff{goto}(\llbracket\,\emph{g}\,\mapsto\,\varnothing,\br
+            & \quad \quad \varphi\,\leadsto\,x(\ldots,\br
+            & \quad \quad \quad k.\ff{if}(\ff{seq}(y,\,flag.\ff{write}(1)),\,z),\br
+            & \quad \quad \quad \phi(w))\rrbracket) \\
+        \end{split}
+        \end{equation}
+        Indeed, depending on the jump condition, the same objects will be dataized as when dataization the \ff{forward} object itself.
+    \end{proof}
+
+    \begin{eotheorem} \label{delDef}
+    Object \ff{goto} without attributes \\
+    \ff{forward} and \ff{backward} inside is equivalent to object \ff{seq}.
+    \end{eotheorem}
+
+    \begin{proof}
+        By definition of the language, behavior of object \ff{goto} without attributes \ff{forward}/\ff{backward} inside is similar to behavior of an object \ff{seq}.
+        \begin{equation}
+            \begin{split}
+                & \ff{goto}(\llbracket \emph{g}\,\mapsto\,\varnothing,\,\varphi\,\mapsto\,x(\alpha_1,\,\ldots\,,\,\alpha_n)\rrbracket) \\
+                & \downarrow \\
+                & \ff{seq}(x(\alpha_1,\,\ldots\,,\,\alpha_n))
+            \end{split}
+        \end{equation}
+    \end{proof}
+
+    \begin{equation*}
+        \dfrac
+        {\begin{split}
+             & \ff{goto}(\llbracket\,\emph{g}\,\mapsto\,\varnothing,\br
+             & \quad \quad \quad \varphi\,\leadsto\,x(\ldots,\br
+             & \quad \quad \quad \quad k.\ff{if}(\emph{g}.\ff{forward}(y),\,z),\br
+             & \quad \quad \quad \quad w,\,\ldots)\rrbracket) \\
+        \end{split}}
+        {\begin{split}
+             & \ff{memory}(0)\,\mapsto\,flag, \\
+             & \ff{seq}(\leadsto x(\ldots,\br
+             & \quad \quad k.\ff{if}(\ff{seq}(y,\,flag.\ff{write}(1)),\,z),\br
+             & \quad \quad \phi(w))) \\
+        \end{split}}
+        \jrule{2}
+    \end{equation*}
+
+    It is not difficult to notice that objects which goto-forward "jumps through" will be dataized if the condition in the if-statement is not equal to \ff{TRUE}.
+    So before dataization such each object, that follows the jump, we can check condition of the jump.
+    It can be done via mutable object \ff{memory} and additional \ff{if} objects.
+    This is required so that all objects following the jump that are attributes of the abstract object $g$ straightforwardly or throw other objects are not dataized.
+    So, by encapsulating each object, following the jump and whose \emph{nesting} is at least that of the $g$ object, in this additional \ff{if} object with a $flag$ check, we make sure that these objects will not be dataized when the jump condition is met.
+
+
+
+
+
+
+    \subsection{Goto backward} \label{GB}
+    Here we describe how to replace \ff{goto} object which has an attribute \ff{backward} inside to a semantic equivalent.
+    Based on the concept of transformation, only cases in which attribute \ff{backward} is directly encapsulated in \ff{if} object are considered.
+
+    When dataized, the \ff{backward} object aborts the current dataization of the \ff{goto} object and starts it again.
+    In fact, such an implementation is equal to the DO-WHILE construct from other languages.
+    The essence of the transformation is that we "emulate" the work of this construct.
+    Since there is no such functionality in the language, we use the \ff{while} object and the mutable $flag$ object, from the result of dataization of which the loop will be dataized.
+
+    At the beginning, we assign $flag$ object to "0". The \ff{while} object condition checks that the \ff{flag} value is equal to "0". Then in the "body" of the loop, we change the value of $flag$ to "1". If the jump condition is \ff{TRUE}, then the \ff{flag} value is required back to "0". This is necessary for the condition of the loop to be fulfilled and the next "iteration" begins.
+
+    Same as at \ref{GF}, it is necessary to protect from dataization all objects following the \ff{if} object containing the jump, and with \emph{nesting} not less than that of the \ff{goto} object itself, since they should not be dataized when the jump condition is \ff{TRUE}.
+    This requires encapsulating each such object in object \ff{if} to check the value of $flag$---i.e. whether the jump condition has been fulfilled before or not.
+
+    Let's consider the following example of object \ff{goto} with \ff{backward} attribute:
+    \begin{ffcode}
+        goto
+        [g]
+        |$\leadsto$|x|$\label{ln:GB0}$|
+        |$\alpha_1$|
+        ...
+        |$\alpha_n$|
+        if.
+        k
+        g.backward
+        |$\alpha_{n+1}$|
+        |$\alpha_{n+2}$|
+        ...
+        |$\alpha_{m}$||$\label{ln:GB1}$|
+    \end{ffcode}
+    Applying transformation this example maps to:
+    \begin{ffcode}
+        memory 0 > fl|$\label{ln:TGB0}$|
+        while.
+        fl.eq 0
+        [i]
+        seq > @
+        fl.write 1
+        |$\leadsto$|x
+        |$\alpha_1$|
+        ...
+        |$\alpha_n$|
+        if.
+        k
+        fl.write 0
+        |$\alpha_{n+1}$|
+        if.
+        fl.eq 1
+        |$\alpha_{n+2}$|
+        TRUE
+        ...
+        if.
+        fl.eq 1
+        |$\alpha_{m}$|
+        TRUE|$\label{ln:TGB1}$|
+    \end{ffcode}
+
+    In terms of $\varphi$-calculus, lines \ref{ln:GB0}-\ref{ln:GB1} appears as:
+    \begin{equation}
+        \begin{split}
+            & x (\alpha_1,\,\ldots\,,\,\alpha_n, \br
+            & \quad k.\ff{if}(\emph{g}.\ff{backward},\,\alpha_{n+1}),\br
+            & \quad \alpha_{n+2},\,\ldots\,, \alpha_m), \\
+        \end{split}
+    \end{equation}
+    and lines \ref{ln:TGB0}-\ref{ln:TGB1} as:
+    \begin{equation}
+        \begin{split}
+            & \ff{memory}(0)\,\mapsto\,flag, \\
+            & flag.\ff{eq}(0).\ff{while}(, \br
+            & \quad \ff{seq}(flag.\ff{write}(1), \br
+            & \quad \quad \leadsto x (\alpha_1,\,\ldots\,,\,\alpha_n, \br
+            & \quad \quad \quad \quad k.\ff{if}(flag.\ff{write}(0),\,\alpha_{n+1}), \br
+            & \quad \quad \quad \quad flag.\ff{eq}(1).\ff{if}(\alpha_{n+2}),\,\ldots\,, \br
+            & \quad \quad \quad \quad flag.\ff{eq}(1).\ff{if}(\alpha_{m})))) \\
+        \end{split}
+    \end{equation}
+
+
+    \begin{eotheorem}
+        Object \ff{goto} with an attribute \ff{backward} inside maps to semantically equivalent analog with mutable object, object \ff{while} and additional \ff{if} objects.
+    \end{eotheorem}
+
+    \begin{proof}
+        Let's introduce the following recursive function:
+        \begin{equation}
+            \begin{split}
+            (\forall x\,\in \emph{attr}(\emph{g})):\,\phi'(x)\,&\rightarrow\,(\mu'(x),\,\phi'(x'\,\neq\,x)) \\
+            &\rightarrow\,(\mu'(x),\,(\mu'(x'),\,\phi'(x''))) \\
+            &\ldots
+            \end{split}
+        \end{equation}
+        where:
+        \begin{equation}
+            \begin{split}
+                & \mu'(x)\,\rightarrow flag.\ff{eq}(1).\ff{if}(x) \\
+            \end{split}
+        \end{equation}
+        Then the Ex. \ref{GBex1} maps to Ex. \ref{GBex2} according to the logic of dataization of \ff{goto} object with an attribute \ff{backward}.
+        \begin{equation}\label{GBex1}
+        \begin{split}
+            & \ff{goto}(\llbracket\,\emph{g}\,\mapsto\,\varnothing,\br
+            & \quad \quad \quad \varphi\,\leadsto\,x(\ldots,\br
+            & \quad \quad \quad \quad k.\ff{if}(\emph{g}.\ff{backward},\,z),\br
+            & \quad \quad \quad \quad w,\,\ldots)\rrbracket) \\
+        \end{split}
+        \end{equation}
+        where \emph{x}, \emph{w} and \emph{z} defines any object in the language, \emph{k} defines an object, which when dataized equals to a data object \ff{TRUE}.
+        \begin{equation}\label{GBex2}
+        \begin{split}
+            & \ff{goto}(\llbracket\,\emph{g}\,\mapsto\,\varnothing,\br
+            & \quad \quad \quad \varphi\,\mapsto\,flag.\ff{eq}(0).\ff{while}(\br
+            & \quad \quad \quad \quad \ff{seq}(flag.\ff{write}(1), \leadsto x(\ldots,\br
+            & \quad \quad \quad \quad \quad k.\ff{if}(flag.\ff{write}(0),\,z),\br
+            & \quad \quad \quad \quad \quad \phi'(w))))\rrbracket) \\
+        \end{split}
+        \end{equation}
+        When the jump condition equals to \ff{TRUE}, all objects that should not be executed when the \ff{backward} object is executed will not be executed because of the added \ff{if} objects and since all attributes of object $g$ are encapsulated in object \ff{while}, all attributes of the object $g$ will start executing again.
+    \end{proof}
+
+    \begin{corollary}
+        After transformation \emph{GB}, \ff{goto} is required to be removed to not violate parent-relations between objects.
+    \end{corollary}
+
+    \begin{proof}
+        Relying on Theorem \ref{delDef}, \ff{goto} object maps to object \ff{seq}.
+        But during transformation \emph{GB}, object \ff{seq} would be already created inside the object \ff{while}.
+        So all bound attributes of object \ff{goto} are already inside this object \ff{seq}, and \ff{goto} now just adds two extra levels of encapsulating.
+
+        Thus, by definition of the language, \ff{goto} object is required to be removed.
+        \begin{equation}
+            \begin{split}
+                & \ff{goto}(\llbracket \emph{g}\,\mapsto\,\varnothing,\,\varphi\,\mapsto\,flag.\ff{eq}(0).\ff{while}(\br
+                & \quad \quad \quad \ff{seq}(flag.\ff{write}(1),\,\alpha_1,\,\ldots\,,\,\alpha_n))\rrbracket) \\
+                & \downarrow \\
+                & flag.\ff{eq}(0).\ff{while}(\br
+                & \quad \ff{seq}(flag.\ff{write}(1),\,\alpha_1,\,\ldots\,,\,\alpha_n)) \\
+            \end{split}
+        \end{equation}
+    \end{proof}
+
+    \begin{equation*}
+        \dfrac
+        {\begin{split}
+             & \ff{goto}(\llbracket\,\emph{g}\,\mapsto\,\varnothing,\br
+             & \quad \quad \varphi\,\leadsto\,x(\ldots,\br
+             & \quad \quad \quad k.\ff{if}(\emph{g}.\ff{backward},\,z),\br
+             & \quad \quad \quad w,\,\ldots)\rrbracket) \\
+        \end{split}}
+        {\begin{split}
+             & \ff{memory}(0)\,\mapsto\,flag, \\
+             & flag.\ff{eq}.(0).\ff{while}(\br
+             & \quad \ff{seq}(flag.\ff{write}(1),\br
+             & \quad \quad \leadsto x(\ldots,\,k.\ff{if}(flag.\ff{write}(0),\,z),\,\phi'(w)))) \\
+        \end{split}}
+        \jrule{3}
+    \end{equation*}
+
+    Goto-backward works the same as DO-WHILE construct in other languages: the first iteration of the new loop is always executed, and the next only if the condition of loop is TRUE.
+    So, all objects that are attributes of object \ff{goto} and below the jump itself should be executed once, and all subsequent times were executed depending on the condition of the loop.
+
+    Since there is no direct implementation this construct in EO, but there is an implementation of the \emph{while} generator, we can resort to a little trick.
+    To emulate it, we can create an object \emph{flag} that will be a condition for \ff{while}, whose dataization condition will depend on this value.
+    The initial value of \emph{flag} is such that the condition for the dataization of \ff{while} is fulfilled.
+    Then, in the "body" of the loop, it is required to change the value of the \emph{flag} to the opposite.
+    If the jump condition is \emph{TRUE}, value of \emph{flag} changes again to original so that as soon as the iteration of the loop is completed, the next iteration will begin, since the loop dataization condition will be fulfilled.
+
+    In order to ensure that when the jump condition is \emph{TRUE}, all other objects below the jump are not executed, it is required to encapsulate them in object \ff{if}, in which will check whether the jump condition was previously been fulfilled.
+
+
+
+
+    \subsection{Terminating the while-object} \label{TW}
+    As mentioned above, the behavior of the \ff{while} object is different from all other objects.
+
+    In order to realize the functionality of loops in EO, generators are provided. A generator is a routine that can be used to control the iteration behaviour of a loop.
+    The language currently provides a \emph{while} generator, on which other generators are implemented.
+
+    This transformation is an "addition" for \emph{GF}/\emph{GB} transformations since it allows to terminate the \ff{while} objects where it is required.
+    It modifies the condition of executing the \ff{while} object, adding a condition so that if this condition fails, the \emph{while}-loop will be terminated.
+    This could be done by creating the \ff{and} object, which implements logical \emph{AND} between attributes, and adding the desired condition and the condition of executing the \ff{while} object to its attributes.
+
+    Consider the following code:
+    \begin{ffcode}
+        while.|$\label{ln:TW0}$|
+        e
+        x
+        |$\alpha_1$|
+        ...
+        |$\alpha_n$||$\label{ln:TW1}$|
+    \end{ffcode}
+    where $\alpha_i$ and $x$ are any objects in language, $e$ is any object, which when dataized equals to a data object \ff{TRUE}.
+
+    Suppose you want to add the following condition, which if will not be fulfilled, the loop should be terminated:
+    \begin{equation}
+        Z\,\neq\,0
+    \end{equation}
+    Applying transformation we get:
+    \begin{ffcode}
+        while.|$\label{ln:TTW0}$|
+        and.
+        eq. (Z 0)
+        e
+        x
+        |$\alpha_1$|
+        ...
+        |$\alpha_n$||$\label{ln:TTW1}$|
+    \end{ffcode}
+
+    Describing transformation in terms of $\varphi$-calculus, lines \ref{ln:TW0}-\ref{ln:TW1} appears as:
+    \begin{equation}
+        \begin{split}
+            & \emph{e}.\ff{while}(\emph{x}(\alpha_1,\,\ldots\,,\,\alpha_n)) \\
+        \end{split}
+    \end{equation}
+    and lines \ref{ln:TTW0}-\ref{ln:TTW1} as:
+    \begin{equation}
+        \begin{split}
+            & \emph{e}.\ff{and}(Z.\ff{eq}(0)).\ff{while}(\emph{x}(\alpha_1,\,\ldots\,,\,\alpha_n))
+        \end{split}
+    \end{equation}
+
+    \begin{eotheorem}
+        The dataization of object \ff{while} can be changed using additional objects that implement logical operators.
+        For example, to add a condition, which if not executed, the loop will terminate, it is required to use an object \ff{and}.
+    \end{eotheorem}
+
+    \begin{proof}
+        By definition of the language.
+        If there is any object \emph{Z}, which returns boolean value when executed and an object \ff{while}, which dataization should stop, when this value is \emph{FALSE}, it is required to use logical operator \emph{AND} with this object:
+        \begin{equation}
+            \begin{split}
+                & while(and(Z,\,cond_{while}),\,\ldots)\\
+            \end{split}
+        \end{equation}
+        where the first argument is the condition for the dataization of the loop, the second argument is the "body" of the loop.
+    \end{proof}
+
+    This is used in \emph{GF}/\emph{GB} to abort the dataization of the \ff{while} object depending on the value of \ff{flag}:
+    \begin{equation*}
+        \dfrac
+        {\begin{split}
+             & e.\ff{while}(x(\alpha_1,\,\ldots\,,\,\alpha_n)) \\
+        \end{split}}
+        {\begin{split}
+             & e.\ff{and}(flag.\ff{eq}(\emph{val})).\ff{while}(x(\alpha_1,\,\ldots\,,\,\alpha_n))
+        \end{split}}
+        \jrule{4}
+    \end{equation*}
+    where \emph{val} is a value "0" or "1", depending on type of transformation - \emph{GF}/\emph{GB}.
+
+    It is also possible to use other objects in the language that implement logical operators such as \ff{or}, \ff{not}, \ff{xor}, etc with object \ff{while}.
+
+%%\subsection{Final algorithm}
+%%To sum up, we can now fully describe the algorithm itself. The first step is to make the transformations, if necessary, described in sections 3.1.1 and 3.2.1, depending on the current transformation. The second step is going through all the jumps in the program - forward and backward, and depending on the jump we carry out the required transformations: if needs to make a replacement in the while loop, containing a jump - use transformations 3.1.3 and 3.2.3 accordingly. If needs to make a replacement for a simple object that frames the jump - use transformations 3.1.2 and 3.2.2 respectively.
+
+    \section{Experimental Results}
+
+    \tbd{Here we explain how we implemented an automated tool for applying all described transformations to EO code.}
+
+    \tbd{Then, we explain how we conducted experiments with this tool, modifying many EO programs and then running them to check whether they return the same results as original ones.}
+
+    \section{Discussion}
+
+    Our software will simplify programs in EO language and make them more readable without using GOTO objects.
+
+    In addition, our proof makes it possible to remove all GOTO constructs from programs.
+
+    \subsection{Necessity and sufficiency}
+    In the above transformations, only three objects are affected - \ff{if}, \ff{while} and mutable object \ff{memory}.
+    We only consider these objects, since all other objects that could implement the behavior of such constructs as \emph{DO-WHILE}, \emph{FOR}, \emph{REPEAT-UNTIL}, \emph{IF-THEN-ELSE} and others can be implemented using this objects.
+
+    \section{Conclusion}
+
+    As a result of our research, we suggested 4 transformations that automatically converts an input program to a semantically equivalent analog, but without using the \emph{atom} object \ff{goto}.
+    We also proved that the program at the output will contain the same logic as the program at the input.
+
+
+    \printbibliography %Prints bibliography
 \end{document}
 \endinput
