@@ -36,7 +36,7 @@ SOFTWARE.
   <name>dejump</name>
   <description>Replaces all GOTO objects</description>
   <properties>
-    <eolang.version>0.28.2</eolang.version>
+    <eolang.version>0.28.5</eolang.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
@@ -60,6 +60,11 @@ SOFTWARE.
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
+      <!-- version from parent POM -->
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
       <!-- version from parent POM -->
     </dependency>
     <dependency>
@@ -180,6 +185,7 @@ SOFTWARE.
                 <exclude>pmd:.*</exclude>
                 <exclude>checkstyle:/src/test/eo/org/eolang/dejump/.*</exclude>
                 <exclude>checkstyle:/src/test/resources/org/eolang/dejump/packs/.*</exclude>
+                <exclude>duplicatefinder:.*</exclude>
               </excludes>
             </configuration>
           </plugin>
