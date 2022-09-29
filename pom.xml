@@ -63,6 +63,11 @@ SOFTWARE.
       <!-- version from parent POM -->
     </dependency>
     <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <!-- version from parent POM -->
+    </dependency>
+    <dependency>
       <groupId>com.yegor256</groupId>
       <artifactId>xsline</artifactId>
       <version>0.12.2</version>
@@ -180,6 +185,7 @@ SOFTWARE.
                 <exclude>pmd:.*</exclude>
                 <exclude>checkstyle:/src/test/eo/org/eolang/dejump/.*</exclude>
                 <exclude>checkstyle:/src/test/resources/org/eolang/dejump/packs/.*</exclude>
+                <exclude>duplicatefinder:.*</exclude>
               </excludes>
             </configuration>
           </plugin>

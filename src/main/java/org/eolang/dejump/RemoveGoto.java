@@ -59,6 +59,11 @@ public final class RemoveGoto {
     private final boolean format;
 
     /**
+     * Directory separator.
+     */
+    private final char sep;
+
+    /**
      * Ctor.
      *
      * @param pth Path to input file
@@ -67,6 +72,11 @@ public final class RemoveGoto {
     public RemoveGoto(final String pth, final boolean fmt) {
         this.path = new File(pth).getAbsolutePath();
         this.format = fmt;
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            this.sep = '\\';
+        } else {
+            this.sep = '/';
+        }
     }
 
     /**
@@ -100,8 +110,8 @@ public final class RemoveGoto {
     public void exec() throws IOException {
         final File dir = new File(
             String.format(
-                "%s\\generated",
-                this.path.substring(0, this.path.lastIndexOf('\\'))
+                "%s%cgenerated",
+                this.path.substring(0, this.path.lastIndexOf(this.sep)), this.sep
             )
         );
         final String filename = new File(this.path).getName()
@@ -127,16 +137,16 @@ public final class RemoveGoto {
             ret = new XMIR(after).toEO();
             output = new File(
                 String.format(
-                    "%s\\%s_transformed.%s",
-                    dir.getPath(), filename, "eo"
+                    "%s%c%s_transformed.%s",
+                    dir.getPath(), this.sep, filename, "eo"
                 )
             );
         } else {
             ret = after.toString();
             output = new File(
                 String.format(
-                    "%s\\%s_transformed.%s",
-                    dir.getPath(), filename, "xmir"
+                    "%s%c%s_transformed.%s",
+                    dir.getPath(), this.sep, filename, "xmir"
                 )
             );
         }
