@@ -42,7 +42,7 @@ import org.eolang.parser.Syntax;
 import org.eolang.parser.XMIR;
 
 /*
-@todo 30min add RemoveGotoTest
+@todo #54:30min add RemoveGotoTest
  */
 /**
  * The main logic of application.
@@ -131,7 +131,7 @@ public final class RemoveGoto {
             before = RemoveGoto.getParsedXml(new XMLDocument(Files.readString(input.toPath())));
         }
         /*
-        @todo 30min Configure slf4j Logger and replace these line to Logger.debug
+        @todo #54:30min Configure slf4j Logger and replace these line to Logger.debug
          */
         System.out.println(before);
         System.out.println("========================================");
