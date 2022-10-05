@@ -23,6 +23,7 @@
  */
 package org.eolang.dejump;
 
+import com.jcabi.log.Logger;
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import com.yegor256.xsline.Shift;
@@ -130,13 +131,9 @@ public final class RemoveGoto {
         } else {
             before = RemoveGoto.getParsedXml(new XMLDocument(Files.readString(input.toPath())));
         }
-        /*
-        @todo #54:30min Configure slf4j Logger and replace these line to Logger.debug
-         */
-        System.out.println(before);
-        System.out.println("========================================");
+        Logger.info(this, "XMIR before transformations:\n%s", before);
         final XML after = RemoveGoto.applyTrain(before);
-        System.out.println(after);
+        Logger.info(this, "XMIR after transformations:\n%s", after);
         final String ret;
         final File output;
         if (this.format) {

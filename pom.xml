@@ -27,7 +27,7 @@ SOFTWARE.
   <parent>
     <groupId>com.jcabi</groupId>
     <artifactId>parent</artifactId>
-    <version>0.62.0</version>
+    <version>0.63.0</version>
   </parent>
   <groupId>org.eolang.dejump</groupId>
   <artifactId>dejump</artifactId>
@@ -35,8 +35,38 @@ SOFTWARE.
   <packaging>jar</packaging>
   <name>dejump</name>
   <description>Replaces all GOTO objects</description>
+  <url>https://github.com/objectionary/dejump</url>
+  <inceptionYear>2022</inceptionYear>
+  <organization>
+    <name>objectionary</name>
+    <url>https://www.yegor256.com</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>MIT</name>
+      <url>https://github.com/objectionary/dejump/blob/main/LICENSE.txt</url>
+      <distribution>site</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>1</id>
+      <name>Mikhail Lipanin</name>
+      <email>mikhail.lipanin@gmail.com</email>
+      <organization>objectionary</organization>
+      <organizationUrl>https://www.yegor256.com</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+3</timezone>
+    </developer>
+  </developers>
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/objectionary/dejump/issues</url>
+  </issueManagement>
   <properties>
-    <eolang.version>0.28.5</eolang.version>
+    <eolang.version>0.28.8</eolang.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
@@ -68,9 +98,30 @@ SOFTWARE.
       <!-- version from parent POM -->
     </dependency>
     <dependency>
+      <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-manifests</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-log</artifactId>
+      <!-- version from parent POM -->
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-reload4j</artifactId>
+      <!-- version from parent POM -->
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <!-- version from parent POM -->
+    </dependency>
+    <dependency>
       <groupId>com.yegor256</groupId>
       <artifactId>xsline</artifactId>
-      <version>0.12.2</version>
+      <version>0.13.0</version>
     </dependency>
     <dependency>
       <groupId>net.sf.saxon</groupId>
