@@ -66,7 +66,7 @@ SOFTWARE.
     <url>https://github.com/objectionary/dejump/issues</url>
   </issueManagement>
   <properties>
-    <eolang.version>0.28.8</eolang.version>
+    <eolang.version>0.28.10</eolang.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
