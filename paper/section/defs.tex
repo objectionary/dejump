@@ -1,0 +1,90 @@
+\begin{eodefinition}
+An \emph{object} is a collection of attributes, which are uniquely named bindings to objects.
+An object is abstract if at least one of its attributes is free---isn’t bound to any object.
+Objects, whose implementation is provided by the runtime are called \emph{atoms}.
+One object may decorate another object by binding it to the $\varphi$ attribute of itself.
+A decorator has its own attributes and bound attributes of its decoratee.
+\end{eodefinition}
+\begin{eodefinition}
+\emph{Dataization} in $\varphi$-calculus is a process of retrieving data from an object.
+The dataization of an object at the highest level of composition is similar to the execution of a program in other languages.
+
+We also define a dataization function $\mathbb{D}(x)$, which turns an object $x$ into data.
+\end{eodefinition}
+\begin{eodefinition}
+\emph{Forwarding goto} defines an object \ff{goto}, which encapsulate object \ff{forward} directly or through other objects:
+\begin{ffcode}
+goto
+  [o1]
+   |$\leadsto$|o1.forward o
+\end{ffcode}
+\end{eodefinition}
+\begin{eodefinition}
+\emph{Backwarding goto} defines an object \ff{goto}, which encapsulate object \ff{backward} directly or through other objects:
+\begin{ffcode}
+goto
+  [o1]
+   |$\leadsto$|o1.backward
+\end{ffcode}
+\end{eodefinition}
+
+Let's consider the following EO program which demonstrates the general syntax of the language:
+\begin{ffcode}
+memory 0 > x|$\label{ln:def0}$|
+[] > app
+  [a b] > max
+    goto > @
+      [g]
+        if. > @
+          a.gt b
+          g.forward a
+          b
+  [x] > run
+    while. > @!
+      and.
+        x.lt 10
+        (x.mod 1).eq 0
+      [i]
+        x.write > @
+          (x.plus 1)|$\label{ln:def1}$|
+\end{ffcode}
+In this code snippet, \ff{goto} is an \emph{atom}-object with attribute \ff{g}, which dataizes similar to \ff{seq} object;
+\ff{memory} is mutable object, which allows to reinitialize the bound object \ff{x} via \ff{.write} attribute;
+\ff{eq} is an object, which checks the equality of the objects passed to it;
+\ff{if} is an object, which implements behavior of branching;
+\ff{seq} is an object that sequentially dataizes all objects within it;
+\ff{while} is an object, implementing behavior of loops: its first bound attribute implements condition of loop dataization and second one implies "body" of loop;
+\ff{backward} and \ff{forward} are objects, which implements behaviour of jumps: first of them starts dataization of object \ff{g} again, while the second one returns the object passed to it as a parameter and terminates the dataization of object \ff{goto};
+\ff{and} is an objects, which implements logical operation \emph{AND}.
+There are also objects \ff{or}, \ff{xor} and \ff{not} in the language, that implement the logical operators \emph{OR}, \emph{XOR} and \emph{NOT} respectively.
+
+In terms of $\varphi$-calculus, code at \lrefs{def0}{def1} will be presented as:
+\begin{equation}
+\begin{split}
+& app \mapsto \llbracket \br
+& \quad max(a, b) \mapsto \llbracket \br
+& \quad \quad \varphi \mapsto \ff{goto}(\llbracket\,g\,\mapsto\,\varnothing,\br
+& \quad \quad \quad \varphi \mapsto a.\ff{gt}(b).\ff{if}(g.\ff{forward}(a), b) \,\rrbracket) \br
+& \quad \rrbracket \br
+& \quad run(x) \mapsto \llbracket \br
+& \quad \quad \varphi\ff{!} \mapsto x.\ff{lt}(10).\ff{and}(x.\ff{mod}(1).\ff{eq}(0)) \br
+& \quad \quad \quad .\ff{while}(\llbracket\,i \mapsto \varnothing, \br
+& \quad \quad \quad \quad \quad \quad \quad \varphi \mapsto x.\ff{write}(x.\ff{plus}(1))\,\rrbracket) \br
+& \quad \rrbracket \br
+& \rrbracket \\
+\end{split}
+\end{equation}
+
+\emph{Designations:}
+\begin{itemize}
+\item "$>$" is used to name objects, where on the left side of ">" is object itself and its name on the right side,
+\item "$[]$" is used to specify object parameters,
+\item "$@$" is used to denote the object being decorated,
+\item "$!$" is used to declare the object as a constant,
+\item "$\mapsto$" is used to defines an object, where free attributes stay in the parentheses on the left side and pairs, which represent bound attributes, stay on the right side, in double-square brackets,
+\item "$\leadsto$" defines an arbitrary number of objects or chains of encapsulated objects that encapsulate the original object.
+\item "$\equiv$" defines the semantic equality of objects, so result of dataization for first object is equal to result of dataization for second one:
+\begin{equation}
+(\forall{x, y}) (x \equiv y) \Leftrightarrow (\mathbb{D}(x) = \mathbb{D}(y)) .
+\end{equation}
+\end{itemize}
