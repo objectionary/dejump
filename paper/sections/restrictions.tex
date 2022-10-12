@@ -1,0 +1,25 @@
+Based on the concept of strictly object-oriented programming languages like EO, it is not possible to get rid of \ff{forward}/\ff{backward} objects in all cases.
+In such languages, some constructs are impossible to be exactly converted into code in functional languages such as Java, C++, Python, and others.
+
+Let's consider the following example of using \ff{goto} object:
+\begin{ffcode}
+    goto
+    [g]
+    seq > @
+    foo g
+    [x] > foo
+    x.forward 25
+\end{ffcode}
+In this case, the object $g$, from which the \ff{forward}/\ff{backward} objects are called, is passed as an argument to another object, and the \ff{forward} object is already will be dataized inside object $foo$.
+
+Similarly, if the \ff{forward}/\ff{backward} objects encapsulate third-party objects whose logic is not known to us, we cannot do the correct jump transformation:
+\begin{ffcode}
+    goto
+    [g]
+    foreign_obj > @
+    QQ.io.stdout
+    "We don't know the logic\n"
+    g.forward TRUE
+\end{ffcode}
+
+Thus, we can guarantee transformations of \ff{forward} and \ff{backward} objects only if these objects encapsulate objects whose logic is known to us and these \ff{forward} and \ff{backward} objects are inside the \ff{goto} object.
