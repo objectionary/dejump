@@ -1,0 +1,64 @@
++alias org.eolang.hamcrest.assert-that
++junit
++package org.eolang.dejump
+
+[] > process_backward_jump
+  assert-that > @
+    [] > backward_jump
+      memory 0 > x
+      seq > @
+        goto
+          [g]
+            seq > @
+              x.write (x.plus 1)
+              if.
+                x.lt 10
+                g.backward
+                TRUE
+        QQ.io.stdout
+          QQ.txt.sprintf "out is %d\n"
+            x
+    $.equal-to
+      [] > backward_jumpTest
+        memory > x
+          0
+        seq > @
+          seq
+            flag_w178aab3ab1aab1b1
+            .write
+              0
+            flag_w178aab3ab1aab1b1
+            .eq
+              0
+            .or
+            .while > g_w181aab3ab1a!
+              [i]
+                seq > @
+                  flag_w178aab3ab1aab1b1
+                  .write
+                    1
+                  seq
+                    x
+                    .write
+                      x
+                      .plus
+                        1
+                    x
+                    .lt
+                      10
+                    .if
+                      seq
+                        flag_w178aab3ab1aab1b1
+                        .write
+                          0
+                      TRUE
+          QQ
+          .io
+          .stdout
+            QQ
+            .txt
+            .sprintf
+              "out is %d\n"
+              x
+        memory > flag_w178aab3ab1aab1b1
+          0

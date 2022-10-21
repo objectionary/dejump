@@ -1,0 +1,111 @@
++alias org.eolang.hamcrest.assert-that
++junit
++package org.eolang.dejump
+
+[] > process_jump_inside_name
+  assert-that > @
+    [] > jump_inside_name
+      memory 1 > x
+      QQ.io.stdout > @
+        QQ.txt.sprintf "result is %d\n"
+          run
+      goto > run
+        [g]
+          seq > @
+            if. > y
+              x.eq 5
+              g.forward x
+              42.div x
+            QQ.io.stdout
+              QQ.txt.sprintf "42/x = %d\n" y
+            x.write (x.plus 1)
+            g.backward
+    $.equal-to
+      [] > jump_inside_nameTest
+        memory > x
+          1
+        QQ
+        .io
+        .stdout > @
+          QQ
+          .txt
+          .sprintf
+            "result is %d\n"
+            run
+        seq > run
+          flag_w76aab3ab2ab1a
+          .write
+            -1
+          flag_w76aab3ab2ab1b3
+          .write
+            0
+          flag_w76aab3ab2ab1a
+          .eq
+            -1
+          .or
+            flag_w76aab3ab2ab1b3
+            .eq
+              0
+          .while > g_w79aab3ab2!
+            [i]
+              seq > @
+                flag_w76aab3ab2ab1a
+                .write
+                  0
+                flag_w76aab3ab2ab1b3
+                .write
+                  1
+                seq
+                  x
+                  .eq
+                    5
+                  .if > y
+                    seq
+                      flag_w76aab3ab2ab1a
+                      .write
+                        2
+                    42
+                    .div
+                      x
+                  flag_w76aab3ab2ab1a
+                  .eq
+                    0
+                  .if
+                    seq
+                      QQ
+                      .io
+                      .stdout
+                        QQ
+                        .txt
+                        .sprintf
+                          "42/x = %d\n"
+                          y
+                      x
+                      .write
+                        x
+                        .plus
+                          1
+                      TRUE
+                      .if
+                        seq
+                          flag_w76aab3ab2ab1b3
+                          .write
+                            0
+                        TRUE
+                    flag_w76aab3ab2ab1b3
+                    .eq
+                      1
+                    .if
+                      seq
+                        TRUE
+                      TRUE
+          flag_w76aab3ab2ab1a
+          .eq
+            2
+          .if
+            x
+            g_w79aab3ab2
+        memory > flag_w76aab3ab2ab1a
+          -1
+        memory > flag_w76aab3ab2ab1b3
+          0

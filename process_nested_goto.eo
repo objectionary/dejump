@@ -1,0 +1,70 @@
++alias org.eolang.hamcrest.assert-that
++junit
++package org.eolang.dejump
+
+[] > process_nested_goto
+  assert-that > @
+    [] > nested_goto
+      goto > @
+        [g1]
+          seq > @
+            goto
+              [g2]
+                seq > @
+                  g1.forward 229
+            7
+    $.equal-to
+      [] > nested_gotoTest
+        seq > @
+          flag_w7aab3aaab1aab1a
+          .write
+            -1
+          flag_w7aab3aaab1aab1a
+          .eq
+            -1
+          .or
+          .while > g_w10aab3aa!
+            [i]
+              seq > @
+                flag_w7aab3aaab1aab1a
+                .write
+                  0
+                seq
+                  seq
+                    flag_temp_w21aab3aaab1a
+                    .write
+                      0
+                    flag_temp_w21aab3aaab1a
+                    .eq
+                      0
+                    .while > g_w10aab3aaab1a!
+                      [i]
+                        seq > @
+                          flag_temp_w21aab3aaab1a
+                          .write
+                            1
+                          seq
+                            TRUE
+                            .if
+                              seq
+                                flag_w7aab3aaab1aab1a
+                                .write
+                                  2
+                              TRUE
+                  flag_w7aab3aaab1aab1a
+                  .eq
+                    0
+                  .if
+                    seq
+                      7
+                    TRUE
+          flag_w7aab3aaab1aab1a
+          .eq
+            2
+          .if
+            229
+            g_w10aab3aa
+        memory > flag_w7aab3aaab1aab1a
+          -1
+        memory > flag_temp_w21aab3aaab1a
+          0

@@ -1,0 +1,61 @@
++alias org.eolang.hamcrest.assert-that
++junit
++package org.eolang.dejump
+
+[] > process_simple_goto
+  assert-that > @
+    [] > simple_goto
+      seq > @
+        goto
+          [g]
+            seq > @
+              QQ.io.stdout "Check\n"
+              g.forward TRUE
+              QQ.io.stdout "Never\n"
+    $.equal-to
+      [] > simple_gotoTest
+        seq > @
+          seq
+            flag_w111aab3aaaab1b1
+            .write
+              -1
+            flag_w111aab3aaaab1b1
+            .eq
+              -1
+            .or
+            .while > g_w114aab3aaa!
+              [i]
+                seq > @
+                  flag_w111aab3aaaab1b1
+                  .write
+                    0
+                  seq
+                    QQ
+                    .io
+                    .stdout
+                      "Check\n"
+                    TRUE
+                    .if
+                      seq
+                        flag_w111aab3aaaab1b1
+                        .write
+                          2
+                      TRUE
+                    flag_w111aab3aaaab1b1
+                    .eq
+                      0
+                    .if
+                      seq
+                        QQ
+                        .io
+                        .stdout
+                          "Never\n"
+                      TRUE
+            flag_w111aab3aaaab1b1
+            .eq
+              2
+            .if
+              TRUE
+              g_w114aab3aaa
+        memory > flag_w111aab3aaaab1b1
+          -1

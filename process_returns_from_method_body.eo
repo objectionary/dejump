@@ -1,0 +1,73 @@
++alias org.eolang.hamcrest.assert-that
++junit
++package org.eolang.dejump
+
+[] > process_returns_from_method_body
+  assert-that > @
+    [] > returns_from_methods_body
+      [a b] > max
+        goto > @
+          [g]
+            seq > @
+              if.
+                a.gt b
+                g.forward a
+                TRUE
+              b
+      seq > @
+        QQ.io.stdout
+          QQ.txt.sprintf "MAX_VAL is %d\n"
+            max 228 1337
+    $.equal-to
+      [] > returns_from_methods_bodyTest
+        [a b] > max
+          seq > @
+            flag_w42aab3aab2ab1a
+            .write
+              -1
+            flag_w42aab3aab2ab1a
+            .eq
+              -1
+            .or
+            .while > g_w45aab3aab2!
+              [i]
+                seq > @
+                  flag_w42aab3aab2ab1a
+                  .write
+                    0
+                  seq
+                    a
+                    .gt
+                      b
+                    .if
+                      seq
+                        flag_w42aab3aab2ab1a
+                        .write
+                          2
+                      TRUE
+                    flag_w42aab3aab2ab1a
+                    .eq
+                      0
+                    .if
+                      seq
+                        b
+                      TRUE
+            flag_w42aab3aab2ab1a
+            .eq
+              2
+            .if
+              a
+              g_w45aab3aab2
+        seq > @
+          QQ
+          .io
+          .stdout
+            QQ
+            .txt
+            .sprintf
+              "MAX_VAL is %d\n"
+              max
+                228
+                1337
+        memory > flag_w42aab3aab2ab1a
+          -1

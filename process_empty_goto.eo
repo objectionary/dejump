@@ -1,0 +1,30 @@
++alias org.eolang.hamcrest.assert-that
++junit
++package org.eolang.dejump
+
+[] > process_empty_goto
+  assert-that > @
+    [] > empty_goto
+      seq > @
+        goto
+          [g]
+            1337 > @
+    $.equal-to
+      [] > empty_gotoTest
+        seq > @
+          seq
+            flag_temp_w157aab3aaa
+            .write
+              0
+            flag_temp_w157aab3aaa
+            .eq
+              0
+            .while > g_w147aab3aaa!
+              [i]
+                seq > @
+                  flag_temp_w157aab3aaa
+                  .write
+                    1
+                  1337
+        memory > flag_temp_w157aab3aaa
+          0
