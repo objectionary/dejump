@@ -20,7 +20,7 @@ jobs:
           java-version: 17
       - run: mvn clean install
       - run: mkdir gh-pages
-      - run: cp -r target/. gh-pages
+      - run: cp -r target/eo-after/. gh-pages
       - uses: JamesIves/github-pages-deploy-action@v4.4.0
         with:
           branch: gh-pages
