@@ -13,6 +13,11 @@ jobs:
   make:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
       - run: mvn clean install
       - run: mkdir gh-pages
       - run: cp -r target/. gh-pages
