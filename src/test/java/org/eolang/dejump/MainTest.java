@@ -39,6 +39,9 @@ import org.junit.jupiter.api.io.TempDir;
  * Main test.
  *
  * @since 0.0.1
+ * @todo #52:30min Rewrite for loop in fullRun method
+ *  as OOP-style of applying functions and comparing
+ *  results in MatcherAssert
  */
 public final class MainTest {
 
@@ -63,19 +66,15 @@ public final class MainTest {
         );
         final Path res = dir.resolve("generated/test_transformed.eo");
         new RemoveGoto(src.toString(), true).exec();
-        final List <String> first = Files.readAllLines(res);
-        final List <String> second = Arrays.asList(
-                new XMIR(
+        final List<String> first = Files.readAllLines(res);
+        final List<String> second = Arrays.asList(
+            new XMIR(
                 RemoveGoto.applyTrain(
                     RemoveGoto.getParsedXml(String.join("\n", before))
                 )
             ).toEO().split("\n")
         );
-        /*
-        @todo #52:30min Rewrite as OOP-style of applying functions and comparing
-        results in MatcherAssert
-         */
-        for (int idx = 0; idx < first.size(); idx++) {
+        for (int idx = 0; idx < first.size(); ++idx) {
             if (first.get(idx).contains("flag_")) {
                 first.set(
                     idx,
