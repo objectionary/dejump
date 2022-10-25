@@ -5,7 +5,7 @@
 
 [![mvn-linux](https://github.com/objectionary/dejump/actions/workflows/build.yml/badge.svg)](https://github.com/objectionary/dejump/actions/workflows/build.yml)
 [![PDD status](http://www.0pdd.com/svg?name=objectionary/dejump)](http://www.0pdd.com/p?name=objectionary/dejump)
-[![Hits-of-Code](https://hitsofcode.com/github/objectionary/dejump?branch=main)](https://hitsofcode.com/github/objectionary/dejump/view?branch=main)
+[![Hits-of-Code](https://hitsofcode.com/github/objectionary/dejump?branch=master)](https://hitsofcode.com/github/objectionary/dejump/view?branch=master)
 [![Lines of code](https://img.shields.io/tokei/lines/github/objectionary/dejump)](https://img.shields.io/tokei/lines/github/objectionary/dejump)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/objectionary/dejump/blob/master/LICENSE.txt)
 
@@ -95,7 +95,7 @@ You will need JDK 11+ and Maven 3.8+. Clone the repo and run the build like this
 $ mvn clean install -Pqulice
 ```
 
-There are `.eo` files in [`src/test/eo/org/eolang/dejump`](https://github.com/objectionary/dejump/tree/main/src/test/eo/org/eolang/dejump), which you can edit or add your own source there. There are the following build steps that process these files:
+There are `.eo` files in [`src/test/eo/org/eolang/dejump`](https://github.com/objectionary/dejump/tree/master/src/test/eo/org/eolang/dejump), which you can edit or add your own source there. There are the following build steps that process these files:
 
 1. At `generate-test-sources` Maven phase, `gmavenplus-plugin` takes all `.eo` sources and generates new ones. The files that it generates are not just `.eo` programs, but EO tests, which combine the code originally taken from original EO programs with the EO code generated. Thus, for `src/test/eo/org/eolang/dejump/alpha.eo` a modified EO source will be saved into `target/eo-after/process_alpha-test.eo`.
 

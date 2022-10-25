@@ -3,11 +3,11 @@ name: github pages
 on:
   push:
     branches:
-      - main
+      - master
     paths-ignore: ['paper/**', 'README.md', 'LICENSE.txt']
   pull_request:
     branches:
-      - main
+      - master
     paths-ignore: ['paper/**', 'README.md', 'LICENSE.txt']
 jobs:
   make:
