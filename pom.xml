@@ -82,8 +82,6 @@ SOFTWARE.
   </distributionManagement>
   <properties>
     <eolang.version>0.28.10</eolang.version>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
   </properties>
   <dependencies>
     <dependency>
