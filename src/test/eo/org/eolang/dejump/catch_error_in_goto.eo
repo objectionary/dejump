@@ -1,0 +1,19 @@
+[] > catch_error_in_goto
+  try > @
+    []
+      goto > @
+        [g]
+          if. > @
+            TRUE
+            g.forward
+              div.
+                42
+                0
+            "never happened"
+    [e]
+      seq > @
+        QQ.io.stdout e
+        eq.
+          e
+          "The 1th argument of 'int.div' is invalid: division by zero is infinity"
+    nop

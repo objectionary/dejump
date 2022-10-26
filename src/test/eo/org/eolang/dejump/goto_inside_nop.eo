@@ -1,4 +1,4 @@
-[] > nop_goto
+[] > goto_inside_nop
   nop > @
     goto
       [g]
