@@ -1,0 +1,12 @@
+[] > try_goto
+  try > @
+    []
+      goto > @
+        [g]
+          if. > @
+            TRUE
+            g.forward "test"
+            "never happened"
+    [e]
+      e > @
+    nop

@@ -1,0 +1,7 @@
+[] > nop_goto
+  nop > @
+    goto
+      [g]
+        seq > @
+          QQ.io.stdout "Never happened\n"
+          g.forward TRUE
