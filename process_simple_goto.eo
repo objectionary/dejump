@@ -2,6 +2,15 @@
 +junit
 +package org.eolang.dejump
 
+[] > simple_goto_Before
+  seq > @
+    goto
+      [g]
+        seq > @
+          QQ.txt.sprintf "Check\n"
+          g.forward TRUE
+          QQ.txt.sprintf "Never\n"
+
 [] > process_simple_goto
   assert-that > @
     [] > simple_goto
@@ -9,9 +18,9 @@
         goto
           [g]
             seq > @
-              QQ.io.stdout "Check\n"
+              QQ.txt.sprintf "Check\n"
               g.forward TRUE
-              QQ.io.stdout "Never\n"
+              QQ.txt.sprintf "Never\n"
     $.equal-to
       [] > simple_gotoTest
         seq > @
@@ -31,8 +40,8 @@
                     0
                   seq
                     QQ
-                    .io
-                    .stdout
+                    .txt
+                    .sprintf
                       "Check\n"
                     TRUE
                     .if
@@ -47,8 +56,8 @@
                     .if
                       seq
                         QQ
-                        .io
-                        .stdout
+                        .txt
+                        .sprintf
                           "Never\n"
                       TRUE
             flag_w111aab3aaaab1b1

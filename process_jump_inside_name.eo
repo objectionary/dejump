@@ -2,13 +2,31 @@
 +junit
 +package org.eolang.dejump
 
+[] > jump_inside_name_Before
+  memory 1 > x
+  if. > @
+    run.eq 5
+    TRUE
+    FALSE
+  goto > run
+    [g]
+      seq > @
+        if. > y
+          x.eq 5
+          g.forward x
+          42.div x
+        QQ.txt.sprintf "42/x = %d\n" y
+        x.write (x.plus 1)
+        g.backward
+
 [] > process_jump_inside_name
   assert-that > @
     [] > jump_inside_name
       memory 1 > x
-      QQ.io.stdout > @
-        QQ.txt.sprintf "result is %d\n"
-          run
+      if. > @
+        run.eq 5
+        TRUE
+        FALSE
       goto > run
         [g]
           seq > @
@@ -16,22 +34,19 @@
               x.eq 5
               g.forward x
               42.div x
-            QQ.io.stdout
-              QQ.txt.sprintf "42/x = %d\n" y
+            QQ.txt.sprintf "42/x = %d\n" y
             x.write (x.plus 1)
             g.backward
     $.equal-to
       [] > jump_inside_nameTest
         memory > x
           1
-        QQ
-        .io
-        .stdout > @
-          QQ
-          .txt
-          .sprintf
-            "result is %d\n"
-            run
+        run
+        .eq
+          5
+        .if > @
+          TRUE
+          FALSE
         seq > run
           flag_w76aab3ab2ab1a
           .write
@@ -73,13 +88,10 @@
                   .if
                     seq
                       QQ
-                      .io
-                      .stdout
-                        QQ
-                        .txt
-                        .sprintf
-                          "42/x = %d\n"
-                          y
+                      .txt
+                      .sprintf
+                        "42/x = %d\n"
+                        y
                       x
                       .write
                         x

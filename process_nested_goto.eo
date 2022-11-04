@@ -2,10 +2,10 @@
 +junit
 +package org.eolang.dejump
 
-[] > process_nested_goto
-  assert-that > @
-    [] > nested_goto
-      goto > @
+[] > nested_goto_Before
+  if. > @
+    eq.
+      goto
         [g1]
           seq > @
             goto
@@ -13,58 +13,83 @@
                 seq > @
                   g1.forward 229
             7
+      229
+    TRUE
+    FALSE
+
+[] > process_nested_goto
+  assert-that > @
+    [] > nested_goto
+      if. > @
+        eq.
+          goto
+            [g1]
+              seq > @
+                goto
+                  [g2]
+                    seq > @
+                      g1.forward 229
+                7
+          229
+        TRUE
+        FALSE
     $.equal-to
       [] > nested_gotoTest
-        seq > @
-          flag_w7aab3aaab1aab1a
+        seq
+          flag_w7aab3aaaaab1aab1a
           .write
             -1
-          flag_w7aab3aaab1aab1a
+          flag_w7aab3aaaaab1aab1a
           .eq
             -1
           .or
-          .while > g_w10aab3aa!
+          .while > g_w10aab3aaaa!
             [i]
               seq > @
-                flag_w7aab3aaab1aab1a
+                flag_w7aab3aaaaab1aab1a
                 .write
                   0
                 seq
                   seq
-                    flag_temp_w21aab3aaab1a
+                    flag_temp_w21aab3aaaaab1a
                     .write
                       0
-                    flag_temp_w21aab3aaab1a
+                    flag_temp_w21aab3aaaaab1a
                     .eq
                       0
-                    .while > g_w10aab3aaab1a!
+                    .while > g_w10aab3aaaaab1a!
                       [i]
                         seq > @
-                          flag_temp_w21aab3aaab1a
+                          flag_temp_w21aab3aaaaab1a
                           .write
                             1
                           seq
                             TRUE
                             .if
                               seq
-                                flag_w7aab3aaab1aab1a
+                                flag_w7aab3aaaaab1aab1a
                                 .write
                                   2
                               TRUE
-                  flag_w7aab3aaab1aab1a
+                  flag_w7aab3aaaaab1aab1a
                   .eq
                     0
                   .if
                     seq
                       7
                     TRUE
-          flag_w7aab3aaab1aab1a
+          flag_w7aab3aaaaab1aab1a
           .eq
             2
           .if
             229
-            g_w10aab3aa
-        memory > flag_w7aab3aaab1aab1a
+            g_w10aab3aaaa
+        .eq
+          229
+        .if > @
+          TRUE
+          FALSE
+        memory > flag_w7aab3aaaaab1aab1a
           -1
-        memory > flag_temp_w21aab3aaab1a
+        memory > flag_temp_w21aab3aaaaab1a
           0

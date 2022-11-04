@@ -2,13 +2,19 @@
 +junit
 +package org.eolang.dejump
 
+[] > empty_goto_Before
+  seq > @
+    goto
+      [g]
+        TRUE > @
+
 [] > process_empty_goto
   assert-that > @
     [] > empty_goto
       seq > @
         goto
           [g]
-            1337 > @
+            TRUE > @
     $.equal-to
       [] > empty_gotoTest
         seq > @
@@ -25,6 +31,6 @@
                   flag_temp_w157aab3aaa
                   .write
                     1
-                  1337
+                  TRUE
         memory > flag_temp_w157aab3aaa
           0

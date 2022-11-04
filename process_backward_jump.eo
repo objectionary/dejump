@@ -2,6 +2,22 @@
 +junit
 +package org.eolang.dejump
 
+[] > backward_jump_Before
+  memory 0 > x
+  seq > @
+    goto
+      [g]
+        seq > @
+          x.write (x.plus 1)
+          if.
+            x.lt 10
+            g.backward
+            nop
+    if.
+      x.eq 10
+      TRUE
+      FALSE
+
 [] > process_backward_jump
   assert-that > @
     [] > backward_jump
@@ -14,10 +30,11 @@
               if.
                 x.lt 10
                 g.backward
-                TRUE
-        QQ.io.stdout
-          QQ.txt.sprintf "out is %d\n"
-            x
+                nop
+        if.
+          x.eq 10
+          TRUE
+          FALSE
     $.equal-to
       [] > backward_jumpTest
         memory > x
@@ -51,14 +68,12 @@
                         flag_w178aab3ab1aab1b1
                         .write
                           0
-                      TRUE
-          QQ
-          .io
-          .stdout
-            QQ
-            .txt
-            .sprintf
-              "out is %d\n"
-              x
+                      nop
+          x
+          .eq
+            10
+          .if
+            TRUE
+            FALSE
         memory > flag_w178aab3ab1aab1b1
           0
