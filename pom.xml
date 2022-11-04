@@ -134,7 +134,7 @@ SOFTWARE.
     <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
-      <version>4.6.3</version>
+      <version>4.7.0</version>
     </dependency>
   </dependencies>
   <build>
