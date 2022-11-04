@@ -9,7 +9,11 @@
             TRUE
           g.forward
             -1.times x
-  QQ.io.stdout > @
-    QQ.txt.sprintf "%d equals to %d\n"
-      abs 228
-      abs 228
+  if. > @
+    eq.
+      QQ.txt.sprintf "%d equals to %d\n"
+        abs 228
+        abs 228
+      "228 equals to 228\n"
+    nop
+    FALSE
