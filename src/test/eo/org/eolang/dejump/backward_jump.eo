@@ -8,7 +8,8 @@
           if.
             x.lt 10
             g.backward
-            TRUE
-    QQ.io.stdout
-      QQ.txt.sprintf "out is %d\n"
-        x
+            nop
+    if.
+      x.eq 10
+      TRUE
+      FALSE

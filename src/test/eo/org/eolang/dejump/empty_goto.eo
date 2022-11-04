@@ -2,4 +2,4 @@
   seq > @
     goto
       [g]
-        1337 > @
+        TRUE > @

@@ -76,11 +76,7 @@ public final class RemoveGoto {
     public RemoveGoto(final String pth, final boolean fmt) {
         this.path = new File(pth).getAbsolutePath();
         this.format = fmt;
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            this.sep = '\\';
-        } else {
-            this.sep = '/';
-        }
+        this.sep = File.separatorChar;
     }
 
     /**

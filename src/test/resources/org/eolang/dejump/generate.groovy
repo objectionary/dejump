@@ -45,6 +45,11 @@ new File("${project.basedir}/src/test/eo/org/eolang/dejump/").eachFile {
 
     if (!(testName in todo)) {
         String src = it.getText()
+        String srcBefore = String.format(
+            "%s_Before%s",
+            src.substring(0, src.indexOf("\n")),
+            src.substring(src.indexOf("\n"))
+        )
         String srcTransformed = new XMIR(
             RemoveGoto.applyTrain(
                 RemoveGoto.getParsedXml(src)
@@ -55,15 +60,30 @@ new File("${project.basedir}/src/test/eo/org/eolang/dejump/").eachFile {
             srcTransformed.substring(0, srcTransformed.indexOf("\n")),
             srcTransformed.substring(srcTransformed.indexOf("\n"))
         )
-        File file = new File(String.format(
-            "%s/target/eo-after/process_%s.eo",
-            "${project.basedir}", "${testName}"
-        ))
+        File file = new File(
+            String.format(
+                "%s/target/eo-after/process_%s.eo",
+                "${project.basedir}", "${testName}"
+            )
+        )
         file.createNewFile()
-        file.append("+alias org.eolang.hamcrest.assert-that\n")
-        file.append("+junit\n")
-        file.append("+package org.eolang.dejump\n\n")
-        file.append("[] > process_" + testName + "\n")
+        file.append(
+            String.format(
+                "%s\n%s\n%s\n\n",
+                "+alias org.eolang.hamcrest.assert-that",
+                "+junit",
+                "+package org.eolang.dejump"
+            )
+        )
+        srcBefore.eachLine {
+            file.append(it + "\n")
+        }
+        file.append(
+            String.format(
+                "\n[] > process_%s\n",
+                testName
+            )
+        )
         file.append("  assert-that > @\n")
         src.eachLine {
             file.append("    " + it + "\n")
