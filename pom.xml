@@ -31,7 +31,7 @@ SOFTWARE.
   </parent>
   <groupId>org.eolang</groupId>
   <artifactId>dejump</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.2</version>
   <packaging>jar</packaging>
   <name>dejump</name>
   <description>Replaces all GOTO objects</description>
