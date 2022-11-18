@@ -8,7 +8,10 @@
             g.forward a
             TRUE
           b
-  seq > @
-    QQ.io.stdout
+  if. > @
+    eq.
       QQ.txt.sprintf "MAX_VAL is %d\n"
         max 228 1337
+      "MAX_VAL is 1337\n"
+    TRUE
+    FALSE

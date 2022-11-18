@@ -3,6 +3,6 @@
     goto
       [g]
         seq > @
-          QQ.io.stdout "Check\n"
+          QQ.txt.sprintf "Check\n"
           g.forward TRUE
-          QQ.io.stdout "Never\n"
+          QQ.txt.sprintf "Never\n"

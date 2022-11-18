@@ -117,7 +117,7 @@ SOFTWARE.
           <xsl:value-of select="$curGOTO/@uniq"/>
         </xsl:attribute>
         <xsl:attribute name="const">
-          <xsl:text></xsl:text>
+          <xsl:text/>
         </xsl:attribute>
         <xsl:apply-templates select="node()|@* except @name"/>
       </xsl:copy>

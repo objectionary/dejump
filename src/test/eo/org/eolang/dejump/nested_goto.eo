@@ -1,9 +1,14 @@
 [] > nested_goto
-  goto > @
-    [g1]
-      seq > @
-        goto
-          [g2]
-            seq > @
-              g1.forward 229
-        7
+  if. > @
+    eq.
+      goto
+        [g1]
+          seq > @
+            goto
+              [g2]
+                seq > @
+                  g1.forward 229
+            7
+      229
+    TRUE
+    FALSE
