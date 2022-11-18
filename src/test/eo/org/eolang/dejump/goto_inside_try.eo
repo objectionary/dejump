@@ -5,7 +5,7 @@
         [g]
           if. > @
             TRUE
-            g.forward "test"
+            g.forward TRUE
             "never happened"
     [e]
       e > @
