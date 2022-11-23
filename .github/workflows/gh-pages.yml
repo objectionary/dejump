@@ -9,6 +9,17 @@ on:
     branches:
       - master
     paths-ignore: ['paper/**', 'README.md', 'LICENSE.txt']
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: write
+  issues: write
+  packages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
 jobs:
   make:
     runs-on: ubuntu-latest
