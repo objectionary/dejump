@@ -1,0 +1,15 @@
+[] > while_inside_goto
+  [] > run
+    goto > @
+      [g]
+        while. > @
+          TRUE
+          [i]
+            seq > @
+              g.forward 1337
+  if. > @
+    eq.
+      run
+      1337
+    TRUE
+    FALSE
