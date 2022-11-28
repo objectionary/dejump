@@ -1,0 +1,90 @@
++alias org.eolang.hamcrest.assert-that
++junit
++package org.eolang.dejump
+
+[] > catch_error_in_goto_Before
+  try > @
+    []
+      goto > @
+        [g]
+          if. > @
+            TRUE
+            g.forward
+              div.
+                42
+                0
+            "never happened"
+    [e]
+      seq > @
+        QQ.io.stdout e
+        eq.
+          e
+          "The 1th argument of 'int.div' is invalid: division by zero is infinity"
+    nop
+
+[] > process_catch_error_in_goto
+  assert-that > @
+    [] > catch_error_in_goto
+      try > @
+        []
+          goto > @
+            [g]
+              if. > @
+                TRUE
+                g.forward
+                  div.
+                    42
+                    0
+                "never happened"
+        [e]
+          seq > @
+            QQ.io.stdout e
+            eq.
+              e
+              "The 1th argument of 'int.div' is invalid: division by zero is infinity"
+        nop
+    $.equal-to
+      [] > catch_error_in_gotoTest
+        try > @
+          []
+            seq > @
+              flag_w247aab3aaaaab1
+              .write
+                -1
+              flag_w247aab3aaaaab1
+              .eq
+                -1
+              .or
+              .while > g_w250aab3aaaa!
+                [i]
+                  seq > @
+                    flag_w247aab3aaaaab1
+                    .write
+                      0
+                    TRUE
+                    .if
+                      seq
+                        flag_w247aab3aaaaab1
+                        .write
+                          2
+                      "never happened"
+              flag_w247aab3aaaaab1
+              .eq
+                2
+              .if
+                42
+                .div
+                  0
+                g_w250aab3aaaa
+          [e]
+            seq > @
+              QQ
+              .io
+              .stdout
+                e
+              e
+              .eq
+                "The 1th argument of 'int.div' is invalid: division by zero is infinity"
+          nop
+        memory > flag_w247aab3aaaaab1
+          -1
