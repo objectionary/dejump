@@ -23,6 +23,7 @@
  */
 package org.eolang.dejump;
 
+import com.jcabi.manifests.Manifests;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -34,10 +35,12 @@ import picocli.CommandLine;
  * @since 0.0.1
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-@CommandLine.Command(name = "dejump",
+@CommandLine.Command(
+    name = "dejump",
     mixinStandardHelpOptions = true,
-    version = "Version 0.0.1",
-    description = "Replaces objects GOTO with semantically equivalent")
+    versionProvider = Main.Version.class,
+    description = "Replaces objects GOTO with semantically equivalent"
+)
 public final class Main implements Callable<Integer> {
 
     /**
@@ -68,4 +71,18 @@ public final class Main implements Callable<Integer> {
     public static void main(final String[] args) {
         new CommandLine(new Main()).execute(args);
     }
+
+    /**
+     * Version.
+     * @since 0.0.2
+     */
+    static final class Version implements CommandLine.IVersionProvider {
+        @Override
+        public String[] getVersion() {
+            return new String[]{
+                Manifests.read("Dejump-Version")
+            };
+        }
+    }
+
 }

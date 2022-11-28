@@ -197,6 +197,7 @@ SOFTWARE.
           <archive>
             <manifestEntries>
               <Main-Class>org.eolang.dejump.Main</Main-Class>
+              <Dejump-Version>${project.version}</Dejump-Version>
             </manifestEntries>
           </archive>
           <descriptorRefs>
