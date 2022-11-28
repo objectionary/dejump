@@ -131,6 +131,11 @@ SOFTWARE.
       <artifactId>picocli</artifactId>
       <version>4.7.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-manifests</artifactId>
+      <!-- version from parent POM -->
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -197,6 +202,7 @@ SOFTWARE.
           <archive>
             <manifestEntries>
               <Main-Class>org.eolang.dejump.Main</Main-Class>
+              <Dejump-Version>${project.version}</Dejump-Version>
             </manifestEntries>
           </archive>
           <descriptorRefs>
