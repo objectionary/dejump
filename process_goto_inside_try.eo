@@ -34,34 +34,34 @@
         try > @
           []
             seq > @
-              flag_w213aab3aaaaab1
+              flag_w247aab3aaaaab1
               .write
                 -1
-              flag_w213aab3aaaaab1
+              flag_w247aab3aaaaab1
               .eq
                 -1
               .or
-              .while > g_w216aab3aaaa!
+              .while > g_w250aab3aaaa!
                 [i]
                   seq > @
-                    flag_w213aab3aaaaab1
+                    flag_w247aab3aaaaab1
                     .write
                       0
                     TRUE
                     .if
                       seq
-                        flag_w213aab3aaaaab1
+                        flag_w247aab3aaaaab1
                         .write
                           2
                       "never happened"
-              flag_w213aab3aaaaab1
+              flag_w247aab3aaaaab1
               .eq
                 2
               .if
                 TRUE
-                g_w216aab3aaaa
+                g_w250aab3aaaa
           [e]
             e > @
           nop
-        memory > flag_w213aab3aaaaab1
+        memory > flag_w247aab3aaaaab1
           -1

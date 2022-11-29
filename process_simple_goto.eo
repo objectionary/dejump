@@ -25,17 +25,17 @@
       [] > simple_gotoTest
         seq > @
           seq
-            flag_w75aab3aaaab1b1
+            flag_w109aab3aaaab1b1
             .write
               -1
-            flag_w75aab3aaaab1b1
+            flag_w109aab3aaaab1b1
             .eq
               -1
             .or
-            .while > g_w78aab3aaa!
+            .while > g_w112aab3aaa!
               [i]
                 seq > @
-                  flag_w75aab3aaaab1b1
+                  flag_w109aab3aaaab1b1
                   .write
                     0
                   seq
@@ -46,11 +46,11 @@
                     TRUE
                     .if
                       seq
-                        flag_w75aab3aaaab1b1
+                        flag_w109aab3aaaab1b1
                         .write
                           2
                       TRUE
-                    flag_w75aab3aaaab1b1
+                    flag_w109aab3aaaab1b1
                     .eq
                       0
                     .if
@@ -60,11 +60,11 @@
                         .sprintf
                           "Never\n"
                       TRUE
-            flag_w75aab3aaaab1b1
+            flag_w109aab3aaaab1b1
             .eq
               2
             .if
               TRUE
-              g_w78aab3aaa
-        memory > flag_w75aab3aaaab1b1
+              g_w112aab3aaa
+        memory > flag_w109aab3aaaab1b1
           -1
