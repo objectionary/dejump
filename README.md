@@ -102,3 +102,5 @@ There are `.eo` files in [`src/test/eo/org/eolang/dejump`](https://github.com/ob
 1. At `generate-test-sources` Maven phase, `gmavenplus-plugin` takes all `.eo` sources and generates new ones. The files that it generates are not just `.eo` programs, but EO tests, which combine the code originally taken from original EO programs with the EO code generated. Thus, for `src/test/eo/org/eolang/dejump/alpha.eo` a modified EO source will be saved into `target/eo-after/process_alpha-test.eo`.
 
 2. At `process-test-sources` phase, `eo-maven-plugin` process generated `.eo` files from `target/eo-after` directory and runs them as junit-tests.
+
+All generated `.eo` junit-tests are deployed to [gh-pages](https://github.com/objectionary/dejump/tree/gh-pages).

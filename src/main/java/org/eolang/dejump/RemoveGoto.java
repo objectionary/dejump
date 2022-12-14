@@ -188,7 +188,8 @@ public final class RemoveGoto {
         final XML xml = new XMLDocument(baos.toByteArray());
         baos.close();
         return new Xsline(
-            new TrDefault<Shift>().with(new StClasspath("/org/eolang/parser/wrap-method-calls.xsl"))
+            new TrDefault<Shift>()
+                .with(new StClasspath("/org/eolang/parser/wrap-method-calls.xsl"))
         ).pass(xml);
     }
 
