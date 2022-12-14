@@ -39,20 +39,20 @@
       [] > while_inside_gotoTest
         [] > run
           seq > @
-            flag_w7aab3aaaab1b1b1a
+            flag_w281aab3aaaab1b1b1a
             .write
               -1
-            flag_w7aab3aaaab1b1b1a
+            flag_w281aab3aaaab1b1b1a
             .eq
               -1
             .or
-            .while > g_w10aab3aaa!
+            .while > g_w284aab3aaa!
               [i]
                 seq > @
-                  flag_w7aab3aaaab1b1b1a
+                  flag_w281aab3aaaab1b1b1a
                   .write
                     0
-                  flag_w7aab3aaaab1b1b1a
+                  flag_w281aab3aaaab1b1b1a
                   .eq
                     0
                   .and
@@ -63,21 +63,21 @@
                         TRUE
                         .if
                           seq
-                            flag_w7aab3aaaab1b1b1a
+                            flag_w281aab3aaaab1b1b1a
                             .write
                               2
                           TRUE
-            flag_w7aab3aaaab1b1b1a
+            flag_w281aab3aaaab1b1b1a
             .eq
               2
             .if
               1337
-              g_w10aab3aaa
+              g_w284aab3aaa
         run
         .eq
           1337
         .if > @
           TRUE
           FALSE
-        memory > flag_w7aab3aaaab1b1b1a
+        memory > flag_w281aab3aaaab1b1b1a
           -1
