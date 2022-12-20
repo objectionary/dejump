@@ -19,18 +19,18 @@
       [] > empty_gotoTest
         seq > @
           seq
-            flag_temp_w327aab3aaa
+            flag_temp_w18aab3aaa
             .write
               0
-            flag_temp_w327aab3aaa
+            flag_temp_w18aab3aaa
             .eq
               0
-            .while > g_w317aab3aaa!
+            .while > g_w8aab3aaa!
               [i]
                 seq > @
-                  flag_temp_w327aab3aaa
+                  flag_temp_w18aab3aaa
                   .write
                     1
                   TRUE
-        memory > flag_temp_w327aab3aaa
+        memory > flag_temp_w18aab3aaa
           0

@@ -41,17 +41,17 @@
           0
         seq > @
           seq
-            flag_w145aab3ab1aab1b1
+            flag_w71aab3ab1aab1b1
             .write
               0
-            flag_w145aab3ab1aab1b1
+            flag_w71aab3ab1aab1b1
             .eq
               0
             .or
-            .while > g_w148aab3ab1a!
+            .while > g_w74aab3ab1a!
               [i]
                 seq > @
-                  flag_w145aab3ab1aab1b1
+                  flag_w71aab3ab1aab1b1
                   .write
                     1
                   seq
@@ -65,7 +65,7 @@
                       10
                     .if
                       seq
-                        flag_w145aab3ab1aab1b1
+                        flag_w71aab3ab1aab1b1
                         .write
                           0
                       nop
@@ -75,5 +75,5 @@
           .if
             TRUE
             FALSE
-        memory > flag_w145aab3ab1aab1b1
+        memory > flag_w71aab3ab1aab1b1
           0
