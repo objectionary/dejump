@@ -31,6 +31,8 @@ import org.eolang.parser.XMIR
  * which checks, that result of dataization EO-code BEFORE
  * transformations are equal to result of dataization same code,
  * but AFTER transformations.
+ *
+ * @todo #5:90min Resolve all tests, that are blocked due "todo" array.
  */
 
 def dir = new File("${project.basedir}/target/eo-after/")
