@@ -81,7 +81,7 @@ SOFTWARE.
     </site>
   </distributionManagement>
   <properties>
-    <eolang.version>0.28.11</eolang.version>
+    <eolang.version>0.28.14</eolang.version>
   </properties>
   <dependencies>
     <dependency>
@@ -102,7 +102,7 @@ SOFTWARE.
     <dependency>
       <groupId>com.jcabi</groupId>
       <artifactId>jcabi-xml</artifactId>
-      <version>0.26.0</version>
+      <version>0.27.0</version>
       <optional>true</optional>
     </dependency>
     <dependency>
