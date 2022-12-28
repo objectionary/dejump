@@ -17,8 +17,8 @@ The input data is a program in `.eo`/`.xmir` format, as the output the program r
 ## Usage
 To use this program, the first step is to download the JAR. Then:
 
-```
-$ java -jar dejump-0.0.0-jar-with-dependencies.jar --help
+```shell
+$ java -jar target/dejump-1.0-SNAPSHOT-jar-with-dependencies.jar --help
 ```
 
 An application has a CLI (Command line interface), which appears as:
@@ -93,7 +93,7 @@ After the application is executed, the file `temp/generated/example_transformed.
 
 You will need JDK 11+ and Maven 3.8+. Clone the repo and run the build like this:
 
-```
+```shell
 $ mvn clean install -Pqulice
 ```
 
