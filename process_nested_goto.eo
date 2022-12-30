@@ -36,60 +36,60 @@
     $.equal-to
       [] > nested_gotoTest
         seq
-          flag_w170aab3aaaaab1aab1a
+          flag_w158aab3aaaaab1aab1a
           .write
             -1
-          flag_w170aab3aaaaab1aab1a
+          flag_w158aab3aaaaab1aab1a
           .eq
             -1
           .or
-          .while > g_w173aab3aaaa!
+          .while > g_w161aab3aaaa!
             [i]
               seq > @
-                flag_w170aab3aaaaab1aab1a
+                flag_w158aab3aaaaab1aab1a
                 .write
                   0
                 seq
                   seq
-                    flag_temp_w184aab3aaaaab1a
+                    flag_temp_w172aab3aaaaab1a
                     .write
                       0
-                    flag_temp_w184aab3aaaaab1a
+                    flag_temp_w172aab3aaaaab1a
                     .eq
                       0
-                    .while > g_w173aab3aaaaab1a!
+                    .while > g_w161aab3aaaaab1a!
                       [i]
                         seq > @
-                          flag_temp_w184aab3aaaaab1a
+                          flag_temp_w172aab3aaaaab1a
                           .write
                             1
                           seq
                             TRUE
                             .if
                               seq
-                                flag_w170aab3aaaaab1aab1a
+                                flag_w158aab3aaaaab1aab1a
                                 .write
                                   2
                               TRUE
-                  flag_w170aab3aaaaab1aab1a
+                  flag_w158aab3aaaaab1aab1a
                   .eq
                     0
                   .if
                     seq
                       7
                     TRUE
-          flag_w170aab3aaaaab1aab1a
+          flag_w158aab3aaaaab1aab1a
           .eq
             2
           .if
             229
-            g_w173aab3aaaa
+            g_w161aab3aaaa
         .eq
           229
         .if > @
           TRUE
           FALSE
-        memory > flag_w170aab3aaaaab1aab1a
+        memory > flag_w158aab3aaaaab1aab1a
           -1
-        memory > flag_temp_w184aab3aaaaab1a
+        memory > flag_temp_w172aab3aaaaab1a
           0
