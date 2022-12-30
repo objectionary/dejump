@@ -81,7 +81,7 @@ SOFTWARE.
     </site>
   </distributionManagement>
   <properties>
-    <eolang.version>0.28.15</eolang.version>
+    <eolang.version>0.28.16</eolang.version>
   </properties>
   <dependencies>
     <dependency>
