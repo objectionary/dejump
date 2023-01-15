@@ -42,14 +42,14 @@ new File("${project.basedir}/src/test/eo/org/eolang/dejump/").eachFile {
     String testName = it.name.substring(0, it.name.lastIndexOf("."))
 
     def todo = [
-        "multiple_returns", // converting negative numbers to "bytes" attribute ?
-        "backward_jump" // new logic for "while" object ?
+        "multiple-returns", // converting negative numbers to "bytes" attribute ?
+        "backward-jump" // new logic for "while" object ?
     ]
 
     if (!(testName in todo)) {
         String src = it.getText()
         String srcBefore = String.format(
-            "%s_Before%s",
+            "%s-Before%s",
             src.substring(0, src.indexOf("\n")),
             src.substring(src.indexOf("\n"))
         )
@@ -65,7 +65,7 @@ new File("${project.basedir}/src/test/eo/org/eolang/dejump/").eachFile {
         )
         File file = new File(
             String.format(
-                "%s/target/eo-after/process_%s.eo",
+                "%s/target/eo-after/process-%s.eo",
                 "${project.basedir}", "${testName}"
             )
         )
