@@ -2,7 +2,7 @@
 +junit
 +package org.eolang.dejump
 
-[] > returns_from_methods_body_Before
+[] > returns_from_methods_body-Before
   [a b] > max
     goto > @
       [g]
@@ -20,7 +20,7 @@
     TRUE
     FALSE
 
-[] > process_returns_from_method_body
+[] > process_returns-from-method-body
   assert-that > @
     [] > returns_from_methods_body
       [a b] > max
@@ -43,17 +43,17 @@
       [] > returns_from_methods_bodyTest
         [a b] > max
           seq > @
-            flag_w98aab3aab2ab1a
+            flag_w6aab3aab2ab1a
             .write
               -1
-            flag_w98aab3aab2ab1a
+            flag_w6aab3aab2ab1a
             .eq
               -1
             .or
-            .while > g_w101aab3aab2!
+            .while > g_w9aab3aab2!
               [i]
                 seq > @
-                  flag_w98aab3aab2ab1a
+                  flag_w6aab3aab2ab1a
                   .write
                     0
                   seq
@@ -62,23 +62,23 @@
                       b
                     .if
                       seq
-                        flag_w98aab3aab2ab1a
+                        flag_w6aab3aab2ab1a
                         .write
                           2
                       TRUE
-                    flag_w98aab3aab2ab1a
+                    flag_w6aab3aab2ab1a
                     .eq
                       0
                     .if
                       seq
                         b
                       TRUE
-            flag_w98aab3aab2ab1a
+            flag_w6aab3aab2ab1a
             .eq
               2
             .if
               a
-              g_w101aab3aab2
+              g_w9aab3aab2
         QQ
         .txt
         .sprintf
@@ -91,5 +91,5 @@
         .if > @
           TRUE
           FALSE
-        memory > flag_w98aab3aab2ab1a
+        memory > flag_w6aab3aab2ab1a
           -1

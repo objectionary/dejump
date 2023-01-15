@@ -2,7 +2,7 @@
 +junit
 +package org.eolang.dejump
 
-[] > while_inside_goto_Before
+[] > while_inside_goto-Before
   [] > run
     goto > @
       [g]
@@ -18,7 +18,7 @@
     TRUE
     FALSE
 
-[] > process_while_inside_goto
+[] > process_while-inside-goto
   assert-that > @
     [] > while_inside_goto
       [] > run
@@ -39,20 +39,20 @@
       [] > while_inside_gotoTest
         [] > run
           seq > @
-            flag_w38aab3aaaab1b1b1a
+            flag_w220aab3aaaab1b1b1a
             .write
               -1
-            flag_w38aab3aaaab1b1b1a
+            flag_w220aab3aaaab1b1b1a
             .eq
               -1
             .or
-            .while > g_w41aab3aaa!
+            .while > g_w223aab3aaa!
               [i]
                 seq > @
-                  flag_w38aab3aaaab1b1b1a
+                  flag_w220aab3aaaab1b1b1a
                   .write
                     0
-                  flag_w38aab3aaaab1b1b1a
+                  flag_w220aab3aaaab1b1b1a
                   .eq
                     0
                   .and
@@ -63,21 +63,21 @@
                         TRUE
                         .if
                           seq
-                            flag_w38aab3aaaab1b1b1a
+                            flag_w220aab3aaaab1b1b1a
                             .write
                               2
                           TRUE
-            flag_w38aab3aaaab1b1b1a
+            flag_w220aab3aaaab1b1b1a
             .eq
               2
             .if
               1337
-              g_w41aab3aaa
+              g_w223aab3aaa
         run
         .eq
           1337
         .if > @
           TRUE
           FALSE
-        memory > flag_w38aab3aaaab1b1b1a
+        memory > flag_w220aab3aaaab1b1b1a
           -1

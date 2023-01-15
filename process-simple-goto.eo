@@ -2,7 +2,7 @@
 +junit
 +package org.eolang.dejump
 
-[] > simple_goto_Before
+[] > simple_goto-Before
   seq > @
     goto
       [g]
@@ -11,7 +11,7 @@
           g.forward TRUE
           QQ.txt.sprintf "Never\n"
 
-[] > process_simple_goto
+[] > process_simple-goto
   assert-that > @
     [] > simple_goto
       seq > @
@@ -25,17 +25,17 @@
       [] > simple_gotoTest
         seq > @
           seq
-            flag_w128aab3aaaab1b1
+            flag_w39aab3aaaab1b1
             .write
               -1
-            flag_w128aab3aaaab1b1
+            flag_w39aab3aaaab1b1
             .eq
               -1
             .or
-            .while > g_w131aab3aaa!
+            .while > g_w42aab3aaa!
               [i]
                 seq > @
-                  flag_w128aab3aaaab1b1
+                  flag_w39aab3aaaab1b1
                   .write
                     0
                   seq
@@ -46,11 +46,11 @@
                     TRUE
                     .if
                       seq
-                        flag_w128aab3aaaab1b1
+                        flag_w39aab3aaaab1b1
                         .write
                           2
                       TRUE
-                    flag_w128aab3aaaab1b1
+                    flag_w39aab3aaaab1b1
                     .eq
                       0
                     .if
@@ -60,11 +60,11 @@
                         .sprintf
                           "Never\n"
                       TRUE
-            flag_w128aab3aaaab1b1
+            flag_w39aab3aaaab1b1
             .eq
               2
             .if
               TRUE
-              g_w131aab3aaa
-        memory > flag_w128aab3aaaab1b1
+              g_w42aab3aaa
+        memory > flag_w39aab3aaaab1b1
           -1

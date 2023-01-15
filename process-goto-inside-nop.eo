@@ -2,7 +2,7 @@
 +junit
 +package org.eolang.dejump
 
-[] > goto_inside_nop_Before
+[] > goto_inside_nop-Before
   nop > @
     goto
       [g]
@@ -10,7 +10,7 @@
           QQ.io.stdout "Never happened\n"
           g.forward TRUE
 
-[] > process_goto_inside_nop
+[] > process_goto-inside-nop
   assert-that > @
     [] > goto_inside_nop
       nop > @
@@ -23,17 +23,17 @@
       [] > goto_inside_nopTest
         nop > @
           seq
-            flag_w220aab3aaaab1b1
+            flag_w190aab3aaaab1b1
             .write
               -1
-            flag_w220aab3aaaab1b1
+            flag_w190aab3aaaab1b1
             .eq
               -1
             .or
-            .while > g_w223aab3aaa!
+            .while > g_w193aab3aaa!
               [i]
                 seq > @
-                  flag_w220aab3aaaab1b1
+                  flag_w190aab3aaaab1b1
                   .write
                     0
                   seq
@@ -44,15 +44,15 @@
                     TRUE
                     .if
                       seq
-                        flag_w220aab3aaaab1b1
+                        flag_w190aab3aaaab1b1
                         .write
                           2
                       TRUE
-            flag_w220aab3aaaab1b1
+            flag_w190aab3aaaab1b1
             .eq
               2
             .if
               TRUE
-              g_w223aab3aaa
-        memory > flag_w220aab3aaaab1b1
+              g_w193aab3aaa
+        memory > flag_w190aab3aaaab1b1
           -1
