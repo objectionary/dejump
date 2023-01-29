@@ -48,34 +48,34 @@
         try > @
           []
             seq > @
-              flag_w129aab3aaaaab1
+              flag_w190aab3aaaaab1
               .write
                 -1
-              flag_w129aab3aaaaab1
+              flag_w190aab3aaaaab1
               .eq
                 -1
               .or
-              .while > g_w132aab3aaaa!
+              .while > g_w193aab3aaaa!
                 [i]
                   seq > @
-                    flag_w129aab3aaaaab1
+                    flag_w190aab3aaaaab1
                     .write
                       0
                     TRUE
                     .if
                       seq
-                        flag_w129aab3aaaaab1
+                        flag_w190aab3aaaaab1
                         .write
                           2
                       "never happened"
-              flag_w129aab3aaaaab1
+              flag_w190aab3aaaaab1
               .eq
                 2
               .if
                 42
                 .div
                   0
-                g_w132aab3aaaa
+                g_w193aab3aaaa
           [e]
             seq > @
               QQ
@@ -86,5 +86,5 @@
               .eq
                 "The 1th argument of 'int.div' is invalid: division by zero is infinity"
           nop
-        memory > flag_w129aab3aaaaab1
+        memory > flag_w190aab3aaaaab1
           -1
