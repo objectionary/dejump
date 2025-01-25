@@ -8,8 +8,7 @@
 [![PDD status](http://www.0pdd.com/svg?name=objectionary/dejump)](http://www.0pdd.com/p?name=objectionary/dejump)
 [![Maven Central](https://img.shields.io/maven-central/v/org.eolang/dejump.svg)](https://maven-badges.herokuapp.com/maven-central/org.eolang/dejump)
 [![Hits-of-Code](https://hitsofcode.com/github/objectionary/dejump?branch=master)](https://hitsofcode.com/github/objectionary/dejump/view?branch=master)
-[![Lines of code](https://img.shields.io/tokei/lines/github/objectionary/dejump)](https://img.shields.io/tokei/lines/github/objectionary/dejump)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/objectionary/dejump/blob/master/LICENSE.txt)
+[[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/objectionary/dejump/blob/master/LICENSE.txt)
 
 Takes as an input a program in [EO](https://www.eolang.org/) and converts it to a semantically equivalent program, excluding the use of `goto` object.
 The input data is a program in `.eo`/`.xmir` format, as the output the program returns `.eo`/`.xmir` respectively.
