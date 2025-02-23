@@ -1,6 +1,4 @@
 /*
- * The MIT License (MIT)
- *
  * SPDX-FileCopyrightText: Copyright (c) 2022 Mikhail Lipanin
  * SPDX-License-Identifier: MIT
  */
