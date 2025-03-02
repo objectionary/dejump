@@ -1,9 +1,11 @@
-.project
-.settings
-.classpath
-.recommenders
-target/
-.DS_Store
 *.iml
+.DS_Store
+.classpath
+.idea/
 .idea/workspace.xml
+.project
+.recommenders
+.settings
 /.idea/
+node_modules/
+target/
