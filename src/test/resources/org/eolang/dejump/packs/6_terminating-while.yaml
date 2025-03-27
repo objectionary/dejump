@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022 Mikhail Lipanin
+# SPDX-License-Identifier: MIT
+
 xsls:
   - /org/eolang/dejump/simple-goto.xsl
   - /org/eolang/dejump/change-condition-of-jump.xsl
