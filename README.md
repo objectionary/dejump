@@ -1,11 +1,11 @@
 <img alt="logo" src="https://www.objectionary.com/cactus.svg" height="100px" />
 
 [![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
-[![DevOps By Rultor.com](http://www.rultor.com/b/objectionary/eo)](http://www.rultor.com/p/objectionary/eo)
+[![DevOps By Rultor.com](https://www.rultor.com/b/objectionary/eo)](https://www.rultor.com/p/objectionary/eo)
 [![We recommend IntelliJ IDEA](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
 
 [![mvn-linux](https://github.com/objectionary/dejump/actions/workflows/build.yml/badge.svg)](https://github.com/objectionary/dejump/actions/workflows/build.yml)
-[![PDD status](http://www.0pdd.com/svg?name=objectionary/dejump)](http://www.0pdd.com/p?name=objectionary/dejump)
+[![PDD status](https://www.0pdd.com/svg?name=objectionary/dejump)](https://www.0pdd.com/p?name=objectionary/dejump)
 [![Maven Central](https://img.shields.io/maven-central/v/org.eolang/dejump.svg)](https://maven-badges.herokuapp.com/maven-central/org.eolang/dejump)
 [![Hits-of-Code](https://hitsofcode.com/github/objectionary/dejump?branch=master)](https://hitsofcode.com/github/objectionary/dejump/view?branch=master)
 [[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/objectionary/dejump/blob/master/LICENSE.txt)
