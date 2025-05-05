@@ -1,11 +1,11 @@
-*.iml
-.DS_Store
 .classpath
+.DS_Store
 .idea/
 .idea/workspace.xml
 .project
 .recommenders
 .settings
+*.iml
 /.idea/
 node_modules/
 target/
