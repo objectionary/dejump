@@ -13,7 +13,11 @@
 Takes as an input a program in [EO](https://www.eolang.org/) and converts it to a semantically equivalent program, excluding the use of `goto` object.
 The input data is a program in `.eo`/`.xmir` format, as the output the program returns `.eo`/`.xmir` respectively.
 
+More details are in
+[this paper](https://dl.acm.org/doi/abs/10.1145/3638584.3638679).
+
 ## Usage
+
 To use this program, the first step is to download the JAR. Then:
 
 ```shell
